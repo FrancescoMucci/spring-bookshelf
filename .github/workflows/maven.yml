@@ -40,6 +40,14 @@ jobs:
     - name: Run Integration Tests
       run: mvn -f spring-bookshelf verify -Pit-tests
 
+    - name: Send code coverage report (previously collected) to Coveralls
+      run: >
+        mvn -f spring-bookshelf coveralls:report
+        -DrepoToken=$COVERALLS_REPO_TOKEN
+        -DpullRequest=${{ github.event.pull_request.number }}
+      env: 
+        COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
+
     - name: Run End-to-end tests in a separate build
       run: xvfb-run mvn -f spring-bookshelf verify -Pe2e-tests
 
