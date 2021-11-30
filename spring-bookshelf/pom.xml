@@ -30,6 +30,7 @@
 		<java.version>1.8</java.version>
 
 		<skip.unit-tests>false</skip.unit-tests>
+		<skip.integration-tests>false</skip.integration-tests>
 
 	</properties>
 
@@ -158,8 +159,130 @@
 				</configuration>
 			</plugin>
 
+			<!-- To read application properties inside POM -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>properties-maven-plugin</artifactId>
+				<version>1.0.0</version>
+				<executions>
+					<execution>
+						<phase>initialize</phase>
+						<goals>
+							<goal>read-project-properties</goal>
+						</goals>
+						<configuration>
+							<files>
+								<file>${project.basedir}/src/main/resources/application.properties</file>
+							</files>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
 		</plugins>
 
+		<!-- ############ Plug-in Management (configured but need activation) ############# -->
+
+		<pluginManagement>
+			<plugins>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-failsafe-plugin</artifactId>
+					<executions>
+						<execution>
+							<configuration>
+								<skipTests>${skip.integration-tests}</skipTests>
+								<includes>
+									<include>**/*ApplicationTests.java</include>
+									<include>**/*IT.java</include>
+								</includes>
+							</configuration>
+							<goals>
+								<goal>integration-test</goal>
+								<goal>verify</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+
+				<plugin>
+					<groupId>io.fabric8</groupId>
+					<artifactId>docker-maven-plugin</artifactId>
+					<version>0.34.1</version>
+					<configuration>
+						<showLogs>true</showLogs>
+						<verbose>build</verbose>
+						<autoCreateCustomNetworks>true</autoCreateCustomNetworks>
+					</configuration>
+					<executions>
+						<execution>
+							<id>docker:start</id>
+							<phase>pre-integration-test</phase>
+							<goals>
+								<goal>start</goal>
+							</goals>
+						</execution>
+						<execution>
+							<id>docker:stop</id>
+							<phase>post-integration-test</phase>
+							<goals>
+								<goal>stop</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+
+			</plugins>
+		</pluginManagement>
+
 	</build>
+
+	<!-- ###################################### -->
+	<!-- ########## Profiles section ########## -->
+	<!-- ###################################### -->
+
+	<profiles>
+
+		<!-- ########## Integration tests profile ########## -->
+
+		<profile>
+			<id>it-tests</id>
+
+			<properties>
+				<skip.unit-tests>true</skip.unit-tests>
+			</properties>
+
+			<build>
+				<plugins>
+
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-failsafe-plugin</artifactId>
+					</plugin>
+
+					<plugin>
+						<groupId>io.fabric8</groupId>
+						<artifactId>docker-maven-plugin</artifactId>
+						<configuration>
+							<images>
+								<image>
+									<name>mongo:4.4.3</name>
+									<run>
+										<ports>
+											<port>${spring.data.mongodb.port}:27017</port>
+										</ports>
+									</run>
+								</image>
+							</images>
+						</configuration>
+					</plugin>
+
+				</plugins>
+			</build>
+
+		</profile>
+
+	</profiles>
 
 </project>
