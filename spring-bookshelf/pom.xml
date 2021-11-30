@@ -26,7 +26,11 @@
 	<!-- ######################################## -->
 
 	<properties>
+
 		<java.version>1.8</java.version>
+
+		<skip.unit-tests>false</skip.unit-tests>
+
 	</properties>
 
 	<!-- ########################################## -->
@@ -141,6 +145,17 @@
 						</configuration>
 					</execution>
 				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<skipTests>${skip.unit-tests}</skipTests>
+					<includes>
+						<include>**/*Test.java</include>
+					</includes>
+				</configuration>
 			</plugin>
 
 		</plugins>
