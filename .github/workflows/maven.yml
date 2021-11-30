@@ -1,0 +1,45 @@
+############################
+# GitHub Actions Workflow #
+###########################
+
+name: Java CI with Maven
+
+on:
+  push:
+    paths-ignore:
+     - 'README.md'
+  pull_request:
+    paths-ignore:
+     - 'README.md'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Clone the GitHub repo in the Runner
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Set up JDK 11 in the Runner
+      uses: actions/setup-java@v1
+      with:
+        java-version: 11
+
+    - name: Cache Maven packages
+      uses: actions/cache@v2
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/spring-bookshelf/pom.xml', '**/*.yml') }}
+        restore-keys: ${{ runner.os }}-m2-
+
+    - name: Run Unit Tests (with JaCoCo)
+      run: mvn -f spring-bookshelf verify -Pjacoco
+
+    - name: Run Integration Tests
+      run: mvn -f spring-bookshelf verify -Pit-tests
+
+    - name: Run End-to-end tests in a separate build
+      run: xvfb-run mvn -f spring-bookshelf verify -Pe2e-tests
+
