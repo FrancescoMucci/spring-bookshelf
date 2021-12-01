@@ -50,8 +50,8 @@ jobs:
       env: 
         COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
 
-    - name: Run End-to-end tests in a separate build
-      run: xvfb-run mvn -f spring-bookshelf verify -Pe2e-tests
+#    - name: Run End-to-end tests in a separate build
+#      run: xvfb-run mvn -f spring-bookshelf verify -Pe2e-tests
 
     - name: Run SonarQube analysis through SonarCloud
       run: >
