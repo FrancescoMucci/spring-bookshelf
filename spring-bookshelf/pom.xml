@@ -32,6 +32,65 @@
 		<skip.unit-tests>false</skip.unit-tests>
 		<skip.integration-tests>false</skip.integration-tests>
 
+		<!-- ########## Properties to configure Sonar Plug-in ########## -->
+
+		<sonar.projectKey>FrancescoMucci_spring-bookshelf</sonar.projectKey>
+
+		<sonar.coverage.jacoco.xmlReportPaths>
+			${project.reporting.outputDirectory}/jacoco/jacoco.xml
+		</sonar.coverage.jacoco.xmlReportPaths>
+
+		<sonar.exclusions>
+			**/*Application.*
+		</sonar.exclusions>
+
+		<!-- Exclude domain model classes from code duplication check -->
+		<sonar.cpd.exclusions>
+			**/model/*
+		</sonar.cpd.exclusions>
+
+		<sonar.coverage.exclusions>
+			**/model/**,
+			**/exception/*,
+			**/*Constants*,
+			**/*Application.*,
+			<!-- **/*Temporary* -->
+		</sonar.coverage.exclusions>
+
+		<sonar.junit.reportPaths>
+			${project.build.directory}/surefire-reports,
+			${project.build.directory}/failsafe-reports
+		</sonar.junit.reportPaths>
+
+		<!-- To keep track of IT and E2E in the additional test folders -->
+		<sonar.tests>
+			${project.build.testSourceDirectory},
+			${basedir}/src/it/java,
+			<!--  ${basedir}/src/e2e/java -->
+		</sonar.tests>
+
+		<!-- To analyze also HTML files -->
+		<sonar.sources>
+			pom.xml,
+			${project.build.sourceDirectory},
+			${basedir}/src/main/resources
+		</sonar.sources>
+
+		<!-- ########## Sonar Rule Exclusions ########## -->
+
+		<!-- For each rule to be ignore, add another ", eXX" and two corresponding 
+			properties with "eXX" in the name as below -->
+		<sonar.issue.ignore.multicriteria>e01</sonar.issue.ignore.multicriteria>
+
+		<!-- "Tests should include assertions" disabled on some classes like *ApplicationTests 
+			which just checks that the Spring application can start, without any assertion -->
+		<sonar.issue.ignore.multicriteria.e01.ruleKey>
+			java:S2699
+		</sonar.issue.ignore.multicriteria.e01.ruleKey>
+		<sonar.issue.ignore.multicriteria.e01.resourceKey>
+			**/*ApplicationTests.java
+		</sonar.issue.ignore.multicriteria.e01.resourceKey>
+
 	</properties>
 
 	<!-- ########################################## -->
@@ -245,6 +304,12 @@
 							<version>2.3.1</version>
 						</dependency>
 					</dependencies>
+				</plugin>
+
+				<plugin>
+					<groupId>org.sonarsource.scanner.maven</groupId>
+					<artifactId>sonar-maven-plugin</artifactId>
+					<version>3.8.0.2131</version>
 				</plugin>
 
 				<plugin>
