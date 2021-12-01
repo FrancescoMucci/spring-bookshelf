@@ -1,0 +1,545 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<!-- ########## Spring Boot Starter Parent ########## -->
+
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.4.5</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+
+	<!-- ########## GAV coordinates and packaging ########## -->
+
+	<groupId>io.github.francescomucci</groupId>
+	<artifactId>spring-bookshelf</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>spring-bookshelf</name>
+	<description>Spring Boot web application to manage personal bookshelf</description>
+
+	<!-- ######################################## -->
+	<!-- ########## Properties section ########## -->
+	<!-- ######################################## -->
+
+	<properties>
+
+		<java.version>1.8</java.version>
+
+		<skip.unit-tests>false</skip.unit-tests>
+		<skip.integration-tests>false</skip.integration-tests>
+
+		<!-- ########## Properties to configure Sonar Plug-in ########## -->
+
+		<sonar.projectKey>FrancescoMucci_spring-bookshelf</sonar.projectKey>
+
+		<sonar.coverage.jacoco.xmlReportPaths>
+			${project.reporting.outputDirectory}/jacoco/jacoco.xml
+		</sonar.coverage.jacoco.xmlReportPaths>
+
+		<sonar.exclusions>
+			**/*Application.*
+		</sonar.exclusions>
+
+		<!-- Exclude domain model classes from code duplication check -->
+		<sonar.cpd.exclusions>
+			**/model/*
+		</sonar.cpd.exclusions>
+
+		<sonar.coverage.exclusions>
+			**/model/**,
+			**/exception/*,
+			**/*Constants*,
+			**/*Application.*,
+			<!-- **/*Temporary* -->
+		</sonar.coverage.exclusions>
+
+		<sonar.junit.reportPaths>
+			${project.build.directory}/surefire-reports,
+			${project.build.directory}/failsafe-reports
+		</sonar.junit.reportPaths>
+
+		<!-- To keep track of IT and E2E in the additional test folders -->
+		<sonar.tests>
+			${project.build.testSourceDirectory},
+			${basedir}/src/it/java,
+			<!--  ${basedir}/src/e2e/java -->
+		</sonar.tests>
+
+		<!-- To analyze also HTML files -->
+		<sonar.sources>
+			pom.xml,
+			${project.build.sourceDirectory},
+			${basedir}/src/main/resources
+		</sonar.sources>
+
+		<!-- ########## Sonar Rule Exclusions ########## -->
+
+		<!-- For each rule to be ignore, add another ", eXX" and two corresponding 
+			properties with "eXX" in the name as below -->
+		<sonar.issue.ignore.multicriteria>e01</sonar.issue.ignore.multicriteria>
+
+		<!-- "Tests should include assertions" disabled on some classes like *ApplicationTests 
+			which just checks that the Spring application can start, without any assertion -->
+		<sonar.issue.ignore.multicriteria.e01.ruleKey>
+			java:S2699
+		</sonar.issue.ignore.multicriteria.e01.ruleKey>
+		<sonar.issue.ignore.multicriteria.e01.resourceKey>
+			**/*ApplicationTests.java
+		</sonar.issue.ignore.multicriteria.e01.resourceKey>
+
+	</properties>
+
+	<!-- ########################################## -->
+	<!-- ########## Dependencies section ########## -->
+	<!-- ########################################## -->
+
+	<dependencies>
+
+		<!-- ########## Spring Boot Starter Virtual Packages ########## -->
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-mongodb</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- ########## Optional dependencies of Spring Boot Starters ########## -->
+
+		<dependency>
+			<groupId>org.thymeleaf.extras</groupId>
+			<artifactId>thymeleaf-extras-springsecurity5</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- To use JUnit 4 with Spring Boot versions > 2.1 -->
+		<dependency>
+			<groupId>org.junit.vintage</groupId>
+			<artifactId>junit-vintage-engine</artifactId>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.hamcrest</groupId>
+					<artifactId>hamcrest-core</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+	</dependencies>
+
+	<!-- ################################### -->
+	<!-- ########## Build section ########## -->
+	<!-- ################################### -->
+
+	<build>
+
+		<!-- ############ Configured Plug-ins (active by default) ############# -->
+
+		<plugins>
+
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+
+			<!-- Configure separate test source folders for it and e2e tests -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>add-test-source</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>add-test-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>src/it/java</source>
+								<source>src/e2e/java</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<skipTests>${skip.unit-tests}</skipTests>
+					<includes>
+						<include>**/*Test.java</include>
+					</includes>
+				</configuration>
+			</plugin>
+
+			<!-- To read application properties inside POM -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>properties-maven-plugin</artifactId>
+				<version>1.0.0</version>
+				<executions>
+					<execution>
+						<phase>initialize</phase>
+						<goals>
+							<goal>read-project-properties</goal>
+						</goals>
+						<configuration>
+							<files>
+								<file>${project.basedir}/src/main/resources/application.properties</file>
+							</files>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+		</plugins>
+
+		<!-- ############ Plug-in Management (configured but need activation) ############# -->
+
+		<pluginManagement>
+			<plugins>
+
+				<plugin>
+					<groupId>org.jacoco</groupId>
+					<artifactId>jacoco-maven-plugin</artifactId>
+					<version>0.8.6</version>
+					<configuration>
+						<excludes>
+							<exclude>**/*Application.*</exclude>
+							<exclude>**/model/**</exclude>
+							<exclude>**/exception/*</exclude>
+							<exclude>**/*Constants*</exclude>
+							<!-- <exclude>**/*Temporary*</exclude> -->
+							<!-- The following is just to avoid the instrumentation error 
+							due to the HtmlUnit class StyleAttributes$Definition (method too large) -->
+							<exclude>**/htmlunit/*</exclude>
+							<!-- The following is just to avoid the instrumentation error 
+							due to the gargoylesoftware class CSS3ParserTokenManager (method too large) -->
+							<exclude>**/gargoylesoftware/*</exclude>
+						</excludes>
+					</configuration>
+					<executions>
+						<execution>
+							<goals>
+								<goal>prepare-agent</goal>
+								<goal>report</goal>
+							</goals>
+						</execution>
+						<execution>
+							<id>jacoco-check</id>
+							<goals>
+								<goal>check</goal>
+							</goals>
+							<configuration>
+								<rules>
+									<rule>
+										<limits>
+											<limit>
+												<minimum>100%</minimum>
+											</limit>
+										</limits>
+									</rule>
+								</rules>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+
+				<plugin>
+					<groupId>org.eluder.coveralls</groupId>
+					<artifactId>coveralls-maven-plugin</artifactId>
+					<version>4.3.0</version>
+					<dependencies>
+						<!-- This is required when using JDK 9 or higher since javax.xml.bind 
+							has been removed from the JDK -->
+						<dependency>
+							<groupId>javax.xml.bind</groupId>
+							<artifactId>jaxb-api</artifactId>
+							<version>2.3.1</version>
+						</dependency>
+					</dependencies>
+				</plugin>
+
+				<plugin>
+					<groupId>org.sonarsource.scanner.maven</groupId>
+					<artifactId>sonar-maven-plugin</artifactId>
+					<version>3.8.0.2131</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-failsafe-plugin</artifactId>
+					<executions>
+						<execution>
+							<configuration>
+								<skipTests>${skip.integration-tests}</skipTests>
+								<includes>
+									<include>**/*ApplicationTests.java</include>
+									<include>**/*IT.java</include>
+								</includes>
+							</configuration>
+							<goals>
+								<goal>integration-test</goal>
+								<goal>verify</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+
+				<plugin>
+					<groupId>io.fabric8</groupId>
+					<artifactId>docker-maven-plugin</artifactId>
+					<version>0.34.1</version>
+					<configuration>
+						<showLogs>true</showLogs>
+						<verbose>build</verbose>
+						<autoCreateCustomNetworks>true</autoCreateCustomNetworks>
+					</configuration>
+					<executions>
+						<execution>
+							<id>docker:start</id>
+							<phase>pre-integration-test</phase>
+							<goals>
+								<goal>start</goal>
+							</goals>
+						</execution>
+						<execution>
+							<id>docker:stop</id>
+							<phase>post-integration-test</phase>
+							<goals>
+								<goal>stop</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+
+			</plugins>
+		</pluginManagement>
+
+	</build>
+
+	<!-- ###################################### -->
+	<!-- ########## Profiles section ########## -->
+	<!-- ###################################### -->
+
+	<profiles>
+
+		<!-- ########## JaCoCo profile ########## -->
+
+		<profile>
+			<id>jacoco</id>
+
+			<build>
+				<plugins>
+
+					<plugin>
+						<groupId>org.jacoco</groupId>
+						<artifactId>jacoco-maven-plugin</artifactId>
+						<configuration>
+							<propertyName>surefireArgLine</propertyName>
+						</configuration>
+					</plugin>
+
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<configuration>
+							<argLine>${surefireArgLine}</argLine>
+						</configuration>
+					</plugin>
+
+				</plugins>
+			</build>
+
+		</profile>
+
+		<!-- ########## Integration tests profile ########## -->
+
+		<profile>
+			<id>it-tests</id>
+
+			<properties>
+				<skip.unit-tests>true</skip.unit-tests>
+			</properties>
+
+			<build>
+				<plugins>
+
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-failsafe-plugin</artifactId>
+					</plugin>
+
+					<plugin>
+						<groupId>io.fabric8</groupId>
+						<artifactId>docker-maven-plugin</artifactId>
+						<configuration>
+							<images>
+								<image>
+									<name>mongo:4.4.3</name>
+									<run>
+										<ports>
+											<port>${spring.data.mongodb.port}:27017</port>
+										</ports>
+									</run>
+								</image>
+							</images>
+						</configuration>
+					</plugin>
+
+				</plugins>
+			</build>
+
+		</profile>
+
+		<!-- ########## E2E-tests profile ########## -->
+
+		<profile>
+			<id>e2e-tests</id>
+
+			<properties>
+				<skip.unit-tests>true</skip.unit-tests>
+				<skip.integration-tests>true</skip.integration-tests>
+			</properties>
+
+			<build>
+				<plugins>
+
+					<plugin>
+						<groupId>io.fabric8</groupId>
+						<artifactId>docker-maven-plugin</artifactId>
+						<configuration>
+							<images>
+								<image>
+									<name>mongo:4.4.3</name>
+									<run>
+										<ports>
+											<port>${spring.data.mongodb.port}:27017</port>
+										</ports>
+									</run>
+								</image>
+							</images>
+						</configuration>
+					</plugin>
+
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>build-helper-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>reserve-tomcat-port</id>
+								<goals>
+									<goal>reserve-network-port</goal>
+								</goals>
+								<phase>process-resources</phase>
+								<configuration>
+									<portNames>
+										<portName>tomcat.http.port</portName>
+									</portNames>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+
+					<plugin>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>pre-integration-test</id>
+								<goals>
+									<goal>start</goal>
+								</goals>
+								<configuration>
+									<arguments>
+										<argument>--server.port=${tomcat.http.port}</argument>
+									</arguments>
+								</configuration>
+							</execution>
+							<execution>
+								<id>post-integration-test</id>
+								<goals>
+									<goal>stop</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-failsafe-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>e2e-tests</id>
+								<configuration>
+									<includes>
+										<include>**/*E2E.java</include>
+									</includes>
+								</configuration>
+								<goals>
+									<goal>integration-test</goal>
+									<goal>verify</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<systemPropertyVariables>
+								<server.port>${tomcat.http.port}</server.port>
+							</systemPropertyVariables>
+						</configuration>
+					</plugin>
+
+				</plugins>
+			</build>
+
+		</profile>
+
+	</profiles>
+
+</project>
