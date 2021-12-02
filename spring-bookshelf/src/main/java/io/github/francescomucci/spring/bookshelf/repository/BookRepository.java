@@ -4,10 +4,13 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
 
 import io.github.francescomucci.spring.bookshelf.model.Book;
 
-public interface BookRepository {
+@Repository("BookRepository")
+public interface BookRepository extends MongoRepository<Book, Long> {
 
 	public List<Book> findAll(Sort sort);
 
@@ -15,6 +18,7 @@ public interface BookRepository {
 
 	public List<Book> findAllByTitleLikeOrderByTitle(String title);
 
+	@SuppressWarnings("unchecked")
 	public Book save(Book book);
 
 	public void deleteById(long isbn);
