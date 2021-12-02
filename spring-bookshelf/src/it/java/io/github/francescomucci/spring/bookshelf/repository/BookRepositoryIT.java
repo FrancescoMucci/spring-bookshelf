@@ -81,4 +81,32 @@ public class BookRepositoryIT {
 		assertThat(foundBookOptional).contains(toBeFound);
 	}
 
+	/*----------- findAllByTitleLikeOrderByTitle tests ----------*/
+
+	@Test
+	public void testBookRepository_findAllByTitleLikeOrderByTitle_whenSearchedTitleNotInMongoDb_shouldReturnEmptyList() {
+		Book book1 = new Book(VALID_ISBN13, TITLE, AUTHORS_LIST);
+		Book book2 = new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2);
+		mongoDb.save(book1);
+		mongoDb.save(book2);
+		
+		List<Book> foundedBookList = bookRepository.findAllByTitleLikeOrderByTitle(UNUSED_TITLE);
+		
+		assertThat(foundedBookList).isEmpty();
+	}
+
+	@Test
+	public void testBookRepository_findAllByTitleLikeOrderByTitle_whenSearchedTitleInMongoDb_shouldReturnOrderedBookListWithSearchedTitle() {
+		Book toBeFoundBook1= new Book(VALID_ISBN13, TITLE, AUTHORS_LIST);
+		Book otherBook = new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2);
+		Book toBeFoundBook2 = new Book(NEW_VALID_ISBN13, NEW_TITLE, AUTHORS_LIST);
+		mongoDb.save(toBeFoundBook2);
+		mongoDb.save(toBeFoundBook1);
+		mongoDb.save(otherBook);
+		
+		List<Book> foundedBookList = bookRepository.findAllByTitleLikeOrderByTitle(TITLE);
+		
+		assertThat(foundedBookList).containsExactly(toBeFoundBook1, toBeFoundBook2);
+	}
+
 }
