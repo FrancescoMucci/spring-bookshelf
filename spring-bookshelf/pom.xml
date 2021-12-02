@@ -65,7 +65,7 @@
 		<!-- To keep track of IT and E2E in the additional test folders -->
 		<sonar.tests>
 			${project.build.testSourceDirectory},
-			${basedir}/src/it/java,
+			${basedir}/src/it/java<!--,-->
 			<!--  ${basedir}/src/e2e/java -->
 		</sonar.tests>
 
