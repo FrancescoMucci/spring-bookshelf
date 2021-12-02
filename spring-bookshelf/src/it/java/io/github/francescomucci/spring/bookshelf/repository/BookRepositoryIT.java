@@ -109,4 +109,29 @@ public class BookRepositoryIT {
 		assertThat(foundedBookList).containsExactly(toBeFoundBook1, toBeFoundBook2);
 	}
 
+	/*----------- save tests ----------*/
+
+	@Test
+	public void testBookRepository_save_whenToBeSavedBookIsbnNotInMongoDb_shouldCreateNewBookInMongoDbAndReturnTheSavedBook() {
+		Book toBeSavedBook = new Book(VALID_ISBN13, TITLE, AUTHORS_LIST);
+		
+		Book savedBook = bookRepository.save(toBeSavedBook);
+		
+		assertThat(mongoDb.findById(VALID_ISBN13, Book.class)).isEqualTo(savedBook);
+		assertThat(toBeSavedBook).isEqualTo(savedBook);
+	}
+
+	@Test
+	public void testBookRepository_save_whenToBeSavedBookIsbnInMongoDb_shouldReplaceBookInMongoDbAndReturnTheSavedBook() {
+		Book alredyPresentBook = new Book(VALID_ISBN13, TITLE, AUTHORS_LIST);
+		Book toBeSavedBook = new Book(VALID_ISBN13, NEW_TITLE, AUTHORS_LIST);
+		mongoDb.save(alredyPresentBook);
+		
+		Book savedBook = bookRepository.save(toBeSavedBook);
+		
+		assertThat(mongoDb.findById(VALID_ISBN13, Book.class)).isEqualTo(savedBook);
+		assertThat(toBeSavedBook).isEqualTo(savedBook);
+	}
+
+
 }
