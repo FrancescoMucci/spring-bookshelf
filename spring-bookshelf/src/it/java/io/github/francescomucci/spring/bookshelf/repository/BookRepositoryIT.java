@@ -133,5 +133,30 @@ public class BookRepositoryIT {
 		assertThat(toBeSavedBook).isEqualTo(savedBook);
 	}
 
+	/*----------- deleteById tests ----------*/
+
+	@Test
+	public void testBookRepository_deleteById_whenToBeDeletedIsbnNotInMongoDb_shouldDoNothing() {
+		Book otherBook1 = new Book(VALID_ISBN13, TITLE, AUTHORS_LIST);
+		Book otherBook2 = new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2);
+		mongoDb.save(otherBook1);
+		mongoDb.save(otherBook2);
+		
+		bookRepository.deleteById(UNUSED_ISBN13);
+		
+		assertThat(mongoDb.findAll(Book.class)).containsExactly(otherBook1, otherBook2);
+	}
+
+	@Test
+	public void testBookRepository_deleteById_whenToBeDeletedIsbnInMongoDb_shouldRemoveTheBookWithThatIsbnFromMongoDb() {
+		Book toBeDeletedBook = new Book(VALID_ISBN13, TITLE, AUTHORS_LIST);;
+		Book otherBook = new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2);
+		mongoDb.save(toBeDeletedBook);
+		mongoDb.save(otherBook);
+		
+		bookRepository.deleteById(VALID_ISBN13);
+		
+		assertThat(mongoDb.findAll(Book.class)).containsExactly(otherBook);
+	}
 
 }
