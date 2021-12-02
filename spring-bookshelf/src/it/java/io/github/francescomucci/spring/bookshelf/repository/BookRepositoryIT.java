@@ -4,6 +4,7 @@ import static io.github.francescomucci.spring.bookshelf.BookTestingConstants.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -52,6 +53,32 @@ public class BookRepositoryIT {
 		List<Book> foundBookList = bookRepository.findAll(Sort.by("title"));
 		
 		assertThat(foundBookList).containsExactly(book1, book2);
+	}
+
+	/*----------- findById tests ----------*/
+
+	@Test
+	public void testBookRepository_findById_whenSearchedBookNotInMongoDb_shouldReturnEmptyOptional() {
+		Book book1 = new Book(VALID_ISBN13, TITLE, AUTHORS_LIST);
+		Book book2 = new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2);
+		mongoDb.save(book1);
+		mongoDb.save(book2);
+		
+		Optional<Book> foundBookOptional = bookRepository.findById(UNUSED_ISBN13);
+		
+		assertThat(foundBookOptional).isEmpty();
+	}
+
+	@Test
+	public void testBookRepository_findById_whenSearchedBookInMongoDb_shouldReturnOptionalContainingTheBook() {
+		Book toBeFound = new Book(VALID_ISBN13, TITLE, AUTHORS_LIST);
+		Book otherBook = new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2);
+		mongoDb.save(toBeFound);
+		mongoDb.save(otherBook);
+		
+		Optional<Book> foundBookOptional = bookRepository.findById(VALID_ISBN13);
+		
+		assertThat(foundBookOptional).contains(toBeFound);
 	}
 
 }
