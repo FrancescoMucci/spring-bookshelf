@@ -6,10 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import io.github.francescomucci.spring.bookshelf.exception.BookNotFoundException;
-
 import io.github.francescomucci.spring.bookshelf.model.Book;
 import io.github.francescomucci.spring.bookshelf.repository.BookRepository;
+import io.github.francescomucci.spring.bookshelf.exception.BookAlreadyExistException;
+import io.github.francescomucci.spring.bookshelf.exception.BookNotFoundException;
 
 @Service("BookService")
 public class MyBookService implements BookService {
@@ -42,7 +42,10 @@ public class MyBookService implements BookService {
 
 	@Override
 	public Book addNewBook(Book newBook) {
-		return null;
+		Long isbn = newBook.getIsbn();
+		if (bookRepository.findById(isbn).isPresent())
+			throw new BookAlreadyExistException(isbn);
+		return bookRepository.save(newBook);
 	}
 
 	@Override

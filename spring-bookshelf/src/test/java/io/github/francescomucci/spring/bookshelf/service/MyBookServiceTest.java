@@ -4,6 +4,9 @@ import static io.github.francescomucci.spring.bookshelf.BookTestingConstants.*;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
@@ -16,10 +19,10 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.domain.Sort;
 
-import io.github.francescomucci.spring.bookshelf.exception.BookNotFoundException;
-
 import io.github.francescomucci.spring.bookshelf.model.Book;
 import io.github.francescomucci.spring.bookshelf.repository.BookRepository;
+import io.github.francescomucci.spring.bookshelf.exception.BookNotFoundException;
+import io.github.francescomucci.spring.bookshelf.exception.BookAlreadyExistException;
 
 
 @RunWith(MockitoJUnitRunner.class)
@@ -95,6 +98,36 @@ public class MyBookServiceTest {
 		
 		assertThat(bookService.getBooksByTitle(TITLE))
 			.containsExactly(book1, book2);
+	}
+
+	/*----------- addNewBook tests ----------*/
+
+	@Test
+	public void testService_addNewBook_whenIsbnAlreadyUsed_shouldThrowBookAlreadyExistException() {
+		Book existingBook = new Book(ALREADY_USED_ISBN13, NEW_TITLE, AUTHORS_LIST);
+		Book newBook = new Book(ALREADY_USED_ISBN13, NEW_TITLE, AUTHORS_LIST);
+		when(bookRepository.findById(ALREADY_USED_ISBN13))
+			.thenReturn(Optional.of(existingBook));
+		
+		assertThatThrownBy(() -> bookService.addNewBook(newBook))
+			.isInstanceOf(BookAlreadyExistException.class)
+			.hasMessage(ALREADY_USED_ISBN13 + BookAlreadyExistException.BOOK_ALREADY_EXIST_MSG);
+		
+		verify(bookRepository, never()).save(any(Book.class));
+	}
+
+	@Test
+	public void testService_addNewBook_whenIsbnIsUnused_shouldSaveTheNewBookInTheRepo() {
+		Book newBook = new Book(UNUSED_ISBN13, TITLE, AUTHORS_LIST);
+		when(bookRepository.findById(UNUSED_ISBN13))
+			.thenReturn(Optional.empty());
+		when(bookRepository.save(newBook))
+			.thenReturn(newBook);
+		
+		assertThat(bookService.addNewBook(newBook))
+			.isSameAs(newBook);
+		
+		verify(bookRepository).save(newBook);
 	}
 
 }
