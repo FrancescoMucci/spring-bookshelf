@@ -34,7 +34,10 @@ public class MyBookService implements BookService {
 
 	@Override
 	public List<Book> getBooksByTitle(String title) {
-		return null;
+		List<Book> bookListWithTitle = bookRepository.findAllByTitleLikeOrderByTitle(title);
+		if (bookListWithTitle.isEmpty())
+			throw new BookNotFoundException(title);
+		return bookListWithTitle;
 	}
 
 	@Override

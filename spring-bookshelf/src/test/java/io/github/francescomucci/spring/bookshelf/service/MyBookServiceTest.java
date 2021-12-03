@@ -74,4 +74,27 @@ public class MyBookServiceTest {
 			.isSameAs(book);
 	}
 
+	/*----------- getBooksByTitle tests ----------*/
+
+	@Test
+	public void testService_getBooksByTitle_whenNoBookIsFound_shouldThrowBookNotFoundException() {
+		when(bookRepository.findAllByTitleLikeOrderByTitle(UNUSED_TITLE))
+			.thenReturn(Collections.emptyList());
+
+		assertThatThrownBy(() -> bookService.getBooksByTitle(UNUSED_TITLE))
+			.isInstanceOf(BookNotFoundException.class)
+			.hasMessage(UNUSED_TITLE + BookNotFoundException.BOOK_NOT_FOUND_TITLE_MSG);
+	}
+
+	@Test
+	public void testService_getBookByTitle_whenBookIsFound_shouldReturnTheFoundedBooks() {
+		Book book1 = new Book(VALID_ISBN13, TITLE, AUTHORS_LIST);
+		Book book2 = new Book(NEW_VALID_ISBN13, TITLE, AUTHORS_LIST);
+		when(bookRepository.findAllByTitleLikeOrderByTitle(TITLE))
+			.thenReturn(asList(book1, book2));
+		
+		assertThat(bookService.getBooksByTitle(TITLE))
+			.containsExactly(book1, book2);
+	}
+
 }
