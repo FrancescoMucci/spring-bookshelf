@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import io.github.francescomucci.spring.bookshelf.exception.BookNotFoundException;
+
 import io.github.francescomucci.spring.bookshelf.model.Book;
 import io.github.francescomucci.spring.bookshelf.repository.BookRepository;
 
@@ -26,7 +28,8 @@ public class MyBookService implements BookService {
 
 	@Override
 	public Book getBookByIsbn(long isbn) {
-		return null;
+		return bookRepository.findById(isbn)
+			.orElseThrow(() -> new BookNotFoundException(isbn));
 	}
 
 	@Override

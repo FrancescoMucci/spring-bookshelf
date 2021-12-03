@@ -3,9 +3,11 @@ package io.github.francescomucci.spring.bookshelf.service;
 import static io.github.francescomucci.spring.bookshelf.BookTestingConstants.*;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
+import java.util.Optional;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,6 +15,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.data.domain.Sort;
+
+import io.github.francescomucci.spring.bookshelf.exception.BookNotFoundException;
 
 import io.github.francescomucci.spring.bookshelf.model.Book;
 import io.github.francescomucci.spring.bookshelf.repository.BookRepository;
@@ -46,6 +50,28 @@ public class MyBookServiceTest {
 		
 		assertThat(bookService.getAllBooks())
 			.containsExactly(book1, book2);
+	}
+
+	/*----------- getBookByIsbn tests ----------*/
+
+	@Test
+	public void testService_getBookByIsbn_whenBookIsNotFound_shouldThrowBookNotFoundException() {
+		when(bookRepository.findById(UNUSED_ISBN13))
+			.thenReturn(Optional.empty());
+		
+		assertThatThrownBy(() -> bookService.getBookByIsbn(UNUSED_ISBN13))
+			.isInstanceOf(BookNotFoundException.class)
+			.hasMessage(UNUSED_ISBN13 + BookNotFoundException.BOOK_NOT_FOUND_MSG);
+	}
+
+	@Test
+	public void testService_getBookByIsbn_whenBookIsFound_shouldReturnTheFoundedBook() {
+		Book book = new Book(VALID_ISBN13, TITLE, AUTHORS_LIST);
+		when(bookRepository.findById(VALID_ISBN13))
+			.thenReturn(Optional.of(book));
+		
+		assertThat(bookService.getBookByIsbn(VALID_ISBN13))
+			.isSameAs(book);
 	}
 
 }
