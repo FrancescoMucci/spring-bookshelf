@@ -42,25 +42,28 @@ public class MyBookService implements BookService {
 
 	@Override
 	public Book addNewBook(Book newBook) {
-		Long isbn = newBook.getIsbn();
-		if (bookRepository.findById(isbn).isPresent())
-			throw new BookAlreadyExistException(isbn);
+		checkBookPresenceByIsbn(newBook.getIsbn(), false);
 		return bookRepository.save(newBook);
 	}
 
 	@Override
 	public Book replaceBook(Book editedBook) {
-		Long isbn = editedBook.getIsbn();
-		if (!bookRepository.findById(isbn).isPresent())
-			throw new BookNotFoundException(isbn);
+		checkBookPresenceByIsbn(editedBook.getIsbn(), true);
 		return bookRepository.save(editedBook);
 	}
 
 	@Override
 	public void delateBookByIsbn(long isbn) {
-		if (!bookRepository.findById(isbn).isPresent())
-			throw new BookNotFoundException(isbn);
+		checkBookPresenceByIsbn(isbn, true);
 		bookRepository.deleteById(isbn);
+	}
+
+	private void checkBookPresenceByIsbn(long isbn, boolean bookIsExpected) {
+		IllegalArgumentException exception = new BookNotFoundException(isbn);
+		if (!bookIsExpected)
+			exception = new BookAlreadyExistException(isbn);
+		if (bookRepository.findById(isbn).isPresent() != bookIsExpected) 
+			throw exception;
 	}
 
 }
