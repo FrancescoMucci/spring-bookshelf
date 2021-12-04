@@ -130,4 +130,34 @@ public class MyBookServiceTest {
 		verify(bookRepository).save(newBook);
 	}
 
+	/*----------- replaceBook tests ----------*/
+
+	@Test
+	public void testService_replaceBook_whenIsbnIsUnused_shouldThrowBookNotFoundException() {
+		Book editedBook = new Book(UNUSED_ISBN13, NEW_TITLE, AUTHORS_LIST);
+		when(bookRepository.findById(UNUSED_ISBN13))
+			.thenReturn(Optional.empty());
+		
+		assertThatThrownBy(() -> bookService.replaceBook(editedBook))
+			.isInstanceOf(BookNotFoundException.class)
+			.hasMessage(UNUSED_ISBN13 + BookNotFoundException.BOOK_NOT_FOUND_MSG);
+		
+		verify(bookRepository, never()).save(any(Book.class));
+	}
+
+	@Test
+	public void testService_replaceBook_whenIsbnIsUsed_shouldSaveTheReplacementInTheRepo() {
+		Book oldBook = new Book(VALID_ISBN13, TITLE, AUTHORS_LIST);
+		Book replacementBook = new Book(VALID_ISBN13, NEW_TITLE, AUTHORS_LIST);
+		when(bookRepository.findById(VALID_ISBN13))
+			.thenReturn(Optional.of(oldBook));
+		when(bookRepository.save(any(Book.class)))
+			.thenReturn(replacementBook);
+	
+		assertThat(bookService.replaceBook(replacementBook))
+			.isSameAs(replacementBook);
+	
+		verify(bookRepository).save(replacementBook);
+	}
+
 }

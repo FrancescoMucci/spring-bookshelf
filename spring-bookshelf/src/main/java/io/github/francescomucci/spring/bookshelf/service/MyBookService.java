@@ -50,7 +50,10 @@ public class MyBookService implements BookService {
 
 	@Override
 	public Book replaceBook(Book editedBook) {
-		return null;
+		Long isbn = editedBook.getIsbn();
+		if (!bookRepository.findById(isbn).isPresent())
+			throw new BookNotFoundException(isbn);
+		return bookRepository.save(editedBook);
 	}
 
 	@Override
