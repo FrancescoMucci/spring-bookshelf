@@ -58,7 +58,9 @@ public class MyBookService implements BookService {
 
 	@Override
 	public void delateBookByIsbn(long isbn) {
-		
+		if (!bookRepository.findById(isbn).isPresent())
+			throw new BookNotFoundException(isbn);
+		bookRepository.deleteById(isbn);
 	}
 
 }

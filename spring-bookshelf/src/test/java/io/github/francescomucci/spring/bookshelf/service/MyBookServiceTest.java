@@ -5,6 +5,7 @@ import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -158,6 +159,30 @@ public class MyBookServiceTest {
 			.isSameAs(replacementBook);
 	
 		verify(bookRepository).save(replacementBook);
+	}
+
+	/*----------- delateBookByIsbn tests ----------*/
+
+	@Test
+	public void testService_delateBookByIsbn_whenIsbnIsUnused_shouldThrowBookNotFoundException() {
+		when(bookRepository.findById(UNUSED_ISBN13))
+			.thenReturn(Optional.empty());
+		
+		assertThatThrownBy(() -> bookService.delateBookByIsbn(UNUSED_ISBN13))
+			.isInstanceOf(BookNotFoundException.class)
+			.hasMessage(UNUSED_ISBN13 + BookNotFoundException.BOOK_NOT_FOUND_MSG);
+		
+		verify(bookRepository, never()).deleteById(anyLong());
+	}
+
+	@Test
+	public void testService_delateBookByIsbn_whenIsbnIsUsed_shouldDelegateTheDeletionToTheRepo() {
+		when(bookRepository.findById(VALID_ISBN13))
+			.thenReturn(Optional.of(new Book(VALID_ISBN13, TITLE, AUTHORS_LIST)));
+		
+		bookService.delateBookByIsbn(VALID_ISBN13);
+		
+		verify(bookRepository).deleteById(VALID_ISBN13);
 	}
 
 }
