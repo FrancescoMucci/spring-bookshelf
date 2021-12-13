@@ -359,6 +359,28 @@
 					</executions>
 				</plugin>
 
+				<plugin>
+					<groupId>org.pitest</groupId>
+					<artifactId>pitest-maven</artifactId>
+					<version>1.5.2</version>
+					<configuration>
+						<excludedTestClasses>
+							<excludedTestClass>io.github.francescomucci.spring.bookshelf.**.*IT</excludedTestClass>
+							<excludedTestClass>io.github.francescomucci.spring.bookshelf.**.*E2ETest</excludedTestClass>
+						</excludedTestClasses>
+						<targetClasses>
+							<param>io.github.francescomucci.spring.bookshelf.service.*</param>
+						</targetClasses>
+						<targetTests>
+							<param>io.github.francescomucci.spring.bookshelf.service.*</param>
+						</targetTests>
+						<mutators>
+							<mutator>STRONGER</mutator>
+						</mutators>
+						<mutationThreshold>100</mutationThreshold>
+					</configuration>
+				</plugin>
+
 			</plugins>
 		</pluginManagement>
 
@@ -538,6 +560,28 @@
 				</plugins>
 			</build>
 
+		</profile>
+
+		<!-- ########## PIT Mutation Testing profile ########## -->
+
+		<profile>
+			<id>pitest</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.pitest</groupId>
+						<artifactId>pitest-maven</artifactId>
+						<executions>
+							<execution>
+								<phase>test-compile</phase>
+								<goals>
+									<goal>mutationCoverage</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
 
 	</profiles>
