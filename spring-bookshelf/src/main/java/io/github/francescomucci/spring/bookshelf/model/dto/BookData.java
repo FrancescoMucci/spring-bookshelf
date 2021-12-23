@@ -5,12 +5,14 @@ import static java.util.Arrays.asList;
 import java.util.Objects;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 
 import io.github.francescomucci.spring.bookshelf.model.Book;
 
 public class BookData extends IsbnData {
 
 	@NotBlank(message = "{Blank.Field.Message}")
+	@Pattern(regexp = "^$|[a-zA-Z0-9&,:.!? ]+$", message = "{Invalid.Title.Message}")
 	private String title;
 
 	private String authors;

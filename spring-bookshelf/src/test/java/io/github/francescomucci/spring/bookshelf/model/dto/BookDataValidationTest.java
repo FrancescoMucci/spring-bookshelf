@@ -102,4 +102,19 @@ public class BookDataValidationTest {
 		});
 	}
 
+	@Test
+	public void testBookData_validation_whenInvalidTitle_shouldReturnTitlePatternConstraintViolation() {
+		BookData bookData = new BookData(VALID_ISBN13_WITHOUT_FORMATTING, INVALID_TITLE, AUTHORS_STRING);
+		
+		Set<ConstraintViolation<BookData>> violations = validator.validate(bookData);
+		
+		assertThat(violations.size()).isOne();
+		violations.forEach(violation -> {
+			assertThat(violation.getPropertyPath())
+				.hasToString("title");
+			assertThat(violation.getMessage())
+				.isEqualTo("Invalid title; the allowed special characters are: & , : . ! ?");
+		});
+	}
+
 }
