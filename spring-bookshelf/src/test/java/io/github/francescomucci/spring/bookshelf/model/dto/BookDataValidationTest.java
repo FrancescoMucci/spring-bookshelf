@@ -15,6 +15,7 @@ import org.junit.Test;
 
 import io.github.francescomucci.spring.bookshelf.model.dto.group.IsbnConstraints;
 import io.github.francescomucci.spring.bookshelf.model.dto.group.TitleConstraints;
+import io.github.francescomucci.spring.bookshelf.model.dto.group.AuthorsConstraints;
 
 public class BookDataValidationTest {
 
@@ -295,6 +296,23 @@ public class BookDataValidationTest {
 				.hasToString("title");
 			assertThat(violation.getMessage())
 				.isEqualTo("Please fill out this field");
+		});
+	}
+
+	/* ----- Tests for validation of AuthorsConstraintsGroup ----- */
+
+	@Test
+	public void testBookData_validationOfAuthorsConstraintsGroup_whenAllFieldsAreInvalid_shouldReturnOnlyAuthorsPatternConstraintViolation() {
+		BookData bookData = new BookData(INVALID_ISBN13_WITHOUT_FORMATTING, INVALID_TITLE, INVALID_AUTHORS_STRING);
+		
+		Set<ConstraintViolation<BookData>> violations = validator.validate(bookData, AuthorsConstraints.class);
+		
+		assertThat(violations.size()).isOne();
+		violations.forEach(violation -> {
+			assertThat(violation.getPropertyPath())
+				.hasToString("authors");
+			assertThat(violation.getMessage())
+				.isEqualTo("Invalid authors; numbers and all special special characters, except the comma, are not allowed");
 		});
 	}
 

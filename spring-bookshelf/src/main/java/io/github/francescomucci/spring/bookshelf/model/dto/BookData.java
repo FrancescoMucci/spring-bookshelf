@@ -10,6 +10,7 @@ import javax.validation.groups.Default;
 
 import io.github.francescomucci.spring.bookshelf.model.Book;
 import io.github.francescomucci.spring.bookshelf.model.dto.group.TitleConstraints;
+import io.github.francescomucci.spring.bookshelf.model.dto.group.AuthorsConstraints;
 
 public class BookData extends IsbnData {
 
@@ -18,7 +19,7 @@ public class BookData extends IsbnData {
 	private String title;
 
 	@NotBlank(message = "{Blank.Field.Message}")
-	@Pattern(regexp = "^$|[a-zA-Z, ]+$", message = "{Invalid.Authors.Message}")
+	@Pattern(regexp = "^$|[a-zA-Z, ]+$", message = "{Invalid.Authors.Message}", groups = {Default.class, AuthorsConstraints.class})
 	private String authors;
 
 	public BookData() {
