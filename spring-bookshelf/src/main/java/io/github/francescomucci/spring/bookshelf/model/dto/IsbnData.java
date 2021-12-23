@@ -5,13 +5,16 @@ import static org.hibernate.validator.constraints.ISBN.Type.ISBN_13;
 import java.util.Objects;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.groups.Default;
 
 import org.hibernate.validator.constraints.ISBN;
+
+import io.github.francescomucci.spring.bookshelf.model.dto.group.IsbnConstraints;
 
 public class IsbnData {
 
 	@NotNull(message = "{Blank.Field.Message}")
-	@ISBN(type = ISBN_13, message = "{Invalid.ISBN.Message}")
+	@ISBN(type = ISBN_13, message = "{Invalid.ISBN.Message}", groups = {Default.class, IsbnConstraints.class})
 	private String isbn;
 
 	public IsbnData() {

@@ -13,6 +13,8 @@ import javax.validation.ValidatorFactory;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import io.github.francescomucci.spring.bookshelf.model.dto.group.IsbnConstraints;
+
 public class BookDataValidationTest {
 
 	private static Validator validator;
@@ -198,6 +200,38 @@ public class BookDataValidationTest {
 		violations.forEach(violation -> {
 			assertThat(violation.getMessage())
 				.isEqualTo("Please fill out this field");
+		});
+	}
+
+	/* ----- Tests for validation of IsbnConstraintsGroup ----- */
+
+	@Test
+	public void testBookData_validationOfIsbnConstraintsGroup_whenAllFieldsAreBlank_shouldReturnOnlyISBNConstraintViolation() {
+		BookData bookData = new BookData(" ", " ", " ");
+		
+		Set<ConstraintViolation<BookData>> violations = validator.validate(bookData, IsbnConstraints.class);
+		
+		assertThat(violations.size()).isOne();
+		violations.forEach(violation -> {
+			assertThat(violation.getPropertyPath())
+				.hasToString("isbn");
+			assertThat(violation.getMessage())
+				.isEqualTo("Invalid ISBN-13; check the advice box to understand how ISBN-13 works");
+		});
+	}
+
+	@Test
+	public void testBookData_validationOfIsbnConstraintsGroup_whenAllFieldsAreInvalid_shouldReturnOnlyISBNConstraintViolation() {
+		BookData bookData = new BookData(INVALID_ISBN13_WITHOUT_FORMATTING, INVALID_TITLE, INVALID_AUTHORS_STRING);
+		
+		Set<ConstraintViolation<BookData>> violations = validator.validate(bookData, IsbnConstraints.class);
+		
+		assertThat(violations.size()).isOne();
+		violations.forEach(violation -> {
+			assertThat(violation.getPropertyPath())
+				.hasToString("isbn");
+			assertThat(violation.getMessage())
+				.isEqualTo("Invalid ISBN-13; check the advice box to understand how ISBN-13 works");
 		});
 	}
 
