@@ -235,4 +235,19 @@ public class BookDataValidationTest {
 		});
 	}
 
+	@Test
+	public void testBookData_validationOfIsbnConstraintsGroup_whenAllFieldsAreNull_shouldReturnOnlyNotNullConstraintViolationForIsbnField() {
+		BookData bookData = new BookData(null, null, null);
+		
+		Set<ConstraintViolation<BookData>> violations = validator.validate(bookData, IsbnConstraints.class);
+		
+		assertThat(violations.size()).isOne();
+		violations.forEach(violation -> {
+			assertThat(violation.getPropertyPath())
+				.hasToString("isbn");
+			assertThat(violation.getMessage())
+				.isEqualTo("Please fill out this field");
+		});
+	}
+
 }

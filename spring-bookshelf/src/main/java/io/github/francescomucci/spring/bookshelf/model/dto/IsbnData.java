@@ -13,7 +13,7 @@ import io.github.francescomucci.spring.bookshelf.model.dto.group.IsbnConstraints
 
 public class IsbnData {
 
-	@NotNull(message = "{Blank.Field.Message}")
+	@NotNull(message = "{Blank.Field.Message}", groups = {Default.class, IsbnConstraints.class})
 	@ISBN(type = ISBN_13, message = "{Invalid.ISBN.Message}", groups = {Default.class, IsbnConstraints.class})
 	private String isbn;
 
