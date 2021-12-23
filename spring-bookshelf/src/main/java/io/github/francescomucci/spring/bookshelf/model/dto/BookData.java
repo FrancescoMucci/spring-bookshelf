@@ -6,13 +6,15 @@ import java.util.Objects;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
+import javax.validation.groups.Default;
 
 import io.github.francescomucci.spring.bookshelf.model.Book;
+import io.github.francescomucci.spring.bookshelf.model.dto.group.TitleConstraints;
 
 public class BookData extends IsbnData {
 
 	@NotBlank(message = "{Blank.Field.Message}")
-	@Pattern(regexp = "^$|[a-zA-Z0-9&,:.!? ]+$", message = "{Invalid.Title.Message}")
+	@Pattern(regexp = "^$|[a-zA-Z0-9&,:.!? ]+$", message = "{Invalid.Title.Message}", groups = {Default.class, TitleConstraints.class})
 	private String title;
 
 	@NotBlank(message = "{Blank.Field.Message}")

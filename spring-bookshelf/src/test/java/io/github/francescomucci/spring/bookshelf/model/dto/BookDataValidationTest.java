@@ -14,6 +14,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import io.github.francescomucci.spring.bookshelf.model.dto.group.IsbnConstraints;
+import io.github.francescomucci.spring.bookshelf.model.dto.group.TitleConstraints;
 
 public class BookDataValidationTest {
 
@@ -247,6 +248,23 @@ public class BookDataValidationTest {
 				.hasToString("isbn");
 			assertThat(violation.getMessage())
 				.isEqualTo("Please fill out this field");
+		});
+	}
+
+	/* ----- Tests for validation of TitleConstraintsGroup ----- */
+
+	@Test
+	public void testBookData_validationOfTitleConstraintsGroup_whenAllFieldsAreInvalid_shouldReturnOnlyTitlePatternConstraintViolation() {
+		BookData bookData = new BookData(INVALID_ISBN13_WITHOUT_FORMATTING, INVALID_TITLE, INVALID_AUTHORS_STRING);
+		
+		Set<ConstraintViolation<BookData>> violations = validator.validate(bookData, TitleConstraints.class);
+		
+		assertThat(violations.size()).isOne();
+		violations.forEach(violation -> {
+			assertThat(violation.getPropertyPath())
+				.hasToString("title");
+			assertThat(violation.getMessage())
+				.isEqualTo("Invalid title; the allowed special characters are: & , : . ! ?");
 		});
 	}
 
