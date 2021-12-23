@@ -1,9 +1,14 @@
 package io.github.francescomucci.spring.bookshelf.model.dto;
 
+import static org.hibernate.validator.constraints.ISBN.Type.ISBN_13;
+
 import java.util.Objects;
+
+import org.hibernate.validator.constraints.ISBN;
 
 public class IsbnData {
 
+	@ISBN(type = ISBN_13, message = "{Invalid.ISBN.Message}")
 	private String isbn;
 
 	public IsbnData() {
