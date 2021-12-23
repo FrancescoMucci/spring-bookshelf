@@ -149,4 +149,19 @@ public class BookDataValidationTest {
 		});
 	}
 
+	@Test
+	public void testBookData_validation_whenInvalidAuthors_shouldReturnAuthorsPatternConstraintViolation() {
+		BookData bookData = new BookData(VALID_ISBN13_WITHOUT_FORMATTING, TITLE, INVALID_AUTHORS_STRING);
+		
+		Set<ConstraintViolation<BookData>> violations = validator.validate(bookData);
+		
+		assertThat(violations.size()).isOne();
+		violations.forEach(violation -> {
+			assertThat(violation.getPropertyPath())
+				.hasToString("authors");
+			assertThat(violation.getMessage())
+				.isEqualTo("Invalid authors; numbers and all special special characters, except the comma, are not allowed");
+		});
+	}
+
 }
