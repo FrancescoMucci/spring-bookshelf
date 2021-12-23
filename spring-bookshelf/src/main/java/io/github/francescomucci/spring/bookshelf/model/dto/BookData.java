@@ -18,7 +18,7 @@ public class BookData extends IsbnData {
 	@Pattern(regexp = "^$|[a-zA-Z0-9&,:.!? ]+$", message = "{Invalid.Title.Message}", groups = {Default.class, TitleConstraints.class})
 	private String title;
 
-	@NotBlank(message = "{Blank.Field.Message}")
+	@NotBlank(message = "{Blank.Field.Message}", groups = {Default.class, AuthorsConstraints.class})
 	@Pattern(regexp = "^$|[a-zA-Z, ]+$", message = "{Invalid.Authors.Message}", groups = {Default.class, AuthorsConstraints.class})
 	private String authors;
 

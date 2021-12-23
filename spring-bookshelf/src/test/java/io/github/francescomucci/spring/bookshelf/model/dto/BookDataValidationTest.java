@@ -316,4 +316,34 @@ public class BookDataValidationTest {
 		});
 	}
 
+	@Test
+	public void testBookData_validationOfAuthorsConstraintsGroup_whenAllFieldsAreBlank_shouldReturnOnlyNotBlankConstraintViolationForAuthorsField() {
+		BookData bookData = new BookData(" ", " ", " ");
+		
+		Set<ConstraintViolation<BookData>> violations = validator.validate(bookData, AuthorsConstraints.class);
+		
+		assertThat(violations.size()).isOne();
+		violations.forEach(violation -> {
+			assertThat(violation.getPropertyPath())
+				.hasToString("authors");
+			assertThat(violation.getMessage())
+				.isEqualTo("Please fill out this field");
+		});
+	}
+
+	@Test
+	public void testBookData_validationOfAuthorsConstraintsGroup_whenAllFieldsAreNull_shouldReturnOnlyNotBlankConstraintViolationForAuthorsField() {
+		BookData bookData = new BookData(null, null, null);
+		
+		Set<ConstraintViolation<BookData>> violations = validator.validate(bookData, AuthorsConstraints.class);
+		
+		assertThat(violations.size()).isOne();
+		violations.forEach(violation -> {
+			assertThat(violation.getPropertyPath())
+				.hasToString("authors");
+			assertThat(violation.getMessage())
+				.isEqualTo("Please fill out this field");
+		});
+	}
+
 }
