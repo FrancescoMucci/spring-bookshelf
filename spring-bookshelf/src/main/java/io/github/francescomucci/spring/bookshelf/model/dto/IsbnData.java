@@ -4,10 +4,13 @@ import static org.hibernate.validator.constraints.ISBN.Type.ISBN_13;
 
 import java.util.Objects;
 
+import javax.validation.constraints.NotNull;
+
 import org.hibernate.validator.constraints.ISBN;
 
 public class IsbnData {
 
+	@NotNull(message = "{Blank.Field.Message}")
 	@ISBN(type = ISBN_13, message = "{Invalid.ISBN.Message}")
 	private String isbn;
 
