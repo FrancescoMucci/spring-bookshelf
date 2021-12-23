@@ -164,4 +164,41 @@ public class BookDataValidationTest {
 		});
 	}
 
+	/* ----- Tests for documenting violation of more than one constraint ----- */
+
+	@Test
+	public void testBookData_validation_whenAllFieldsAreInvalid_shouldReturnAllConstraintViolations() {
+		BookData bookData = new BookData(INVALID_ISBN13_WITHOUT_FORMATTING, INVALID_TITLE, INVALID_AUTHORS_STRING);
+		
+		Set<ConstraintViolation<BookData>> violations = validator.validate(bookData);
+		
+		assertThat(violations.size()).isEqualTo(3);
+		assertThat(violations.toString())
+			.contains("Invalid ISBN-13;", "Invalid authors;", "Invalid title;");
+	}
+
+	@Test
+	public void testBookData_validation_whenAllFieldsAreBlank_shouldReturnAllConstraintViolations() {
+		BookData bookData = new BookData(" ", " ", " ");
+		
+		Set<ConstraintViolation<BookData>> violations = validator.validate(bookData);
+		
+		assertThat(violations.size()).isEqualTo(3);
+		assertThat(violations.toString())
+			.contains("Invalid ISBN-13;", "Please fill out this field");
+	}
+
+	@Test
+	public void testBookData_validation_whenAllFieldsAreNull_shouldReturnAllConstraintViolations() {
+		BookData bookData = new BookData(null, null, null);
+		
+		Set<ConstraintViolation<BookData>> violations = validator.validate(bookData);
+		
+		assertThat(violations.size()).isEqualTo(3);
+		violations.forEach(violation -> {
+			assertThat(violation.getMessage())
+				.isEqualTo("Please fill out this field");
+		});
+	}
+
 }
