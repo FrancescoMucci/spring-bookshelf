@@ -70,4 +70,36 @@ public class BookDataValidationTest {
 		});
 	}
 
+	/* ----- Tests for title validation ----- */
+
+	@Test
+	public void testBookData_validation_whenBlankTitle_shouldReturnNotBlankConstraintViolationForTitleField() {
+		BookData bookData = new BookData(VALID_ISBN13_WITHOUT_FORMATTING, " ", AUTHORS_STRING);
+		
+		Set<ConstraintViolation<BookData>> violations = validator.validate(bookData);
+		
+		assertThat(violations.size()).isOne();
+		violations.forEach(violation -> {
+			assertThat(violation.getPropertyPath())
+				.hasToString("title");
+			assertThat(violation.getMessage())
+				.isEqualTo("Please fill out this field");
+		});
+	}
+
+	@Test
+	public void testBookData_validation_whenNullTitle_shouldReturnNotBlankConstraintViolationForTitleField() {
+		BookData bookData = new BookData(VALID_ISBN13_WITHOUT_FORMATTING, null, AUTHORS_STRING);
+		
+		Set<ConstraintViolation<BookData>> violations = validator.validate(bookData);
+		
+		assertThat(violations.size()).isOne();
+		violations.forEach(violation -> {
+			assertThat(violation.getPropertyPath())
+				.hasToString("title");
+			assertThat(violation.getMessage())
+				.isEqualTo("Please fill out this field");
+		});
+	}
+
 }

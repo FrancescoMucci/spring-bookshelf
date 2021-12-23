@@ -4,10 +4,13 @@ import static java.util.Arrays.asList;
 
 import java.util.Objects;
 
+import javax.validation.constraints.NotBlank;
+
 import io.github.francescomucci.spring.bookshelf.model.Book;
 
 public class BookData extends IsbnData {
 
+	@NotBlank(message = "{Blank.Field.Message}")
 	private String title;
 
 	private String authors;
