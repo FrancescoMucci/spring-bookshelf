@@ -13,7 +13,7 @@ import io.github.francescomucci.spring.bookshelf.model.dto.group.TitleConstraint
 
 public class BookData extends IsbnData {
 
-	@NotBlank(message = "{Blank.Field.Message}")
+	@NotBlank(message = "{Blank.Field.Message}", groups = {Default.class, TitleConstraints.class})
 	@Pattern(regexp = "^$|[a-zA-Z0-9&,:.!? ]+$", message = "{Invalid.Title.Message}", groups = {Default.class, TitleConstraints.class})
 	private String title;
 
