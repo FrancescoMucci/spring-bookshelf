@@ -3,6 +3,7 @@ package io.github.francescomucci.spring.bookshelf.web.security;
 import static io.github.francescomucci.spring.bookshelf.web.BookWebControllerConstants.*;
 import static io.github.francescomucci.spring.bookshelf.web.security.WebSecurityTestingConstants.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.formLogin;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.logout;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.unauthenticated;
@@ -71,6 +72,32 @@ public class MyWebSecurityConfigurationTest {
 			.param("username", VALID_USER_NAME)
 			.param("password", VALID_PASSWORD))
 				.andExpect(status().isForbidden());
+	}
+
+	/* ---------- Logout tests documenting default behavior ---------- */
+
+	@Test
+	@WithMockAdmin
+	public void testWebSecurityConfiguration_logout_whenAdmin_shouldRedirectToLoginUrlWithLogoutParameter() throws Exception {
+		mvc.perform(logout())
+			.andExpect(status().is3xxRedirection())
+			.andExpect(redirectedUrl(URI_LOGIN + "?logout"))
+			.andExpect(unauthenticated());
+	}
+
+	@Test
+	public void testWebSecurityConfiguration_postLogout_whenAnonymousUser_shouldRedirectToLoginUrlWithLogoutParameter() throws Exception {
+		mvc.perform(logout())
+			.andExpect(status().is3xxRedirection())
+			.andExpect(redirectedUrl(URI_LOGIN + "?logout"))
+			.andExpect(unauthenticated());
+	}
+
+	@Test
+	public void testWebSecurityConfiguration_postLogout_whenInvalidCsrfToken_shouldAlwaysReturn403() throws Exception {
+		mvc.perform(post("/logout")
+			.with(csrf().useInvalidToken()))
+			.andExpect(status().isForbidden());
 	}
 
 }
