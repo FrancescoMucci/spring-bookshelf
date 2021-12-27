@@ -1,0 +1,12 @@
+{"properties": [
+  {
+    "name": "admin.username",
+    "type": "java.lang.String",
+    "description": "Property 'admin.username' should specify the admin user name"
+  },
+  {
+    "name": "admin.password",
+    "type": "java.lang.String",
+    "description": "Property 'admin.password' should specify the admin password"
+  }
+]}
