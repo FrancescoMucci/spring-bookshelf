@@ -3,7 +3,10 @@ package io.github.francescomucci.spring.bookshelf.web.security;
 import static io.github.francescomucci.spring.bookshelf.web.BookWebControllerConstants.*;
 import static io.github.francescomucci.spring.bookshelf.web.security.WebSecurityTestingConstants.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.formLogin;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
+import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.unauthenticated;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -37,6 +40,37 @@ public class MyWebSecurityConfigurationTest {
 				.andExpect(status().is3xxRedirection())
 				.andExpect(redirectedUrl(URI_BOOK_HOME))
 				.andExpect(authenticated().withRoles("ADMIN"));
-	}	
+	}
+
+	/* ---------- Login tests documenting default behavior ---------- */
+
+	@Test
+	public void testWebSecurityConfiguration_formLogin_whenInvalidUsername_shouldRedirectToLoginUrlWithErrorParameter() throws Exception {
+		mvc.perform(formLogin()
+			.user(INVALID_USER_NAME)
+			.password(VALID_PASSWORD))
+				.andExpect(status().is3xxRedirection())
+				.andExpect(redirectedUrl(URI_LOGIN + "?error"))
+				.andExpect(unauthenticated());
+	}
+
+	@Test
+	public void testWebSecurityConfiguration_formLogin_whenInvalidPassword_shouldRedirectToLoginUrlWithErrorParameter() throws Exception {
+		mvc.perform(formLogin()
+			.user(VALID_USER_NAME)
+			.password(INVALID_PASSWORD))
+				.andExpect(status().is3xxRedirection())
+				.andExpect(redirectedUrl(URI_LOGIN + "?error"))
+				.andExpect(unauthenticated());
+	}
+
+	@Test
+	public void testWebSecurityConfiguration_postLogin_whenInvalidCsrfToken_shouldAlwaysReturn403() throws Exception {
+		mvc.perform(post(URI_LOGIN)
+			.with(csrf().useInvalidToken())
+			.param("username", VALID_USER_NAME)
+			.param("password", VALID_PASSWORD))
+				.andExpect(status().isForbidden());
+	}
 
 }
