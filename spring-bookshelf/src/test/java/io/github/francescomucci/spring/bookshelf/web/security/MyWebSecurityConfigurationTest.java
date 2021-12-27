@@ -174,4 +174,33 @@ public class MyWebSecurityConfigurationTest {
 				.andExpect(redirectedUrl("http://localhost" + URI_LOGIN));
 	}
 
+	/* ---------- Tests for documenting default behavior of CSRF protection ---------- */
+
+	@Test
+	public void testWebSecurityConfiguration_postDeleteBook_whenInvalidCsrfToken_shouldAlwaysReturn403() throws Exception {
+		mvc.perform(post("/book/delete/" + VALID_ISBN13_WITHOUT_FORMATTING)
+			.with(csrf().useInvalidToken()))
+			.andExpect(status().isForbidden());
+	}
+
+	@Test
+	public void testWebSecurityConfiguration_postAddBook_whenInvalidCsrfToken_shouldAlwaysReturn403() throws Exception {
+		mvc.perform(post(URI_BOOK_ADD)
+			.with(csrf().useInvalidToken())
+			.param("isbn", VALID_ISBN13_WITHOUT_FORMATTING)
+			.param("title", TITLE)
+			.param("authors", AUTHORS_STRING))
+				.andExpect(status().isForbidden());
+	}
+
+	@Test
+	public void testWebSecurityConfiguration_postSaveBook_whenInvalidCsrfToken_shouldAlwaysReturn403() throws Exception {
+		mvc.perform(post(URI_BOOK_SAVE)
+			.with(csrf().useInvalidToken())
+			.param("isbn", VALID_ISBN13_WITHOUT_FORMATTING)
+			.param("title", NEW_TITLE)
+			.param("authors", AUTHORS_STRING))
+				.andExpect(status().isForbidden());
+	}
+
 }
