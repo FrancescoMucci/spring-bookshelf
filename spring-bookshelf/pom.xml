@@ -54,7 +54,7 @@
 			**/exception/*,
 			**/*Constants*,
 			**/*Application.*,
-			<!-- **/*Temporary* -->
+			**/*Temporary*
 		</sonar.coverage.exclusions>
 
 		<sonar.junit.reportPaths>
@@ -255,7 +255,7 @@
 							<exclude>**/model/**</exclude>
 							<exclude>**/exception/*</exclude>
 							<exclude>**/*Constants*</exclude>
-							<!-- <exclude>**/*Temporary*</exclude> -->
+							<exclude>**/*Temporary*</exclude>
 							<!-- The following is just to avoid the instrumentation error 
 							due to the HtmlUnit class StyleAttributes$Definition (method too large) -->
 							<exclude>**/htmlunit/*</exclude>
