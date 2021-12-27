@@ -17,6 +17,18 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableWebSecurity
 public class MyWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
+	private static final String[] UNSECURED_URIS = {
+			URI_HOME, 
+			URI_LOGIN,
+			URI_BOOK_HOME, 
+			URI_BOOK_LIST, 
+			URI_BOOK_SEARCH_BY_ISBN, 
+			URI_BOOK_GET_BY_ISBN, 
+			URI_BOOK_SEARCH_BY_TITLE, 
+			URI_BOOK_GET_BY_TITLE, 
+			"/actuator/health"
+	};
+
 	private static final String ROLE_ADMIN = "ADMIN";
 
 	@Value("${admin.username:Admin}")
@@ -44,7 +56,10 @@ public class MyWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http
-			.formLogin()
+			.authorizeRequests()
+				.antMatchers(UNSECURED_URIS).permitAll()
+				.anyRequest().hasRole(ROLE_ADMIN)
+			.and().formLogin()
 				.loginPage(URI_LOGIN)
 				.defaultSuccessUrl(URI_BOOK_HOME, true);
 	}

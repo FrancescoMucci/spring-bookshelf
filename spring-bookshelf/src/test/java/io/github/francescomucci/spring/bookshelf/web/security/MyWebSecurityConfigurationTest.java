@@ -1,5 +1,6 @@
 package io.github.francescomucci.spring.bookshelf.web.security;
 
+import static io.github.francescomucci.spring.bookshelf.BookTestingConstants.*;
 import static io.github.francescomucci.spring.bookshelf.web.BookWebControllerConstants.*;
 import static io.github.francescomucci.spring.bookshelf.web.security.WebSecurityTestingConstants.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.formLogin;
@@ -7,6 +8,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.unauthenticated;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -98,6 +100,78 @@ public class MyWebSecurityConfigurationTest {
 		mvc.perform(post("/logout")
 			.with(csrf().useInvalidToken()))
 			.andExpect(status().isForbidden());
+	}
+
+	/* ---------- Protected URI test: postDelete ---------- */
+
+	@Test
+	public void testWebSecurityConfiguration_postDeleteBook_whenAnonymousUser_shouldAlwaysRedirectToLogin() throws Exception {
+		mvc.perform(post("/book/delete/" + VALID_ISBN13_WITHOUT_FORMATTING)
+			.with(csrf()))
+			.andExpect(status().is3xxRedirection())
+			.andExpect(redirectedUrl("http://localhost/login"));
+	}
+
+	/* ---------- Protected URI test: getBookEdit ---------- */
+
+	@Test
+	public void testWebSecurityConfiguration_getBookEditView_whenAnonymousUser_shouldAlwaysRedirectToLogin() throws Exception {
+		mvc.perform(get("/book/edit/" + VALID_ISBN13_WITHOUT_FORMATTING))
+			.andExpect(status().is3xxRedirection())
+			.andExpect(redirectedUrl("http://localhost" + URI_LOGIN));
+	}
+
+	/* ---------- Protected URI test: postSaveBook ---------- */
+
+	@Test
+	public void testWebSecurityConfiguration_postSaveBook_whenAnonymousUser_shouldAlwaysRedirectToLogin() throws Exception {
+		mvc.perform(post(URI_BOOK_SAVE)
+			.with(csrf())
+			.param("isbn", VALID_ISBN13_WITHOUT_FORMATTING)
+			.param("title", NEW_TITLE)
+			.param("authors", AUTHORS_STRING))
+				.andExpect(status().is3xxRedirection())
+				.andExpect(redirectedUrl("http://localhost" + URI_LOGIN));
+	}
+
+	/* ---------- Protected URI test: getBookNewView ---------- */
+
+	@Test
+	public void testWebSecurityConfiguration_getBookNewView_whenAnonymousUser_shouldAlwaysRedirectToLogin() throws Exception {
+		mvc.perform(get(URI_BOOK_NEW))
+			.andExpect(status().is3xxRedirection())
+			.andExpect(redirectedUrl("http://localhost" + URI_LOGIN));
+	}
+
+	/* ---------- Protected URI test: postAddBook ---------- */
+
+	@Test
+	public void testWebSecurityConfiguration_postAddBook_whenAnonymousUser_shouldAlwaysRedirectToLogin() throws Exception {
+		mvc.perform(post(URI_BOOK_ADD)
+			.with(csrf())
+			.param("isbn", VALID_ISBN13_WITHOUT_FORMATTING)
+			.param("title", TITLE)
+			.param("authors", AUTHORS_STRING))
+				.andExpect(status().is3xxRedirection())
+				.andExpect(redirectedUrl("http://localhost" + URI_LOGIN));
+	}
+
+	/* ---------- Protected URI test: /actuator & /actuator/info ---------- */
+
+	@Test
+	public void testWebSecurityConfiguration_getActuator_whenAnonymousUser_shouldAlwaysRedirectToLogin() throws Exception {
+		mvc.perform(get("/actuator")
+			.with(csrf()))
+				.andExpect(status().is3xxRedirection())
+				.andExpect(redirectedUrl("http://localhost" + URI_LOGIN));
+	}
+
+	@Test
+	public void testWebSecurityConfiguration_getActuatorInfo_whenAnonymousUser_shouldAlwaysRedirectToLogin() throws Exception {
+		mvc.perform(get("/actuator/info")
+			.with(csrf()))
+				.andExpect(status().is3xxRedirection())
+				.andExpect(redirectedUrl("http://localhost" + URI_LOGIN));
 	}
 
 }
