@@ -90,8 +90,10 @@ public class MyBookWebController implements BookWebController {
 	}
 
 	@Override
-	public String getBookByIsbn(BookData searchFormData, BindingResult result, Model model) {
-		return null;
+	public String getBookByIsbn(BookData searchByIsbnFormData, BindingResult result, Model model) {
+		if (!result.hasErrors())
+			model.addAttribute(MODEL_BOOKS, service.getBookByIsbn(searchByIsbnFormData.toLong()));
+		return VIEW_BOOK_SEARCH_BY_ISBN;
 	}
 
 	@Override

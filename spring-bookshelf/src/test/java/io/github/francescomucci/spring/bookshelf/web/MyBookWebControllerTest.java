@@ -550,4 +550,69 @@ public class MyBookWebControllerTest {
 			.andExpect(model().attribute("bookData", new BookData()));
 	}
 
+	/* ---------- getBookByIsbn tests ---------- */
+
+	@Test
+	public void testWebController_getBookByIsbn_whenNullIsbn_shouldNotInteractWithServiceAndReturnSearchByIsbnView() throws Exception {
+		mvc.perform(get(URI_BOOK_GET_BY_ISBN)
+			.param("isbn", (String) null))
+				.andExpect(status().isOk())
+				.andExpect(view().name(VIEW_BOOK_SEARCH_BY_ISBN))
+				.andExpect(model().attributeHasFieldErrorCode("bookData", "isbn", "NotNull"))
+				.andExpect(model().attributeDoesNotExist(MODEL_BOOKS));
+		
+		verifyNoInteractions(bookService);
+	}
+
+	@Test
+	public void testWebController_getBookByIsbn_whenBlankIsbn_shouldNotInteractWithServiceAndReturnSearchByIsbnView() throws Exception {
+		mvc.perform(get(URI_BOOK_GET_BY_ISBN)
+			.param("isbn", ""))
+				.andExpect(status().isOk())
+				.andExpect(view().name(VIEW_BOOK_SEARCH_BY_ISBN))
+				.andExpect(model().attributeHasFieldErrorCode("bookData", "isbn", "ISBN"))
+				.andExpect(model().attributeDoesNotExist(MODEL_BOOKS));
+		
+		verifyNoInteractions(bookService);
+	}
+
+	@Test
+	public void testWebController_getBookByIsbn_whenInvalidIsbn_shouldNotInteractWithServiceAndReturnSearchByIsbnView() throws Exception {
+		mvc.perform(get(URI_BOOK_GET_BY_ISBN)
+			.param("isbn", INVALID_ISBN13_WITHOUT_FORMATTING))
+				.andExpect(status().isOk())
+				.andExpect(view().name(VIEW_BOOK_SEARCH_BY_ISBN))
+				.andExpect(model().attributeHasFieldErrorCode("bookData", "isbn", "ISBN"))
+				.andExpect(model().attributeDoesNotExist(MODEL_BOOKS));
+		
+		verifyNoInteractions(bookService);
+	}
+
+	@Test
+	public void testWebController_getBookByIsbn_whenIsbnIsValidButUnused_shouldAddErrorInfoToModelAndReturnBookNotFoundView() throws Exception {
+		when(bookService.getBookByIsbn(UNUSED_ISBN13))
+			.thenThrow(new BookNotFoundException(UNUSED_ISBN13));
+		
+		mvc.perform(get(URI_BOOK_GET_BY_ISBN)
+			.param("isbn", UNUSED_ISBN13_WITHOUT_FORMATTING))
+				.andExpect(status().isNotFound())
+				.andExpect(view().name(ERROR_BOOK_NOT_FOUND))
+				.andExpect(model().attribute(MODEL_ERROR_CODE, HttpStatus.NOT_FOUND.value()))
+				.andExpect(model().attribute(MODEL_ERROR_REASON, HttpStatus.NOT_FOUND.getReasonPhrase()))
+				.andExpect(model().attribute(MODEL_ERROR_MESSAGE, UNUSED_ISBN13_WITHOUT_FORMATTING + BookNotFoundException.BOOK_NOT_FOUND_MSG));
+	}
+
+	@Test
+	public void testWebController_getBookByIsbn_whenIsbnIsValid_shouldAddRetrievedBooksToModelAndReturnSearchByIsbnView() throws Exception {
+		Book book = new Book(VALID_ISBN13, TITLE, AUTHORS_LIST);
+		when(bookService.getBookByIsbn(VALID_ISBN13))
+			.thenReturn(book);
+		
+		mvc.perform(get(URI_BOOK_GET_BY_ISBN)
+			.param("isbn", VALID_ISBN13_WITHOUT_FORMATTING))
+				.andExpect(status().isOk())
+				.andExpect(view().name(VIEW_BOOK_SEARCH_BY_ISBN))
+				.andExpect(model().attribute(MODEL_BOOKS, book));
+	}
+
 }
