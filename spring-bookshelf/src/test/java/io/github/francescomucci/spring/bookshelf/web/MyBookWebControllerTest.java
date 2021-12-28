@@ -6,6 +6,7 @@ import static java.util.Arrays.asList;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -175,6 +176,184 @@ public class MyBookWebControllerTest {
 			.andExpect(status().isOk())
 			.andExpect(view().name(VIEW_BOOK_EDIT))
 			.andExpect(model().attribute("bookData", new BookData(VALID_ISBN13_WITHOUT_FORMATTING, TITLE, AUTHORS_STRING)));
+	}
+
+	/* ---------- postSaveBook tests ---------- */
+
+	@Test
+	@WithMockAdmin
+	public void testWebController_postSaveBook_whenAdminUserAndNullIsbn_shouldAddErrorInfoToModelAndReturnInvalidIsbnView() throws Exception {
+		mvc.perform(post(URI_BOOK_SAVE)
+			.with(csrf())
+			.param("isbn", (String) null)
+			.param("title", TITLE)
+			.param("authors", AUTHORS_STRING))
+				.andExpect(status().isBadRequest())
+				.andExpect(view().name(ERROR_INVALID_ISBN))
+				.andExpect(model().attribute(MODEL_ERROR_CODE, HttpStatus.BAD_REQUEST.value()))
+				.andExpect(model().attribute(MODEL_ERROR_REASON, HttpStatus.BAD_REQUEST.getReasonPhrase()))
+				.andExpect(model().attribute(MODEL_ERROR_MESSAGE, "null" + InvalidIsbnException.INVALID_ISBN_MSG));
+		
+		verifyNoInteractions(bookService);
+	}
+
+	@Test
+	@WithMockAdmin
+	public void testWebController_postSaveBook_whenAdminUserAndBlankIsbn_shouldAddErrorInfoToModelAndReturnInvalidIsbnView() throws Exception {
+		mvc.perform(post(URI_BOOK_SAVE)
+			.with(csrf())
+			.param("isbn", "")
+			.param("title", TITLE)
+			.param("authors", AUTHORS_STRING))
+				.andExpect(status().isBadRequest())
+				.andExpect(view().name(ERROR_INVALID_ISBN))
+				.andExpect(model().attribute(MODEL_ERROR_CODE, HttpStatus.BAD_REQUEST.value()))
+				.andExpect(model().attribute(MODEL_ERROR_REASON, HttpStatus.BAD_REQUEST.getReasonPhrase()))
+				.andExpect(model().attribute(MODEL_ERROR_MESSAGE, "" + InvalidIsbnException.INVALID_ISBN_MSG));
+		
+		verifyNoInteractions(bookService);
+	}
+
+	@Test
+	@WithMockAdmin
+	public void testWebController_postSaveBook_whenAdminUserAndInvalidIsbn_shouldAddErrorInfoToModelAndReturnInvalidIsbnView() throws Exception {
+		mvc.perform(post(URI_BOOK_SAVE)
+			.with(csrf())
+			.param("isbn", INVALID_ISBN13_WITHOUT_FORMATTING)
+			.param("title", TITLE)
+			.param("authors", AUTHORS_STRING))
+				.andExpect(status().isBadRequest())
+				.andExpect(view().name(ERROR_INVALID_ISBN))
+				.andExpect(model().attribute(MODEL_ERROR_CODE, HttpStatus.BAD_REQUEST.value()))
+				.andExpect(model().attribute(MODEL_ERROR_REASON, HttpStatus.BAD_REQUEST.getReasonPhrase()))
+				.andExpect(model().attribute(MODEL_ERROR_MESSAGE, INVALID_ISBN13_WITHOUT_FORMATTING + InvalidIsbnException.INVALID_ISBN_MSG));
+		
+		verifyNoInteractions(bookService);
+	}
+
+	@Test
+	@WithMockAdmin
+	public void testWebController_postSaveBook_whenAdminUserAndNullTitle_shouldNotInteractWithServiceAndReturnEditView() throws Exception {
+		mvc.perform(post(URI_BOOK_SAVE)
+			.with(csrf())
+			.param("isbn", VALID_ISBN13_WITHOUT_FORMATTING)
+			.param("title", (String) null)
+			.param("authors", AUTHORS_STRING))
+				.andExpect(status().isOk())
+				.andExpect(view().name(VIEW_BOOK_EDIT))
+				.andExpect(model().attributeHasFieldErrorCode("bookData", "title", "NotBlank"));
+		
+		verifyNoInteractions(bookService);
+	}
+
+	@Test
+	@WithMockAdmin
+	public void testWebController_postSaveBook_whenAdminUserAndBlankTitle_shouldNotInteractWithServiceAndReturnEditView() throws Exception {
+		mvc.perform(post(URI_BOOK_SAVE)
+			.with(csrf())
+			.param("isbn", VALID_ISBN13_WITHOUT_FORMATTING)
+			.param("title", "")
+			.param("authors", AUTHORS_STRING))
+				.andExpect(status().isOk())
+				.andExpect(view().name(VIEW_BOOK_EDIT))
+				.andExpect(model().attributeHasFieldErrorCode("bookData", "title", "NotBlank"));
+		
+		verifyNoInteractions(bookService);
+	}
+
+	@Test
+	@WithMockAdmin
+	public void testWebController_postSaveBook_whenAdminUserAndInvalidTitle_shouldNotInteractWithServiceAndReturnEditView() throws Exception {
+		mvc.perform(post(URI_BOOK_SAVE)
+			.with(csrf())
+			.param("isbn", VALID_ISBN13_WITHOUT_FORMATTING)
+			.param("title", INVALID_TITLE)
+			.param("authors", AUTHORS_STRING))
+				.andExpect(status().isOk())
+				.andExpect(view().name(VIEW_BOOK_EDIT))
+				.andExpect(model().attributeHasFieldErrorCode("bookData", "title", "Pattern"));
+		
+		verifyNoInteractions(bookService);
+	}
+
+	@Test
+	@WithMockAdmin
+	public void testWebController_postSaveBook_whenAdminUserAndNullAuthors_shouldNotInteractWithServiceAndReturnEditView() throws Exception {
+		mvc.perform(post(URI_BOOK_SAVE)
+			.with(csrf())
+			.param("isbn", VALID_ISBN13_WITHOUT_FORMATTING)
+			.param("title", TITLE)
+			.param("authors", (String) null))
+				.andExpect(status().isOk())
+				.andExpect(view().name(VIEW_BOOK_EDIT))
+				.andExpect(model().attributeHasFieldErrorCode("bookData", "authors", "NotBlank"));
+		
+		verifyNoInteractions(bookService);
+	}
+
+	@Test
+	@WithMockAdmin
+	public void testWebController_postSaveBook_whenAdminUserAndBlankAuthors_shouldNotInteractWithServiceAndReturnEditView() throws Exception {
+		mvc.perform(post(URI_BOOK_SAVE)
+			.with(csrf())
+			.param("isbn", VALID_ISBN13_WITHOUT_FORMATTING)
+			.param("title", TITLE)
+			.param("authors", ""))
+				.andExpect(status().isOk())
+				.andExpect(view().name(VIEW_BOOK_EDIT))
+				.andExpect(model().attributeHasFieldErrorCode("bookData", "authors", "NotBlank"));
+		
+		verifyNoInteractions(bookService);
+	}
+
+	@Test
+	@WithMockAdmin
+	public void testWebController_postSaveBook_whenAdminUserAndInvalidAuthors_shouldNotInteractWithServiceAndReturnEditView() throws Exception {
+		mvc.perform(post(URI_BOOK_SAVE)
+			.with(csrf())
+			.param("isbn", VALID_ISBN13_WITHOUT_FORMATTING)
+			.param("title", TITLE)
+			.param("authors", INVALID_AUTHORS_STRING))
+				.andExpect(status().isOk())
+				.andExpect(view().name(VIEW_BOOK_EDIT))
+				.andExpect(model().attributeHasFieldErrorCode("bookData", "authors", "Pattern"));
+		
+		verifyNoInteractions(bookService);
+	}
+
+	@Test
+	@WithMockAdmin
+	public void testWebController_postSaveBook_whenAdminUserAndIsbnIsValidButUnused_shouldAddErrorInfoToModelAndReturnBookNotFoundView() throws Exception {
+		BookData editFormData = new BookData(UNUSED_ISBN13_WITHOUT_FORMATTING, UNUSED_TITLE, UNUSED_AUTHORS_STRING);
+		when(bookService.replaceBook(editFormData.toBook()))
+			.thenThrow(new BookNotFoundException(UNUSED_ISBN13));
+		
+		mvc.perform(post(URI_BOOK_SAVE)
+			.with(csrf())
+			.param("isbn", editFormData.getIsbn())
+			.param("title", editFormData.getTitle())
+			.param("authors", editFormData.getAuthors()))
+				.andExpect(status().isNotFound())
+				.andExpect(view().name(ERROR_BOOK_NOT_FOUND))
+				.andExpect(model().attribute(MODEL_ERROR_CODE, HttpStatus.NOT_FOUND.value()))
+				.andExpect(model().attribute(MODEL_ERROR_REASON, HttpStatus.NOT_FOUND.getReasonPhrase()))
+				.andExpect(model().attribute(MODEL_ERROR_MESSAGE, editFormData.getIsbn() + BookNotFoundException.BOOK_NOT_FOUND_MSG));
+	}
+
+	@Test
+	@WithMockAdmin
+	public void testWebController_postSaveBook_whenAdminUserAndBookFormDataDoNotContainErrors_shouldReplaceBookUsingServiceAndReturnBookListView() throws Exception {
+		BookData editFormData = new BookData(VALID_ISBN13_WITHOUT_FORMATTING, NEW_TITLE, AUTHORS_STRING);
+		mvc.perform(post(URI_BOOK_SAVE)
+			.with(csrf())
+			.param("isbn", editFormData.getIsbn())
+			.param("title", editFormData.getTitle())
+			.param("authors", editFormData.getAuthors()))
+				.andExpect(status().is3xxRedirection())
+				.andExpect(redirectedUrl(URI_BOOK_LIST));
+		
+		verify(bookService).replaceBook(editFormData.toBook());
+		verifyNoMoreInteractions(bookService);
 	}
 
 }

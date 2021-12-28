@@ -61,7 +61,13 @@ public class MyBookWebController implements BookWebController {
 
 	@Override
 	public String postSaveBook(BookData editFormData, BindingResult result) {
-		return null;
+		if (result.hasErrors()) {
+			if (result.hasFieldErrors("isbn"))
+				throw new InvalidIsbnException(editFormData.getIsbn());
+			return VIEW_BOOK_EDIT;
+		}
+		service.replaceBook(editFormData.toBook());
+		return REDIRECT + URI_BOOK_LIST;
 	}
 
 	@Override
