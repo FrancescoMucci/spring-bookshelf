@@ -97,8 +97,8 @@ public class MyBookWebController implements BookWebController {
 	}
 
 	@Override
-	public String getBookSearchByTitleView(BookData searchFormData) {
-		return null;
+	public String getBookSearchByTitleView(BookData searchByTitleFormData) {
+		return VIEW_BOOK_SEARCH_BY_TITLE;
 	}
 
 	@Override

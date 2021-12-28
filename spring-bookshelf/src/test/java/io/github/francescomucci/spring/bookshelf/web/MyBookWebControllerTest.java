@@ -615,4 +615,14 @@ public class MyBookWebControllerTest {
 				.andExpect(model().attribute(MODEL_BOOKS, book));
 	}
 
+	/* ---------- getBookSearchByTitleView tests ---------- */
+
+	@Test
+	public void testWebController_getBookSearchByTitleView() throws Exception {
+		mvc.perform(get(URI_BOOK_SEARCH_BY_TITLE))
+			.andExpect(status().isOk())
+			.andExpect(view().name(VIEW_BOOK_SEARCH_BY_TITLE))
+			.andExpect(model().attribute("bookData", new BookData()));
+	}
+
 }
