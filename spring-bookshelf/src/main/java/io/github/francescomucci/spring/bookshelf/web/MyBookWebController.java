@@ -102,8 +102,10 @@ public class MyBookWebController implements BookWebController {
 	}
 
 	@Override
-	public String getBookByTitle(BookData searchFormData, BindingResult result, Model model) {
-		return null;
+	public String getBookByTitle(BookData searchByTitleFormData, BindingResult result, Model model) {
+		if (!result.hasErrors())
+			model.addAttribute(MODEL_BOOKS, service.getBooksByTitle(searchByTitleFormData.getTitle()));
+		return VIEW_BOOK_SEARCH_BY_TITLE;
 	}
 
 	@ExceptionHandler(InvalidIsbnException.class)

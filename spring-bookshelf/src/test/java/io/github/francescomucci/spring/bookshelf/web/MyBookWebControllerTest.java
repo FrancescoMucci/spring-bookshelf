@@ -625,4 +625,69 @@ public class MyBookWebControllerTest {
 			.andExpect(model().attribute("bookData", new BookData()));
 	}
 
+	/* ---------- getBookByTitle tests ---------- */
+
+	@Test
+	public void testWebController_getBookByTitle_whenNullTitle_shouldNotInteractWithServiceAndReturnSearchByTitleView() throws Exception {
+		mvc.perform(get(URI_BOOK_GET_BY_TITLE)
+			.param("title", (String) null))
+				.andExpect(status().isOk())
+				.andExpect(view().name(VIEW_BOOK_SEARCH_BY_TITLE))
+				.andExpect(model().attributeHasFieldErrorCode("bookData", "title", "NotBlank"))
+				.andExpect(model().attributeDoesNotExist(MODEL_BOOKS));
+		
+		verifyNoInteractions(bookService);
+	}
+
+	@Test
+	public void testWebController_getBookByTitle_whenBlankTitle_shouldNotInteractWithServiceAndReturnSearchByTitleView() throws Exception {
+		mvc.perform(get(URI_BOOK_GET_BY_TITLE)
+			.param("title", ""))
+				.andExpect(status().isOk())
+				.andExpect(view().name(VIEW_BOOK_SEARCH_BY_TITLE))
+				.andExpect(model().attributeHasFieldErrorCode("bookData", "title", "NotBlank"))
+				.andExpect(model().attributeDoesNotExist(MODEL_BOOKS));
+		
+		verifyNoInteractions(bookService);
+	}
+
+	@Test
+	public void testWebController_getBookByTitle_whenInvalidTitle_shouldNotInteractWithServiceAndReturnSearchByTitleView() throws Exception {
+		mvc.perform(get(URI_BOOK_GET_BY_TITLE)
+			.param("title", INVALID_TITLE))
+				.andExpect(status().isOk())
+				.andExpect(view().name(VIEW_BOOK_SEARCH_BY_TITLE))
+				.andExpect(model().attributeHasFieldErrorCode("bookData", "title", "Pattern"))
+				.andExpect(model().attributeDoesNotExist(MODEL_BOOKS));
+		
+		verifyNoInteractions(bookService);
+	}
+
+	@Test
+	public void testWebController_getBookByTitle_whenTitleIsValidButNotFound_shouldAddErrorInfoToModelAndReturnBookNotFoundView() throws Exception {
+		when(bookService.getBooksByTitle(UNUSED_TITLE))
+			.thenThrow(new BookNotFoundException(UNUSED_TITLE));
+		
+		mvc.perform(get(URI_BOOK_GET_BY_TITLE)
+			.param("title", UNUSED_TITLE))
+				.andExpect(status().isNotFound())
+				.andExpect(view().name(ERROR_BOOK_NOT_FOUND))
+				.andExpect(model().attribute(MODEL_ERROR_CODE, HttpStatus.NOT_FOUND.value()))
+				.andExpect(model().attribute(MODEL_ERROR_REASON, HttpStatus.NOT_FOUND.getReasonPhrase()))
+				.andExpect(model().attribute(MODEL_ERROR_MESSAGE, UNUSED_TITLE + BookNotFoundException.BOOK_NOT_FOUND_TITLE_MSG));
+	}
+
+	@Test
+	public void testWebController_getBookByTitle_whenTitleIsValidAndFound_shouldAddRetrievedBooksToModelAndReturnSearchByTitleView() throws Exception {
+		List<Book> foundedBooks = asList(new Book(VALID_ISBN13, TITLE, AUTHORS_LIST), new Book(NEW_VALID_ISBN13, NEW_TITLE, AUTHORS_LIST));
+		when(bookService.getBooksByTitle(TITLE))
+			.thenReturn(foundedBooks);
+		
+		mvc.perform(get(URI_BOOK_GET_BY_TITLE)
+			.param("title", TITLE))
+				.andExpect(status().isOk())
+				.andExpect(view().name(VIEW_BOOK_SEARCH_BY_TITLE))
+				.andExpect(model().attribute(MODEL_BOOKS, foundedBooks));
+	}
+
 }
