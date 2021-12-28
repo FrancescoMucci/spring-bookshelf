@@ -540,4 +540,14 @@ public class MyBookWebControllerTest {
 		verifyNoMoreInteractions(bookService);
 	}
 
+	/* ---------- getBookSearchByIsbnView tests ---------- */
+
+	@Test
+	public void testWebController_getBookSearchByIsbnView() throws Exception {
+		mvc.perform(get(URI_BOOK_SEARCH_BY_ISBN))
+			.andExpect(status().isOk())
+			.andExpect(view().name(VIEW_BOOK_SEARCH_BY_ISBN))
+			.andExpect(model().attribute("bookData", new BookData()));
+	}
+
 }

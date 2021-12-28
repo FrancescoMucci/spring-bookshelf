@@ -85,8 +85,8 @@ public class MyBookWebController implements BookWebController {
 	}
 
 	@Override
-	public String getBookSearchByIsbnView(BookData searchFormData) {
-		return null;
+	public String getBookSearchByIsbnView(BookData searchByIsbnFormData) {
+		return VIEW_BOOK_SEARCH_BY_ISBN;
 	}
 
 	@Override
