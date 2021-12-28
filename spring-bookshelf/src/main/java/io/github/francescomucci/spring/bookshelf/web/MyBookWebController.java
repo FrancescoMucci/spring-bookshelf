@@ -5,19 +5,14 @@ import static io.github.francescomucci.spring.bookshelf.web.BookWebControllerCon
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 import io.github.francescomucci.spring.bookshelf.model.Book;
 import io.github.francescomucci.spring.bookshelf.model.dto.BookData;
 import io.github.francescomucci.spring.bookshelf.model.dto.IsbnData;
 import io.github.francescomucci.spring.bookshelf.exception.InvalidIsbnException;
-import io.github.francescomucci.spring.bookshelf.exception.BookNotFoundException;
-import io.github.francescomucci.spring.bookshelf.exception.BookAlreadyExistException;
 import io.github.francescomucci.spring.bookshelf.service.BookService;
 
 @Controller("BookWebController")
@@ -106,33 +101,6 @@ public class MyBookWebController implements BookWebController {
 		if (!result.hasErrors())
 			model.addAttribute(MODEL_BOOKS, service.getBooksByTitle(searchByTitleFormData.getTitle()));
 		return VIEW_BOOK_SEARCH_BY_TITLE;
-	}
-
-	@ExceptionHandler(InvalidIsbnException.class)
-	@ResponseStatus(HttpStatus.BAD_REQUEST)
-	private String handleInvalidIsbnException(InvalidIsbnException exception, Model model) {
-		addErrorModelAttributes(exception, model, HttpStatus.BAD_REQUEST);
-		return ERROR_INVALID_ISBN;
-	}
-
-	@ExceptionHandler(BookNotFoundException.class)
-	@ResponseStatus(HttpStatus.NOT_FOUND)
-	private String handleBookNotFoundException(BookNotFoundException exception, Model model) {
-		addErrorModelAttributes(exception, model, HttpStatus.NOT_FOUND);
-		return ERROR_BOOK_NOT_FOUND;
-	}
-
-	@ExceptionHandler(BookAlreadyExistException.class)
-	@ResponseStatus(HttpStatus.CONFLICT)
-	private String handleBookAlreadyExistException(BookAlreadyExistException exception, Model model) {
-		addErrorModelAttributes(exception, model, HttpStatus.CONFLICT);
-		return ERROR_BOOK_ALREADY_EXIST;
-	}
-
-	private void addErrorModelAttributes(Exception exception, Model model, HttpStatus httpStatus) {
-		model.addAttribute(MODEL_ERROR_CODE, httpStatus.value());
-		model.addAttribute(MODEL_ERROR_REASON, httpStatus.getReasonPhrase());
-		model.addAttribute(MODEL_ERROR_MESSAGE, exception.getMessage());
 	}
 
 }
