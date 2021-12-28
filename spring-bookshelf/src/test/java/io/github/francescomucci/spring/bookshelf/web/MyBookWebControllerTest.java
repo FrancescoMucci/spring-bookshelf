@@ -29,6 +29,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import io.github.francescomucci.spring.bookshelf.model.Book;
+import io.github.francescomucci.spring.bookshelf.model.dto.BookData;
 import io.github.francescomucci.spring.bookshelf.exception.BookNotFoundException;
 import io.github.francescomucci.spring.bookshelf.exception.InvalidIsbnException;
 import io.github.francescomucci.spring.bookshelf.service.BookService;
@@ -133,6 +134,47 @@ public class MyBookWebControllerTest {
 		
 		verify(bookService).delateBookByIsbn(VALID_ISBN13);
 		verifyNoMoreInteractions(bookService);
+	}
+
+	/* ---------- getBookEditView tests ---------- */
+
+	@Test
+	@WithMockAdmin
+	public void testWebController_getBookEditView_whenAdminUserAndIsbnIsInvalid_shouldAddErrorInfoToModelAndReturnInvalidIsbnView() throws Exception {
+		mvc.perform(get("/book/edit/" + INVALID_ISBN13_WITHOUT_FORMATTING))
+			.andExpect(status().isBadRequest())
+			.andExpect(view().name(ERROR_INVALID_ISBN))
+			.andExpect(model().attribute(MODEL_ERROR_CODE, HttpStatus.BAD_REQUEST.value()))
+			.andExpect(model().attribute(MODEL_ERROR_REASON, HttpStatus.BAD_REQUEST.getReasonPhrase()))
+			.andExpect(model().attribute(MODEL_ERROR_MESSAGE, INVALID_ISBN13_WITHOUT_FORMATTING + InvalidIsbnException.INVALID_ISBN_MSG));
+		
+		verify(bookService, never()).getBookByIsbn(INVALID_ISBN13);
+	}
+
+	@Test
+	@WithMockAdmin
+	public void testWebController_getBookEditView_whenAdminUserAndIsbnIsValidButUnused_shouldAddErrorInfoToModelAndReturnBookNotFoundView() throws Exception {
+		when(bookService.getBookByIsbn(UNUSED_ISBN13))
+			.thenThrow(new BookNotFoundException(UNUSED_ISBN13));
+		
+		mvc.perform(get("/book/edit/" + UNUSED_ISBN13_WITHOUT_FORMATTING))
+			.andExpect(status().isNotFound())
+			.andExpect(view().name(ERROR_BOOK_NOT_FOUND))
+			.andExpect(model().attribute(MODEL_ERROR_CODE, HttpStatus.NOT_FOUND.value()))
+			.andExpect(model().attribute(MODEL_ERROR_REASON, HttpStatus.NOT_FOUND.getReasonPhrase()))
+			.andExpect(model().attribute(MODEL_ERROR_MESSAGE, UNUSED_ISBN13 + BookNotFoundException.BOOK_NOT_FOUND_MSG));
+	}
+
+	@Test
+	@WithMockAdmin
+	public void testWebController_getBookEditView_whenAdminUserAndIsbnIsValidAndUsed_shouldAddBookFormDataToModel() throws Exception {
+		when(bookService.getBookByIsbn(VALID_ISBN13))
+			.thenReturn(new Book(VALID_ISBN13, TITLE, AUTHORS_LIST));
+		
+		mvc.perform(get("/book/edit/" + VALID_ISBN13_WITHOUT_FORMATTING))
+			.andExpect(status().isOk())
+			.andExpect(view().name(VIEW_BOOK_EDIT))
+			.andExpect(model().attribute("bookData", new BookData(VALID_ISBN13_WITHOUT_FORMATTING, TITLE, AUTHORS_STRING)));
 	}
 
 }
