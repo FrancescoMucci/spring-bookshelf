@@ -72,7 +72,7 @@ public class MyBookWebController implements BookWebController {
 
 	@Override
 	public String getBookNewView(BookData addFormData) {
-		return null;
+		return VIEW_BOOK_NEW;
 	}
 
 	@Override

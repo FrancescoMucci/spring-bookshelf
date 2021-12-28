@@ -356,4 +356,15 @@ public class MyBookWebControllerTest {
 		verifyNoMoreInteractions(bookService);
 	}
 
+	/* ---------- getBookNewView tests ---------- */
+
+	@Test
+	@WithMockAdmin
+	public void testWebController_getBookNewView_whenAdminUser() throws Exception {
+		mvc.perform(get(URI_BOOK_NEW))
+			.andExpect(status().isOk())
+			.andExpect(view().name(VIEW_BOOK_NEW))
+			.andExpect(model().attribute("bookData", new BookData()));
+	}
+
 }
