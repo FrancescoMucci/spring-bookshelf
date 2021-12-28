@@ -17,6 +17,7 @@ import io.github.francescomucci.spring.bookshelf.model.dto.BookData;
 import io.github.francescomucci.spring.bookshelf.model.dto.IsbnData;
 import io.github.francescomucci.spring.bookshelf.exception.InvalidIsbnException;
 import io.github.francescomucci.spring.bookshelf.exception.BookNotFoundException;
+import io.github.francescomucci.spring.bookshelf.exception.BookAlreadyExistException;
 import io.github.francescomucci.spring.bookshelf.service.BookService;
 
 @Controller("BookWebController")
@@ -77,7 +78,10 @@ public class MyBookWebController implements BookWebController {
 
 	@Override
 	public String postAddBook(BookData addFormData, BindingResult result) {
-		return null;
+		if (result.hasErrors()) 
+			return VIEW_BOOK_NEW;
+		service.addNewBook(addFormData.toBook());
+		return REDIRECT + URI_BOOK_LIST;
 	}
 
 	@Override
@@ -112,6 +116,13 @@ public class MyBookWebController implements BookWebController {
 	private String handleBookNotFoundException(BookNotFoundException exception, Model model) {
 		addErrorModelAttributes(exception, model, HttpStatus.NOT_FOUND);
 		return ERROR_BOOK_NOT_FOUND;
+	}
+
+	@ExceptionHandler(BookAlreadyExistException.class)
+	@ResponseStatus(HttpStatus.CONFLICT)
+	private String handleBookAlreadyExistException(BookAlreadyExistException exception, Model model) {
+		addErrorModelAttributes(exception, model, HttpStatus.CONFLICT);
+		return ERROR_BOOK_ALREADY_EXIST;
 	}
 
 	private void addErrorModelAttributes(Exception exception, Model model, HttpStatus httpStatus) {

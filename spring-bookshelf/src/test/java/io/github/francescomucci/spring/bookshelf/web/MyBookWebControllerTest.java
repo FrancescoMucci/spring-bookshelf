@@ -33,6 +33,7 @@ import io.github.francescomucci.spring.bookshelf.model.Book;
 import io.github.francescomucci.spring.bookshelf.model.dto.BookData;
 import io.github.francescomucci.spring.bookshelf.exception.BookNotFoundException;
 import io.github.francescomucci.spring.bookshelf.exception.InvalidIsbnException;
+import io.github.francescomucci.spring.bookshelf.exception.BookAlreadyExistException;
 import io.github.francescomucci.spring.bookshelf.service.BookService;
 import io.github.francescomucci.spring.bookshelf.web.security.WithMockAdmin;
 
@@ -365,6 +366,178 @@ public class MyBookWebControllerTest {
 			.andExpect(status().isOk())
 			.andExpect(view().name(VIEW_BOOK_NEW))
 			.andExpect(model().attribute("bookData", new BookData()));
+	}
+
+	/* ---------- postAddBook tests ---------- */
+
+	@Test
+	@WithMockAdmin
+	public void testWebController_postAddBook_whenAdminUserAndNullIsbn_shouldNotInteractWithServiceAndReturnNewView() throws Exception {
+		mvc.perform(post(URI_BOOK_ADD)
+			.with(csrf())
+			.param("isbn", (String) null)
+			.param("title", TITLE)
+			.param("authors", AUTHORS_STRING))
+				.andExpect(status().isOk())
+				.andExpect(view().name(VIEW_BOOK_NEW))
+				.andExpect(model().attributeHasFieldErrorCode("bookData", "isbn", "NotNull"));
+		
+		verifyNoInteractions(bookService);
+	}
+
+	@Test
+	@WithMockAdmin
+	public void testWebController_postAddBook_whenAdminUserAndBlankIsbn_shouldNotInteractWithServiceAndReturnNewView() throws Exception {
+		mvc.perform(post(URI_BOOK_ADD)
+			.with(csrf())
+			.param("isbn", "")
+			.param("title", TITLE)
+			.param("authors", AUTHORS_STRING))
+				.andExpect(status().isOk())
+				.andExpect(view().name(VIEW_BOOK_NEW))
+				.andExpect(model().attributeHasFieldErrorCode("bookData", "isbn", "ISBN"));
+		
+		verifyNoInteractions(bookService);
+	}
+
+	@Test
+	@WithMockAdmin
+	public void testWebController_postAddBook_whenAdminUserAndInvalidIsbn_shouldNotInteractWithServiceAndReturnNewView() throws Exception {
+		mvc.perform(post(URI_BOOK_ADD)
+			.with(csrf())
+			.param("isbn", INVALID_ISBN13_WITHOUT_FORMATTING)
+			.param("title", TITLE)
+			.param("authors", AUTHORS_STRING))
+				.andExpect(status().isOk())
+				.andExpect(view().name(VIEW_BOOK_NEW))
+				.andExpect(model().attributeHasFieldErrorCode("bookData", "isbn", "ISBN"));
+		
+		verifyNoInteractions(bookService);
+	}
+
+	@Test
+	@WithMockAdmin
+	public void testWebController_postAddBook_whenAdminUserAndNullTitle_shouldNotInteractWithServiceAndReturnNewView() throws Exception {
+		mvc.perform(post(URI_BOOK_ADD)
+			.with(csrf())
+			.param("isbn", VALID_ISBN13_WITHOUT_FORMATTING)
+			.param("title", (String) null)
+			.param("authors", AUTHORS_STRING))
+				.andExpect(status().isOk())
+				.andExpect(view().name(VIEW_BOOK_NEW))
+				.andExpect(model().attributeHasFieldErrorCode("bookData", "title", "NotBlank"));
+		
+		verifyNoInteractions(bookService);
+	}
+
+	@Test
+	@WithMockAdmin
+	public void testWebController_postAddBook_whenAdminUserAndBlankTitle_shouldNotInteractWithServiceAndReturnNewView() throws Exception {
+		mvc.perform(post(URI_BOOK_ADD)
+			.with(csrf())
+			.param("isbn", VALID_ISBN13_WITHOUT_FORMATTING)
+			.param("title", "")
+			.param("authors", AUTHORS_STRING))
+				.andExpect(status().isOk())
+				.andExpect(view().name(VIEW_BOOK_NEW))
+				.andExpect(model().attributeHasFieldErrorCode("bookData", "title", "NotBlank"));
+		
+		verifyNoInteractions(bookService);
+	}
+
+	@Test
+	@WithMockAdmin
+	public void testWebController_postAddBook_whenAdminUserAndInvalidTitle_shouldNotInteractWithServiceAndReturnNewView() throws Exception {
+		mvc.perform(post(URI_BOOK_ADD)
+			.with(csrf())
+			.param("isbn", VALID_ISBN13_WITHOUT_FORMATTING)
+			.param("title", INVALID_TITLE)
+			.param("authors", AUTHORS_STRING))
+				.andExpect(status().isOk())
+				.andExpect(view().name(VIEW_BOOK_NEW))
+				.andExpect(model().attributeHasFieldErrorCode("bookData", "title", "Pattern"));
+		
+		verifyNoInteractions(bookService);
+	}
+
+	@Test
+	@WithMockAdmin
+	public void testWebController_postAddBook_whenAdminUserAndNullAuthors_shouldNotInteractWithServiceAndReturnNewView() throws Exception {
+		mvc.perform(post(URI_BOOK_ADD)
+			.with(csrf())
+			.param("isbn", VALID_ISBN13_WITHOUT_FORMATTING)
+			.param("title", TITLE)
+			.param("authors", (String) null))
+				.andExpect(status().isOk())
+				.andExpect(view().name(VIEW_BOOK_NEW))
+				.andExpect(model().attributeHasFieldErrorCode("bookData", "authors", "NotBlank"));
+		
+		verifyNoInteractions(bookService);
+	}
+
+	@Test
+	@WithMockAdmin
+	public void testWebController_postAddBook_whenAdminUserAndBlankAuthors_shouldNotInteractWithServiceAndReturnNewView() throws Exception {
+		mvc.perform(post(URI_BOOK_ADD)
+			.with(csrf())
+			.param("isbn", VALID_ISBN13_WITHOUT_FORMATTING)
+			.param("title", TITLE)
+			.param("authors", ""))
+				.andExpect(status().isOk())
+				.andExpect(view().name(VIEW_BOOK_NEW))
+				.andExpect(model().attributeHasFieldErrorCode("bookData", "authors", "NotBlank"));
+		
+		verifyNoInteractions(bookService);
+	}
+
+	@Test
+	@WithMockAdmin
+	public void testWebController_postAddBook_whenAdminUserAndInvalidAuthors_shouldNotInteractWithServiceAndReturnNewView() throws Exception {
+		mvc.perform(post(URI_BOOK_ADD)
+			.with(csrf())
+			.param("isbn", VALID_ISBN13_WITHOUT_FORMATTING)
+			.param("title", TITLE)
+			.param("authors", INVALID_AUTHORS_STRING))
+				.andExpect(status().isOk())
+				.andExpect(view().name(VIEW_BOOK_NEW))
+				.andExpect(model().attributeHasFieldErrorCode("bookData", "authors", "Pattern"));
+		
+		verifyNoInteractions(bookService);
+	}
+
+	@Test
+	@WithMockAdmin
+	public void testWebController_postAddBook_whenAdminUserAndIsbnIsValidButAlreadyUsed_shouldAddErrorInfoToModelAndReturnBookAlreadyExistView() throws Exception {
+		BookData addFormData = new BookData(ALREADY_USED_ISBN13_WITHOUT_FORMATTING, UNUSED_TITLE, UNUSED_AUTHORS_STRING);
+		when(bookService.addNewBook(addFormData.toBook()))
+			.thenThrow(new BookAlreadyExistException(ALREADY_USED_ISBN13));
+		
+		mvc.perform(post(URI_BOOK_ADD)
+			.with(csrf())
+			.param("isbn", addFormData.getIsbn())
+			.param("title", addFormData.getTitle())
+			.param("authors", addFormData.getAuthors()))
+				.andExpect(status().isConflict())
+				.andExpect(view().name(ERROR_BOOK_ALREADY_EXIST))
+				.andExpect(model().attribute(MODEL_ERROR_CODE, HttpStatus.CONFLICT.value()))
+				.andExpect(model().attribute(MODEL_ERROR_REASON, HttpStatus.CONFLICT.getReasonPhrase()))
+				.andExpect(model().attribute(MODEL_ERROR_MESSAGE, addFormData.getIsbn() + BookAlreadyExistException.BOOK_ALREADY_EXIST_MSG));
+	}
+
+	@Test
+	@WithMockAdmin
+	public void testWebController_postAddBook_whenAdminUserAndBookFormDataDoNotContainErrors_shouldAddBookUsingServiceAndReturnBookListView() throws Exception {
+		BookData addFormData = new BookData(VALID_ISBN13_WITHOUT_FORMATTING, TITLE, AUTHORS_STRING);
+		mvc.perform(post(URI_BOOK_ADD)
+			.with(csrf())
+			.param("isbn", addFormData.getIsbn())
+			.param("title", addFormData.getTitle())
+			.param("authors", addFormData.getAuthors()))
+				.andExpect(status().is3xxRedirection())
+				.andExpect(redirectedUrl(URI_BOOK_LIST));
+		
+		verify(bookService).addNewBook(addFormData.toBook());
+		verifyNoMoreInteractions(bookService);
 	}
 
 }
