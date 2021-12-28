@@ -2,15 +2,23 @@ package io.github.francescomucci.spring.bookshelf.web;
 
 import static io.github.francescomucci.spring.bookshelf.web.BookWebControllerConstants.*;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
+import io.github.francescomucci.spring.bookshelf.model.Book;
 import io.github.francescomucci.spring.bookshelf.model.dto.BookData;
 import io.github.francescomucci.spring.bookshelf.model.dto.IsbnData;
+import io.github.francescomucci.spring.bookshelf.service.BookService;
 
 @Controller("BookWebController")
 public class MyBookWebController implements BookWebController {
+
+	@Autowired
+	private BookService service;
 
 	@Override
 	public String getBookHomeView() {
@@ -19,7 +27,13 @@ public class MyBookWebController implements BookWebController {
 
 	@Override
 	public String getBookListView(Model model) {
-		return null;
+		List<Book> bookList = service.getAllBooks();
+		if (bookList.isEmpty()) {
+			model.addAttribute(MODEL_EMPTY_MESSAGE, MESSAGE_EMPTY_DB);
+		} else {
+			model.addAttribute(MODEL_BOOKS, bookList);
+		}
+		return VIEW_BOOK_LIST;
 	}
 
 	@Override
