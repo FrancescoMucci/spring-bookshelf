@@ -4,6 +4,7 @@ import static io.github.francescomucci.spring.bookshelf.web.BookWebControllerCon
 
 import javax.validation.Valid;
 
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -15,6 +16,7 @@ import io.github.francescomucci.spring.bookshelf.model.dto.IsbnData;
 import io.github.francescomucci.spring.bookshelf.model.dto.group.IsbnConstraints;
 import io.github.francescomucci.spring.bookshelf.model.dto.group.TitleConstraints;
 
+@Controller
 public interface BookWebController {
 
 	@GetMapping({URI_HOME, URI_BOOK_HOME, URI_LOGIN})

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+
+<html lang="en"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org">
+
+<head>
+	<title>Book home view</title>
+
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<script th:src="@{/webjars/jquery/jquery.min.js}"></script>
+	<script th:src="@{/webjars/popper.js/umd/popper.min.js}"></script>
+	<script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+
+	<link rel="stylesheet" 
+		th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
+	<link rel="stylesheet" 
+		th:href="@{/webjars/font-awesome/css/all.css}">
+	<link rel="stylesheet" 
+		th:href="@{/css/main.css}">
+</head>
+
+<body>
+	<nav class="navbar navbar-expand-sm bg-dark navbar-dark justify-content-center sticky-top">
+		<a class="navbar-brand" th:href="@{/book}">
+			<span><i class="fas fa-home" aria-hidden="true"></i></span>
+			<span>Mucci's bookshelf</span>
+		</a>
+		<ul class="navbar-nav">
+			<li>
+				<a class="nav-link" th:href="@{/book/list}">
+					<span><i class="fas fa-book" aria-hidden="true"></i></span>
+					<span>Show book list</span>
+				</a>
+			</li>
+			<li>
+				<a class="nav-link" th:href="@{/book/searchByIsbn}">
+					<span><i class="fas fa-search" aria-hidden="true"></i></span>
+					<span>Search book by isbn</span>
+				</a>
+			</li>
+			<li>
+				<a class="nav-link" th:href="@{/book/searchByTitle}">
+					<span><i class="fas fa-search" aria-hidden="true"></i></span>
+					<span>Search book by title</span>
+				</a>
+			</li>
+			<li sec:authorize="hasRole('ADMIN')">
+				<a class="nav-link" th:href="@{/book/new}">
+					<span><i class="fas fa-plus" aria-hidden="true"></i></span>
+					<span>Add new book</span>
+				</a>
+			</li>
+		</ul>
+		<form sec:authorize="isAuthenticated()" name="logout-form" th:action="@{/logout}" method="post">
+			<button type="submit" class="btn btn-dark text-white-50" name="logout-button">
+				<span><i class="fas fa-sign-out-alt" aria-hidden="true"></i></span>
+				<span>Logout</span>
+			</button>
+		</form>
+	</nav>
+	<footer th:fragment="fragment" class="site-footer font-small fixed-bottom">
+		<div class="footer-copyright text-center py-3">&copy; 2021 Copyright: Francesco Mucci</div>
+	</footer>
+</body>
