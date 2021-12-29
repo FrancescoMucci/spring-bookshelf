@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -17,16 +18,20 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableWebSecurity
 public class MyWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
+	private static final String[] STATIC_RESOURCES = {
+		"/webjars/**", 
+		"/css/**"
+	};
 	private static final String[] UNSECURED_URIS = {
-			URI_HOME, 
-			URI_LOGIN,
-			URI_BOOK_HOME, 
-			URI_BOOK_LIST, 
-			URI_BOOK_SEARCH_BY_ISBN, 
-			URI_BOOK_GET_BY_ISBN, 
-			URI_BOOK_SEARCH_BY_TITLE, 
-			URI_BOOK_GET_BY_TITLE, 
-			"/actuator/health"
+		URI_HOME, 
+		URI_LOGIN,
+		URI_BOOK_HOME, 
+		URI_BOOK_LIST, 
+		URI_BOOK_SEARCH_BY_ISBN, 
+		URI_BOOK_GET_BY_ISBN, 
+		URI_BOOK_SEARCH_BY_TITLE, 
+		URI_BOOK_GET_BY_TITLE, 
+		"/actuator/health"
 	};
 
 	private static final String ROLE_ADMIN = "ADMIN";
@@ -51,6 +56,11 @@ public class MyWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 			.withUser(adminUsername)
 			.password(passwordEncoder.encode(adminPassword))
 			.roles(ROLE_ADMIN);
+	}
+
+	@Override
+	public void configure(WebSecurity web) throws Exception {
+		web.ignoring().antMatchers(STATIC_RESOURCES);
 	}
 
 	@Override
