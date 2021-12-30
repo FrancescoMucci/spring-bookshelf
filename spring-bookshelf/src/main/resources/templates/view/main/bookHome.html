@@ -68,6 +68,31 @@
 				<h2>Welcome to my book library!</h2>
 				<p>Feel free to explore, but remember that you need administrator privileges to create, edit or delete books</p>
 			</header>
+			<div class="container my-5 text-center">
+				<form name="login-form" id="login-form"
+					th:action="@{/login}" method="post">
+					<div class="form-group">
+						<label id="username-label">User</label>
+						<input class="form-control form-control-lg text-center"
+							required type="text" name="username" placeholder="e.g. Admin"/>
+					</div>
+					<div class="form-group">
+						<label id="password-label">Password</label>
+						<input class="form-control form-control-lg text-center"
+							required type="password" name="password" placeholder="e.g. Password"/>
+					</div>
+					<div class="form-group pt-3">
+						<button class="btn btn-block btn-outline-dark" type="submit" name="submit-button">
+							<span><i class="fas fa-sign-in-alt" aria-hidden="true"></i></span>
+							<span>Login</span>
+						</button>
+					</div>
+					<div class="form-group pb-5">
+						<div th:if="${param.error}" id="authentication-error" class="alert alert-warning">Invalid user name or password</div>
+						<div th:if="${param.logout}" id="logout-message" class="alert alert-success">Logged out successfully</div>
+					</div>
+				</form>
+			</div>
 		</div>
 		<div sec:authorize="isAuthenticated()">
 			<header class="container my-5 text-center" id="header">

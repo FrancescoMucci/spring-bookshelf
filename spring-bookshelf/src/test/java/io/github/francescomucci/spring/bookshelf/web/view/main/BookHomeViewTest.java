@@ -1,11 +1,13 @@
 package io.github.francescomucci.spring.bookshelf.web.view.main;
 
 import static io.github.francescomucci.spring.bookshelf.web.BookWebControllerConstants.*;
+import static io.github.francescomucci.spring.bookshelf.web.security.WebSecurityTestingConstants.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
@@ -76,6 +78,154 @@ public class BookHomeViewTest {
 			.isEqualTo(
 				"Welcome back!" + "\n" +
 				"Feel free to explore, create, edit or delete books");
+	}
+
+	/* ---------- BookHomeView login form tests ---------- */
+
+	@Test
+	public void testBookHomeView_whenNotAuthenticated_shouldContainTheLoginForm() throws Exception {
+		when(bookWebController.getBookHomeView())
+			.thenReturn(VIEW_BOOK_HOME);
+		
+		HtmlPage bookHomeView = webClient.getPage(URI_BOOK_HOME);
+		HtmlForm loginForm = bookHomeView.getFormByName("login-form");
+		
+		assertThat(loginForm.getElementsByTagName("label").get(0).asText())
+			.isEqualTo("User");
+		assertThat(loginForm.getInputByName("username").getPlaceholder())
+			.isEqualTo("e.g. Admin");
+		
+		assertThat(loginForm.getElementsByTagName("label").get(1).asText())
+			.isEqualTo("Password");
+		assertThat(loginForm.getInputByName("password").getPlaceholder())
+			.isEqualTo("e.g. Password");
+		
+		assertThat(loginForm.getButtonByName("submit-button").asText())
+			.isEqualTo("Login");
+	}
+
+	@Test
+	@WithMockAdmin
+	public void testBookHomeView_whenAuthenticated_shouldNotContainTheLoginForm() throws Exception {
+		when(bookWebController.getBookHomeView())
+			.thenReturn(VIEW_BOOK_HOME);
+		
+		HtmlPage bookHomeView = webClient.getPage(URI_BOOK_HOME);
+		
+		assertThat(bookHomeView.getElementById("login-form"))
+			.isNull();
+	}
+
+	@Test
+	public void testBookHomeView_whenUserDoNotFillTheUserAndPressTheSubmitButton_shouldNotSuccesfullyLogin() throws Exception {
+		when(bookWebController.getBookHomeView())
+			.thenReturn(VIEW_BOOK_HOME);
+		
+		HtmlPage bookHomeView = webClient.getPage(URI_BOOK_HOME);
+		HtmlForm loginForm = bookHomeView.getFormByName("login-form");
+		
+		loginForm.getInputByName("password").setValueAttribute(VALID_PASSWORD);
+		loginForm.getButtonByName("submit-button").click();
+
+		assertThat(bookHomeView.getElementById("header").asText())
+			.contains("Welcome to my book library!");
+
+		verify(bookWebController, times(1))
+			.getBookHomeView();
+		verifyNoMoreInteractions(bookWebController);
+	}
+
+	@Test
+	public void testBookHomeView_whenUserDoNotFillThePasswordAndPressTheSubmitButton_shouldNotSuccesfullyLogin() throws Exception {
+		when(bookWebController.getBookHomeView())
+			.thenReturn(VIEW_BOOK_HOME);
+		
+		HtmlPage bookHomeView = webClient.getPage(URI_BOOK_HOME);
+		HtmlForm loginForm = bookHomeView.getFormByName("login-form");
+		
+		loginForm.getInputByName("username").setValueAttribute(VALID_USER_NAME);
+		loginForm.getButtonByName("submit-button").click();
+		
+		assertThat(bookHomeView.getElementById("header").asText())
+			.contains("Welcome to my book library!");
+		
+		verify(bookWebController, times(1))
+			.getBookHomeView();
+		verifyNoMoreInteractions(bookWebController);
+	}
+
+	@Test
+	public void testBookHomeView_whenUserFillTheFormWithInvalidUserAndPressTheSubmitButton_shouldShowAuthenticationErrorMessage() throws Exception {
+		when(bookWebController.getBookHomeView())
+			.thenReturn(VIEW_BOOK_HOME);
+		
+		HtmlPage bookHomeView = webClient.getPage(URI_BOOK_HOME);
+		HtmlForm loginForm = bookHomeView.getFormByName("login-form");
+		
+		loginForm.getInputByName("username").setValueAttribute(INVALID_USER_NAME);
+		loginForm.getInputByName("password").setValueAttribute(VALID_PASSWORD);
+		bookHomeView = loginForm.getButtonByName("submit-button").click();
+		
+		assertThat(bookHomeView.getElementById("authentication-error").asText())
+			.isEqualTo("Invalid user name or password");
+		
+		verify(bookWebController, times(2))
+			.getBookHomeView();
+		verifyNoMoreInteractions(bookWebController);
+	}
+
+	@Test
+	public void testBookHomeView_whenUserFillTheFormWithInvalidPasswordAndPressTheSubmitButton_shouldShowAuthenticationErrorMessage() throws Exception {
+		when(bookWebController.getBookHomeView())
+			.thenReturn(VIEW_BOOK_HOME);
+		
+		HtmlPage bookHomeView = webClient.getPage(URI_BOOK_HOME);
+		HtmlForm loginForm = bookHomeView.getFormByName("login-form");
+		
+		loginForm.getInputByName("username").setValueAttribute(VALID_USER_NAME);
+		loginForm.getInputByName("password").setValueAttribute(INVALID_PASSWORD);
+		bookHomeView = loginForm.getButtonByName("submit-button").click();
+		
+		assertThat(bookHomeView.getElementById("authentication-error").asText())
+			.isEqualTo("Invalid user name or password");
+		
+		verify(bookWebController, times(2))
+			.getBookHomeView();
+		verifyNoMoreInteractions(bookWebController);
+	}
+
+	@Test
+	public void testBookHomeView_whenUserFillTheFormWithValidInputsAndPressTheSubmitButton_shouldSuccesfullyLogin() throws Exception {
+		when(bookWebController.getBookHomeView())
+			.thenReturn(VIEW_BOOK_HOME);
+		
+		HtmlPage bookHomeView = webClient.getPage(URI_BOOK_HOME);
+		HtmlForm loginForm = bookHomeView.getFormByName("login-form");
+		
+		loginForm.getInputByName("username").setValueAttribute(VALID_USER_NAME);
+		loginForm.getInputByName("password").setValueAttribute(VALID_PASSWORD);
+		bookHomeView = loginForm.getButtonByName("submit-button").click();
+		
+		assertThat(bookHomeView.getElementById("header").asText())
+			.contains("Welcome back!");
+		verify(bookWebController, times(2))
+			.getBookHomeView();
+		verifyNoMoreInteractions(bookWebController);
+	}
+
+	@Test
+	@WithMockAdmin
+	public void testBookHomeView_afterLogoutRequest_shouldShowLogoutMessage() throws Exception {
+		when(bookWebController.getBookHomeView())
+			.thenReturn(VIEW_BOOK_HOME);
+		
+		HtmlPage bookHomeView = webClient.getPage(URI_BOOK_HOME);
+		bookHomeView = bookHomeView.getFormByName("logout-form")
+			.getButtonByName("logout-button")
+			.click();
+		
+		assertThat(bookHomeView.getElementById("logout-message").asText())
+			.isEqualTo("Logged out successfully");
 	}
 
 	/* ---------- BookHomeView layout tests ---------- */
