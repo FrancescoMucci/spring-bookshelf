@@ -4,11 +4,16 @@ import static io.github.francescomucci.spring.bookshelf.web.BookWebControllerCon
 import static io.github.francescomucci.spring.bookshelf.web.security.WebSecurityTestingConstants.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.within;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+
+import java.time.temporal.ChronoUnit;
+import java.util.Calendar;
+import java.util.Date;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -213,6 +218,8 @@ public class BookHomeViewTest {
 		verifyNoMoreInteractions(bookWebController);
 	}
 
+	/* ---------- BookHomeView logout message tests ---------- */
+
 	@Test
 	@WithMockAdmin
 	public void testBookHomeView_afterLogoutRequest_shouldShowLogoutMessage() throws Exception {
@@ -226,6 +233,121 @@ public class BookHomeViewTest {
 		
 		assertThat(bookHomeView.getElementById("logout-message").asText())
 			.isEqualTo("Logged out successfully");
+	}
+
+	/* ---------- BookHomeView remember-me check-box tests ---------- */
+
+	@Test
+	public void testBookHomeView_shouldContainRememberMeCheckboxInLoginForm() throws Exception {
+		when(bookWebController.getBookHomeView())
+			.thenReturn(VIEW_BOOK_HOME);
+		
+		HtmlPage bookHomeView = webClient.getPage(URI_BOOK_HOME);
+		HtmlForm loginForm = bookHomeView.getFormByName("login-form");
+		
+		assertThat(loginForm.getInputByName("remember-me").getTypeAttribute())
+			.isEqualTo("checkbox");
+		assertThat(loginForm.getElementsByTagName("label").get(2).asText())
+			.isEqualTo("Remember me");
+	}
+
+	@Test
+	public void testBookHomeView_whenLoginWithoutRememberMe_shouldNotSaveRememberMeCookie() throws Exception {
+		when(bookWebController.getBookHomeView())
+			.thenReturn(VIEW_BOOK_HOME);
+		
+		HtmlPage bookHomeView = webClient.getPage(URI_BOOK_HOME);
+		HtmlForm loginForm = bookHomeView.getFormByName("login-form");
+		
+		loginForm.getInputByName("username").setValueAttribute(VALID_USER_NAME);
+		loginForm.getInputByName("password").setValueAttribute(VALID_PASSWORD);
+		bookHomeView = loginForm.getButtonByName("submit-button").click();
+		
+		assertThat(webClient.getCookieManager().getCookie("spring-bookshelf-remember-me"))
+			.isNull();
+	}
+
+	@Test
+	public void testBookHomeView_whenFailedLoginWithRememberMe_shouldNotSaveRememberMeCookie() throws Exception {
+		when(bookWebController.getBookHomeView())
+			.thenReturn(VIEW_BOOK_HOME);
+		
+		HtmlPage bookHomeView = webClient.getPage(URI_BOOK_HOME);
+		HtmlForm loginForm = bookHomeView.getFormByName("login-form");
+		
+		loginForm.getInputByName("username").setValueAttribute(VALID_USER_NAME);
+		loginForm.getInputByName("password").setValueAttribute(INVALID_PASSWORD);
+		loginForm.getInputByName("remember-me").click();
+		bookHomeView = loginForm.getButtonByName("submit-button").click();
+		assertThat(bookHomeView.getElementById("header").asText())
+			.contains("Welcome to my book library");
+		
+		assertThat(webClient.getCookieManager().getCookie("spring-bookshelf-remember-me"))
+			.isNull();
+	}
+
+	@Test
+	public void testBookHomeView_whenSuccessfulLoginWithRememberMe_shouldSaveRememberMeCookie() throws Exception {
+		when(bookWebController.getBookHomeView())
+			.thenReturn(VIEW_BOOK_HOME);
+		
+		HtmlPage bookHomeView = webClient.getPage(URI_BOOK_HOME);
+		HtmlForm loginForm = bookHomeView.getFormByName("login-form");
+		
+		loginForm.getInputByName("username").setValueAttribute(VALID_USER_NAME);
+		loginForm.getInputByName("password").setValueAttribute(VALID_PASSWORD);
+		loginForm.getInputByName("remember-me").click();
+		bookHomeView = loginForm.getButtonByName("submit-button").click();
+		assertThat(bookHomeView.getElementById("header").asText())
+			.contains("Welcome back!");
+		
+		assertThat(webClient.getCookieManager().getCookie("spring-bookshelf-remember-me"))
+			.isNotNull();
+	}
+
+	@Test
+	public void testBookHomeView_afterSuccessfulLoginWithRememberMe_cookieShouldExpireAfter30Minutes() throws Exception {
+		when(bookWebController.getBookHomeView())
+			.thenReturn(VIEW_BOOK_HOME);
+		
+		HtmlPage bookHomeView = webClient.getPage(URI_BOOK_HOME);
+		HtmlForm loginForm = bookHomeView.getFormByName("login-form");
+		
+		loginForm.getInputByName("username").setValueAttribute(VALID_USER_NAME);
+		loginForm.getInputByName("password").setValueAttribute(VALID_PASSWORD);
+		loginForm.getInputByName("remember-me").click();
+		bookHomeView = loginForm.getButtonByName("submit-button").click();
+		
+		Date expires = webClient.getCookieManager()
+			.getCookie("spring-bookshelf-remember-me")
+			.getExpires();
+		
+		Calendar expectedExpires = Calendar.getInstance();
+		expectedExpires.add(Calendar.MINUTE, 30);
+		
+		assertThat(expires.toInstant())
+			.isCloseTo(expectedExpires.toInstant(), within(1, ChronoUnit.SECONDS));
+	}
+
+	@Test
+	public void testBookHome_afterSuccessfulLoginWithRememberMe_logoutRequestshouldDeleteRememeberMeCookies() throws Exception {
+		when(bookWebController.getBookHomeView())
+			.thenReturn(VIEW_BOOK_HOME);
+		
+		HtmlPage bookHomeView = webClient.getPage(URI_BOOK_HOME);
+		HtmlForm loginForm = bookHomeView.getFormByName("login-form");
+		
+		loginForm.getInputByName("username").setValueAttribute(VALID_USER_NAME);
+		loginForm.getInputByName("password").setValueAttribute(VALID_PASSWORD);
+		loginForm.getInputByName("remember-me").click();
+		bookHomeView = loginForm.getButtonByName("submit-button").click();
+		
+		bookHomeView.getFormByName("logout-form")
+			.getButtonByName("logout-button")
+			.click();
+		
+		assertThat(webClient.getCookieManager().getCookie("spring-bookshelf-remember-me"))
+			.isNull();
 	}
 
 	/* ---------- BookHomeView layout tests ---------- */

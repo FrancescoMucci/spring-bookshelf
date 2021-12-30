@@ -36,6 +36,9 @@ public class MyWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	private static final String ROLE_ADMIN = "ADMIN";
 
+	private static final String REMEMBER_ME_TOKEN = "spring-bookshelf-remember-me";
+	private static final int TOKEN_VALIDITY_SECONDS = 1800; // 30 minutes
+
 	@Value("${admin.username:Admin}")
 	private String adminUsername;
 
@@ -71,6 +74,9 @@ public class MyWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.anyRequest().hasRole(ROLE_ADMIN)
 			.and().formLogin()
 				.loginPage(URI_LOGIN)
-				.defaultSuccessUrl(URI_BOOK_HOME, true);
+				.defaultSuccessUrl(URI_BOOK_HOME, true)
+			.and().rememberMe()
+				.rememberMeCookieName(REMEMBER_ME_TOKEN)
+				.tokenValiditySeconds(TOKEN_VALIDITY_SECONDS);
 	}
 }
