@@ -23,7 +23,7 @@ public class TemporaryBookWebController implements BookWebController {
 
 	@Override
 	public String getBookListView(Model model) {
-		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
+		return VIEW_BOOK_LIST;
 	}
 
 	@Override

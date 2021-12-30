@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org">
+
+<body>
+	<nav th:fragment="fragment" class="navbar navbar-expand-sm bg-dark navbar-dark justify-content-center sticky-top">
+		<a class="navbar-brand" th:href="@{/book}">
+			<span><i class="fas fa-home" aria-hidden="true"></i></span>
+			<span>Mucci's bookshelf</span>
+		</a>
+		<ul class="navbar-nav">
+			<li th:replace="shared/fragment/layout/parametric/navItem::fragment('/book/list', 'Show book list', 'fa-book')">
+				<a>Placeholder navigation item for showing the book list</a>
+			</li>
+			<li th:replace="shared/fragment/layout/parametric/navItem::fragment('/book/searchByIsbn', 'Search book by isbn', 'fa-search')">
+				<a>Placeholder navigation item for showing the searching a book</a>
+			</li>
+			<li th:replace="shared/fragment/layout/parametric/navItem::fragment('/book/searchByTitle', 'Search book by title', 'fa-search')">
+				<a>Placeholder navigation item for showing the searching a book</a>
+			</li>
+			<li sec:authorize="hasRole('ADMIN')" th:replace="shared/fragment/layout/parametric/navItem::fragment('/book/new', 'Add new book', 'fa-plus')">
+				<a>Placeholder navigation item for adding a new book</a>
+			</li>
+		</ul>
+		<form sec:authorize="isAuthenticated()" name="logout-form" th:action="@{/logout}" method="post">
+			<button type="submit" class="btn btn-dark text-white-50" name="logout-button">
+				<span><i class="fas fa-sign-out-alt" aria-hidden="true"></i></span>
+				<span>Logout</span>
+			</button>
+		</form>
+	</nav>
+</body>
+
+</html>
