@@ -23,11 +23,13 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlFooter;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
+import com.gargoylesoftware.htmlunit.html.HtmlHeader;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import io.github.francescomucci.spring.bookshelf.model.dto.BookData;
 import io.github.francescomucci.spring.bookshelf.web.BookWebController;
 import io.github.francescomucci.spring.bookshelf.web.security.WithMockAdmin;
+import io.github.francescomucci.spring.bookshelf.web.view.BookViewTestingHelperMethods;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(controllers = BookWebController.class)
@@ -43,6 +45,37 @@ public class BookHomeViewTest {
 	public void setup() {
 		webClient.setCssErrorHandler(new SilentCssErrorHandler());
 		webClient.getCookieManager().clearCookies();
+	}
+
+	/* ---------- BookHomeView header message tests ---------- */
+
+	@Test
+	public void testBookHomeView_whenNotAuthenticated_shouldContainAWelcomeMessageForAnonymousUsersInTheHeader() throws Exception {
+		when(bookWebController.getBookHomeView())
+			.thenReturn(VIEW_BOOK_HOME);
+		
+		HtmlPage bookHomeView = webClient.getPage(URI_BOOK_HOME);
+		HtmlHeader header = (HtmlHeader) bookHomeView.getElementsByTagName("header").get(0);
+		
+		assertThat(BookViewTestingHelperMethods.removeWindowsCR(header.asText()))
+			.isEqualTo(
+				"Welcome to my book library!" + "\n" +
+				"Feel free to explore, but remember that you need administrator privileges to create, edit or delete books");
+	}
+
+	@Test
+	@WithMockAdmin
+	public void testBookHomeView_whenAuthenticated_shouldContainAWelcomeMessageForAdminInTheHeader() throws Exception {
+		when(bookWebController.getBookHomeView())
+			.thenReturn(VIEW_BOOK_HOME);
+		
+		HtmlPage bookHomeView = webClient.getPage(URI_BOOK_HOME);
+		HtmlHeader header = (HtmlHeader) bookHomeView.getElementsByTagName("header").get(0);
+		
+		assertThat(BookViewTestingHelperMethods.removeWindowsCR(header.asText()))
+			.isEqualTo(
+				"Welcome back!" + "\n" +
+				"Feel free to explore, create, edit or delete books");
 	}
 
 	/* ---------- BookHomeView layout tests ---------- */

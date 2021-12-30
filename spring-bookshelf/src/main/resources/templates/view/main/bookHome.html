@@ -61,6 +61,22 @@
 			</button>
 		</form>
 	</nav>
+
+	<section class="pb-3" >
+		<div sec:authorize="!isAuthenticated()">
+			<header class="container my-5 text-center" id="header">
+				<h2>Welcome to my book library!</h2>
+				<p>Feel free to explore, but remember that you need administrator privileges to create, edit or delete books</p>
+			</header>
+		</div>
+		<div sec:authorize="isAuthenticated()">
+			<header class="container my-5 text-center" id="header">
+				<h2>Welcome back!</h2>
+				<p>Feel free to explore, create, edit or delete books</p>
+			</header>
+		</div>
+	</section>
+
 	<footer th:fragment="fragment" class="site-footer font-small fixed-bottom">
 		<div class="footer-copyright text-center py-3">&copy; 2021 Copyright: Francesco Mucci</div>
 	</footer>
