@@ -1,6 +1,8 @@
 package io.github.francescomucci.spring.bookshelf.web.view.main;
 
+import static io.github.francescomucci.spring.bookshelf.BookTestingConstants.*;
 import static io.github.francescomucci.spring.bookshelf.web.BookWebControllerConstants.*;
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.AdditionalAnswers.answer;
@@ -8,6 +10,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -26,7 +30,9 @@ import com.gargoylesoftware.htmlunit.html.HtmlFooter;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlHeader;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.html.HtmlTable;
 
+import io.github.francescomucci.spring.bookshelf.model.Book;
 import io.github.francescomucci.spring.bookshelf.model.dto.BookData;
 import io.github.francescomucci.spring.bookshelf.web.BookWebController;
 import io.github.francescomucci.spring.bookshelf.web.security.WithMockAdmin;
@@ -121,6 +127,72 @@ public class BookListViewTest {
 				"Try to add some book to the database",
 				"Use the link Add new book in the navigation bar"
 		);
+	}
+
+	/* ---------- BookListView book table layout and text content tests ---------- */
+
+	@Test
+	public void testBookListView_whenAnonymousUserAndDbIsNotEmpty_shouldShowBooksInATableWithoutEditAndDeleteColumns() throws Exception {
+		List<Book> bookList = asList(new Book(VALID_ISBN13, TITLE, AUTHORS_LIST), new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2));
+		when(bookWebController.getBookListView(any(Model.class)))
+			.thenAnswer(answer((Model model)-> {
+				model.addAttribute(MODEL_BOOKS, bookList);
+				return VIEW_BOOK_LIST;
+			}
+		));
+		
+		HtmlPage bookListView = webClient.getPage(URI_BOOK_LIST);
+		HtmlTable booksTable = bookListView.getHtmlElementById("book-table");
+		
+		assertThat(bookListView.getElementById("book-table-fragment"))
+			.isNotNull();
+		assertThat(BookViewTestingHelperMethods.removeWindowsCR(booksTable.asText()))
+			.isEqualTo(
+				"ISBN-13"      + "	" + "Title" + "	" + "Authors"      + "\n" +
+				VALID_ISBN13   + "	" + TITLE   + "	" + AUTHORS_LIST   + "\n" +
+				VALID_ISBN13_2 + "	" + TITLE_2 + "	" + AUTHORS_LIST_2
+		);
+	}
+
+	@Test
+	@WithMockAdmin
+	public void testBookListView_whenAdminAndDbIsNotEmpty_shouldShowBooksInATableWithEditAndDeleteColumns() throws Exception {
+		List<Book> bookList = asList(new Book(VALID_ISBN13, TITLE, AUTHORS_LIST), new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2));
+		when(bookWebController.getBookListView(any(Model.class)))
+			.thenAnswer(answer((Model model)-> {
+				model.addAttribute(MODEL_BOOKS, bookList);
+				return VIEW_BOOK_LIST;
+			}
+		));
+		
+		HtmlPage bookListView = webClient.getPage(URI_BOOK_LIST);
+		HtmlTable booksTable = bookListView.getHtmlElementById("book-table");
+		
+		assertThat(bookListView.getElementById("book-table-fragment"))
+			.isNotNull();
+		assertThat(BookViewTestingHelperMethods.removeWindowsCR(booksTable.asText()))
+			.isEqualTo(
+				"ISBN-13"      + "	" + "Title" + "	" + "Authors"      + "	" + "Edit book" + "	" + "Delete book" + "\n" +
+				VALID_ISBN13   + "	" + TITLE   + "	" + AUTHORS_LIST   + "	" + "Edit"      + "	" + "Delete"      + "\n" +
+				VALID_ISBN13_2 + "	" + TITLE_2 + "	" + AUTHORS_LIST_2 + "	" + "Edit"      + "	" + "Delete"
+		);
+	}
+
+	@Test
+	public void testBookListView_whenDbIsEmpty_shouldNotContainTheBookTable() throws Exception {
+		when(bookWebController.getBookListView(any(Model.class)))
+			.thenAnswer(answer((Model model)-> {
+				model.addAttribute(MODEL_EMPTY_MESSAGE, MESSAGE_EMPTY_DB);
+				return VIEW_BOOK_LIST;
+			}
+		));
+		
+		HtmlPage bookListView = webClient.getPage(URI_BOOK_LIST);
+		
+		assertThat(bookListView.getElementById("book-table-fragment"))
+			.isNull();
+		assertThat(bookListView.getElementsByTagName("table"))
+			.isEmpty();
 	}
 
 	/* ---------- BookListView layout tests ---------- */

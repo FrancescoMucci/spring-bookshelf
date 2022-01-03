@@ -1,12 +1,16 @@
 package io.github.francescomucci.spring.bookshelf.web;
 
 import static io.github.francescomucci.spring.bookshelf.web.BookWebControllerConstants.*;
+import static java.util.Arrays.asList;
+
+import java.util.List;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import io.github.francescomucci.spring.bookshelf.model.Book;
 import io.github.francescomucci.spring.bookshelf.model.dto.BookData;
 import io.github.francescomucci.spring.bookshelf.model.dto.IsbnData;
 
@@ -24,6 +28,10 @@ public class TemporaryBookWebController implements BookWebController {
 
 	@Override
 	public String getBookListView(Model model) {
+		List<Book> bookList = asList(
+			new Book(9788804395942L, "Foundation",  asList("Isaac Asimov")), 
+			new Book(9781401238964L, "Watchmen", asList("Alan Moore", "Dave Gibbons")));
+		model.addAttribute(MODEL_BOOKS, bookList);
 		return VIEW_BOOK_LIST;
 	}
 

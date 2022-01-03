@@ -28,6 +28,31 @@
 				'Book list table',
 				'This table contains all the book in the database')">
 			</header>
+			<div id="book-table-fragment">
+				<div class="container my-5 pb-5">
+					<table class="table table-striped table-bordered text-center" id="book-table"
+						aria-label="Book table">
+						<thead>
+							<tr class="thead-dark align-middle">
+								<th colspan="2" scope="col">ISBN-13</th>
+								<th colspan="2" scope="col">Title</th>
+								<th colspan="2" scope="col">Authors</th>
+								<th sec:authorize="hasRole('ADMIN')" colspan="2" scope="col">Edit book</th>
+								<th sec:authorize="hasRole('ADMIN')" colspan="2" scope="col">Delete book</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="book : ${books}">
+								<td class="align-middle" colspan="2" th:text="${book.isbn}">Placeholder for ISBN</td>
+								<td class="align-middle" colspan="2" th:text="${book.title}">Placeholder for title</td>
+								<td class="align-middle" colspan="2" th:text="${book.authors}">Placeholder for authors</td>
+								<td sec:authorize="hasRole('ADMIN')" colspan="2">Edit</td>
+								<td sec:authorize="hasRole('ADMIN')" colspan="2">Delete</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
 		</div>
 	</section>
 </body>
