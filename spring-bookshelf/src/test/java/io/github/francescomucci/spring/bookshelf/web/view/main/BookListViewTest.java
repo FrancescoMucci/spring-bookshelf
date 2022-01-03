@@ -1,9 +1,9 @@
 package io.github.francescomucci.spring.bookshelf.web.view.main;
 
 import static io.github.francescomucci.spring.bookshelf.web.BookWebControllerConstants.*;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.AdditionalAnswers.answer;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -24,11 +24,13 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlFooter;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
+import com.gargoylesoftware.htmlunit.html.HtmlHeader;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import io.github.francescomucci.spring.bookshelf.model.dto.BookData;
 import io.github.francescomucci.spring.bookshelf.web.BookWebController;
 import io.github.francescomucci.spring.bookshelf.web.security.WithMockAdmin;
+import io.github.francescomucci.spring.bookshelf.web.view.BookViewTestingHelperMethods;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(controllers = BookWebController.class)
@@ -44,6 +46,40 @@ public class BookListViewTest {
 	public void setup() {
 		webClient.setCssErrorHandler(new SilentCssErrorHandler());
 		webClient.getCookieManager().clearCookies();
+	}
+
+	/* ---------- BookListView header message tests ---------- */
+
+	@Test
+	public void testBookListView_whenDbIsEmpty_shouldContainAWarningMessageInTheHeader() throws Exception {
+		when(bookWebController.getBookListView(any(Model.class)))
+			.thenAnswer(answer((Model model)-> {
+				model.addAttribute(MODEL_EMPTY_MESSAGE, MESSAGE_EMPTY_DB);
+				return VIEW_BOOK_LIST;
+			}
+		));
+		
+		HtmlPage bookListView = webClient.getPage(URI_BOOK_LIST);
+		HtmlHeader header = (HtmlHeader) bookListView.getElementsByTagName("header").get(0);
+		
+		assertThat(BookViewTestingHelperMethods.removeWindowsCR(header.asText()))
+			.isEqualTo(
+				"Empty database" + "\n" +
+				MESSAGE_EMPTY_DB);
+	}
+
+	@Test
+	public void testBookListView_whenDbIsNotEmpty_shouldContainAnInformativeTextInTheHeader() throws Exception {
+		when(bookWebController.getBookListView(any(Model.class)))
+			.thenReturn(VIEW_BOOK_LIST);
+		
+		HtmlPage bookListView = webClient.getPage(URI_BOOK_LIST);
+		HtmlHeader header = (HtmlHeader) bookListView.getElementsByTagName("header").get(0);
+		
+		assertThat(BookViewTestingHelperMethods.removeWindowsCR(header.asText()))
+			.isEqualTo(
+				"Book list table" + "\n" +
+				"This table contains all the book in the database");
 	}
 
 	/* ---------- BookListView layout tests ---------- */

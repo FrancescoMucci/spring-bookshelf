@@ -5,6 +5,7 @@ import static io.github.francescomucci.spring.bookshelf.web.BookWebControllerCon
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import io.github.francescomucci.spring.bookshelf.model.dto.BookData;
 import io.github.francescomucci.spring.bookshelf.model.dto.IsbnData;
@@ -23,6 +24,13 @@ public class TemporaryBookWebController implements BookWebController {
 
 	@Override
 	public String getBookListView(Model model) {
+		return VIEW_BOOK_LIST;
+	}
+
+	/* Temporary web end-point only to manual test bookList view esthetics when DB is empty */
+	@GetMapping(URI_BOOK_LIST + "/empty")
+	public String getEmptyBookListView(Model model) {
+		model.addAttribute(MODEL_EMPTY_MESSAGE, MESSAGE_EMPTY_DB);
 		return VIEW_BOOK_LIST;
 	}
 

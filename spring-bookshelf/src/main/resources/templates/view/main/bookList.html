@@ -8,6 +8,15 @@
 
 <body>
 	<section>
+		<div th:if="${empty}">
+			<header th:replace="shared/fragment/parametric/header::fragment('Empty database', ${empty})"></header>
+		</div>
+		<div th:unless="${empty}">
+			<header th:replace="shared/fragment/parametric/header::fragment(
+				'Book list table',
+				'This table contains all the book in the database')">
+			</header>
+		</div>
 	</section>
 </body>
 </html>
