@@ -82,6 +82,47 @@ public class BookListViewTest {
 				"This table contains all the book in the database");
 	}
 
+	/* ---------- BookListView empty DB advice tests ---------- */
+
+	@Test
+	@WithMockAdmin
+	public void testBookListView_whenAdminAndDbIsEmpty_shouldContainSomeAdvice() throws Exception {
+		when(bookWebController.getBookListView(any(Model.class)))
+			.thenAnswer(answer((Model model)-> {
+				model.addAttribute(MODEL_EMPTY_MESSAGE, MESSAGE_EMPTY_DB);
+				return VIEW_BOOK_LIST;
+			}
+		));
+		
+		HtmlPage bookListView = webClient.getPage(URI_BOOK_LIST);
+		
+		assertThat(bookListView.asText())
+			.contains(
+				"Advice",
+				"Try to add some book to the database",
+				"Use the link Add new book in the navigation bar"
+		);
+	}
+
+	@Test
+	public void testBookListView_whenAnonymousUserAndDbIsEmpty_shouldNotContainAnyAdvice() throws Exception {
+		when(bookWebController.getBookListView(any(Model.class)))
+			.thenAnswer(answer((Model model)-> {
+				model.addAttribute(MODEL_EMPTY_MESSAGE, MESSAGE_EMPTY_DB);
+				return VIEW_BOOK_LIST;
+			}
+		));
+		
+		HtmlPage bookListView = webClient.getPage(URI_BOOK_LIST);
+		
+		assertThat(bookListView.asText())
+			.doesNotContain(
+				"Advice",
+				"Try to add some book to the database",
+				"Use the link Add new book in the navigation bar"
+		);
+	}
+
 	/* ---------- BookListView layout tests ---------- */
 
 	@Test
