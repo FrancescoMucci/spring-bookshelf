@@ -9,6 +9,7 @@ import static org.mockito.AdditionalAnswers.answer;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -277,7 +278,7 @@ public class BookListViewTest {
 			
 			HtmlPage bookListView = webClient.getPage(URI_BOOK_LIST);
 			
-			bookListView.getElementById("getDeleteBookDialogButton-" + isbn).click();
+			bookListView.getHtmlElementById("getDeleteBookDialogButton-" + isbn).click();
 			webClient.waitForBackgroundJavaScript(1000);
 			
 			assertThat(bookListView.asText())
@@ -347,6 +348,108 @@ public class BookListViewTest {
 				.doesNotContain(deleteDialogContent);
 			
 		}
+	}
+
+	/* ---------- BookListView delete dialog tests ---------- */
+
+	@Test
+	@WithMockAdmin
+	public void testBookListView_whenDeleteDialogCloseButtonIsPressed_thenDialogIsClosedAndNoBookDeleted() throws Exception {
+		Book book = new Book(VALID_ISBN13, TITLE, AUTHORS_LIST);
+		List<Book> bookList = asList(
+			new Book(VALID_ISBN13, TITLE, AUTHORS_LIST),
+			new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2));
+		when(bookWebController.getBookListView(any(Model.class)))
+			.thenAnswer(answer((Model model)-> {
+				model.addAttribute(MODEL_BOOKS, bookList);
+				return VIEW_BOOK_LIST;
+			}
+		));
+		
+		String isbn = Long.toString(book.getIsbn());
+		List<String> deleteDialogContent = asList(
+			"Do you really want to delete this book?",
+			isbn + " - " + book.getTitle() + " - " + book.getAuthors(),
+			"No", "Yes, delete"
+		);
+		
+		HtmlPage bookListView = webClient.getPage(URI_BOOK_LIST);
+		
+		bookListView.getHtmlElementById("getDeleteBookDialogButton-" + isbn).click();
+		webClient.waitForBackgroundJavaScript(1000);
+		
+		bookListView.getHtmlElementById("deleteBookDialog-" + isbn + "-closeButton").click();
+		webClient.waitForBackgroundJavaScript(1000);
+		
+		assertThat(bookListView.asText())
+			.doesNotContain(deleteDialogContent);
+		verify(bookWebController, never())
+			.postDeleteBook(eq(new IsbnData(isbn)), any(BindingResult.class));
+	}
+
+	@Test
+	@WithMockAdmin
+	public void testBookListView_whenDeleteDialogNoButtonIsPressed_thenDialogIsClosedAndNoBookDeleted() throws Exception {
+		Book book = new Book(VALID_ISBN13, TITLE, AUTHORS_LIST);
+		List<Book> bookList = asList(
+			new Book(VALID_ISBN13, TITLE, AUTHORS_LIST),
+			new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2));
+		when(bookWebController.getBookListView(any(Model.class)))
+			.thenAnswer(answer((Model model)-> {
+				model.addAttribute(MODEL_BOOKS, bookList);
+				return VIEW_BOOK_LIST;
+			}
+		));
+		
+		String isbn = Long.toString(book.getIsbn());
+		List<String> deleteDialogContent = asList(
+			"Do you really want to delete this book?",
+			isbn + " - " + book.getTitle() + " - " + book.getAuthors(),
+			"No", "Yes, delete"
+		);
+		
+		HtmlPage bookListView = webClient.getPage(URI_BOOK_LIST);
+		
+		bookListView.getHtmlElementById("getDeleteBookDialogButton-" + isbn).click();
+		webClient.waitForBackgroundJavaScript(1000);
+		
+		bookListView.getHtmlElementById("deleteBookDialog-" + isbn + "-noButton").click();
+		webClient.waitForBackgroundJavaScript(1000);
+		
+		assertThat(bookListView.asText())
+			.doesNotContain(deleteDialogContent);
+		verify(bookWebController, never())
+			.postDeleteBook(eq(new IsbnData(isbn)), any(BindingResult.class));
+	}
+
+	@Test
+	@WithMockAdmin
+	public void testBookListView_whenDeleteDialogYesButtonIsPressed_thenChoosenBookIsDeleted() throws Exception {
+		Book book = new Book(VALID_ISBN13, TITLE, AUTHORS_LIST);
+		List<Book> bookList = asList(
+			new Book(VALID_ISBN13, TITLE, AUTHORS_LIST),
+			new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2));
+		when(bookWebController.getBookListView(any(Model.class)))
+			.thenAnswer(answer((Model model)-> {
+				model.addAttribute(MODEL_BOOKS, bookList);
+				return VIEW_BOOK_LIST;
+			}
+		));
+		when(bookWebController.postDeleteBook(any(IsbnData.class), any(BindingResult.class)))
+			.thenReturn(VIEW_BOOK_LIST);
+		
+		String isbn = Long.toString(book.getIsbn());
+		
+		HtmlPage bookListView = webClient.getPage(URI_BOOK_LIST);
+		
+		bookListView.getHtmlElementById("getDeleteBookDialogButton-" + isbn).click();
+		webClient.waitForBackgroundJavaScript(1000);
+		
+		bookListView.getHtmlElementById("deleteBookDialog-" + isbn + "-yesButton").click();
+		webClient.waitForBackgroundJavaScript(1000);
+		
+		verify(bookWebController)
+			.postDeleteBook(eq(new IsbnData(isbn)), any(BindingResult.class));
 	}
 
 	/* ---------- BookListView layout tests ---------- */
