@@ -52,10 +52,31 @@
 										<span>Edit</span>
 									</a>
 								</td>
-								<td sec:authorize="hasRole('ADMIN')" colspan="2">Delete</td>
+								<td sec:authorize="hasRole('ADMIN')" class="align-middle" colspan="2">
+									<button type="button" th:id="|getDeleteBookDialogButton-${book.isbn}|" class="btn btn-link text-muted"
+										data-toggle="modal" th:data-row=${book} th:data-target="|#deleteBookDialog-${book.isbn}|">
+										<span><i class="fas fa-trash-alt" aria-hidden="true"></i></span>
+										<span>Delete</span>
+									</button>
+								</td>
 							</tr>
 						</tbody>
 					</table>
+				</div>
+				<div sec:authorize="hasRole('ADMIN')" th:each="book : ${books}"
+					 class="modal fade" th:id="|deleteBookDialog-${book.isbn}|">
+					<div class="modal-dialog modal-dialog-centered">
+						<div class="modal-content">
+							<div class="modal-header bg-dark text-light">
+								<h5 class="modal-title">Do you really want to delete this book?</h5>
+							</div>
+							<div class="modal-body" th:text="|${book.isbn} - ${book.title} - ${book.authors}|">Placeholder for book data</div>
+							<div class="modal-footer">
+								<span>No</span>
+								<span>Yes, delete</span>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>

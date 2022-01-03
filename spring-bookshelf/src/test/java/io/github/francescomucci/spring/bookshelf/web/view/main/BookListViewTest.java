@@ -250,6 +250,105 @@ public class BookListViewTest {
 			.isInstanceOf(ElementNotFoundException.class);
 	}
 
+	/* ---------- BookListView book table get delete dialog button tests---------- */
+
+	@Test
+	@WithMockAdmin
+	public void testBookListView_whenAdminAndDbIsNotEmpty_shouldProvideAButtonToOpenTheDeleteDialogForEachBookInTheTable() throws Exception {
+		List<Book> bookList = asList(
+			new Book(VALID_ISBN13, TITLE, AUTHORS_LIST), 
+			new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2)
+		);
+		when(bookWebController.getBookListView(any(Model.class)))
+			.thenAnswer(answer((Model model)-> {
+				model.addAttribute(MODEL_BOOKS, bookList);
+				return VIEW_BOOK_LIST;
+			}
+		));
+		
+		for (Book book : bookList) {
+			
+			String isbn = Long.toString(book.getIsbn());
+			List<String> deleteDialogContent = asList(
+				"Do you really want to delete this book?",
+				isbn + " - " + book.getTitle() + " - " + book.getAuthors(),
+				"No", 
+				"Yes, delete");
+			
+			HtmlPage bookListView = webClient.getPage(URI_BOOK_LIST);
+			
+			bookListView.getElementById("getDeleteBookDialogButton-" + isbn).click();
+			webClient.waitForBackgroundJavaScript(1000);
+			
+			assertThat(bookListView.asText())
+				.contains(deleteDialogContent);
+			
+		}
+	}
+
+	@Test
+	@WithMockAdmin
+	public void testBookListView_whenAdminAndDbIsNotEmptyButDeleteButtonNotPressed_shouldNotShowTheDeleteDialog() throws Exception {
+		List<Book> bookList = asList(
+			new Book(VALID_ISBN13, TITLE, AUTHORS_LIST), 
+			new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2)
+		);
+		when(bookWebController.getBookListView(any(Model.class)))
+			.thenAnswer(answer((Model model)-> {
+				model.addAttribute(MODEL_BOOKS, bookList);
+				return VIEW_BOOK_LIST;
+			}
+		));
+		
+		for (Book book : bookList) {
+			
+			List<String> deleteDialogContent = asList(
+				"Do you really want to delete this book?",
+				book.getIsbn() + " - " + book.getTitle() + " - " + book.getAuthors(),
+				"No", 
+				"Yes, delete");
+			
+			HtmlPage bookListView = webClient.getPage(URI_BOOK_LIST);
+			
+			assertThat(bookListView.asText())
+				.doesNotContain(deleteDialogContent);
+		}
+	}
+
+	@Test
+	public void testBookListView_whenAnonymousUserAndDbIsNotEmpty_shouldNotProvideAButtonToOpenTheDeleteDialogForEachBookInTheTable() throws Exception {
+		List<Book> bookList = asList(
+			new Book(VALID_ISBN13, TITLE, AUTHORS_LIST), 
+			new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2)
+		);
+		when(bookWebController.getBookListView(any(Model.class)))
+			.thenAnswer(answer((Model model)-> {
+				model.addAttribute(MODEL_BOOKS, bookList);
+				return VIEW_BOOK_LIST;
+			}
+		));
+		
+		for (Book book : bookList) {
+			
+			String isbn = Long.toString(book.getIsbn());
+			List<String> deleteDialogContent = asList(
+				"Do you really want to delete this book?",
+				isbn + " - " + book.getTitle() + " - " + book.getAuthors(),
+				"No", 
+				"Yes, delete");
+			
+			HtmlPage bookListView = webClient.getPage(URI_BOOK_LIST);
+			
+			assertThat(bookListView.getElementById("getDeleteBookDialogButton-" + isbn))
+				.isNull();
+			assertThat(bookListView.getElementById("deleteBookDialog-" + isbn))
+				.isNull();
+			assertThat(bookListView.asText())
+				.doesNotContain(deleteDialogContent);
+			
+		}
+	}
+
 	/* ---------- BookListView layout tests ---------- */
 
 	@Test
