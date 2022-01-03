@@ -7,6 +7,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.AdditionalAnswers.answer;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -16,11 +18,13 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.SilentCssErrorHandler;
@@ -33,6 +37,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
 
 import io.github.francescomucci.spring.bookshelf.model.Book;
+import io.github.francescomucci.spring.bookshelf.model.dto.IsbnData;
 import io.github.francescomucci.spring.bookshelf.model.dto.BookData;
 import io.github.francescomucci.spring.bookshelf.web.BookWebController;
 import io.github.francescomucci.spring.bookshelf.web.security.WithMockAdmin;
@@ -173,8 +178,8 @@ public class BookListViewTest {
 		assertThat(BookViewTestingHelperMethods.removeWindowsCR(booksTable.asText()))
 			.isEqualTo(
 				"ISBN-13"      + "	" + "Title" + "	" + "Authors"      + "	" + "Edit book" + "	" + "Delete book" + "\n" +
-				VALID_ISBN13   + "	" + TITLE   + "	" + AUTHORS_LIST   + "	" + "Edit"      + "	" + "Delete"      + "\n" +
-				VALID_ISBN13_2 + "	" + TITLE_2 + "	" + AUTHORS_LIST_2 + "	" + "Edit"      + "	" + "Delete"
+				VALID_ISBN13   + "	" + TITLE   + "	" + AUTHORS_LIST   + "	" + " Edit "      + "	" + "Delete"      + "\n" +
+				VALID_ISBN13_2 + "	" + TITLE_2 + "	" + AUTHORS_LIST_2 + "	" + " Edit "      + "	" + "Delete"
 		);
 	}
 
@@ -193,6 +198,56 @@ public class BookListViewTest {
 			.isNull();
 		assertThat(bookListView.getElementsByTagName("table"))
 			.isEmpty();
+	}
+
+	/* ---------- BookListView book table edit link tests ---------- */
+
+	@Test
+	@WithMockAdmin
+	public void testBookListView_whenAdminAndDbIsNotEmpty_shouldProvideAnEditLinkForEachBookInTheTable() throws Exception {
+		List<Book> bookList = asList(new Book(VALID_ISBN13, TITLE, AUTHORS_LIST), new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2));
+		when(bookWebController.getBookListView(any(Model.class)))
+			.thenAnswer(answer((Model model)-> {
+				model.addAttribute(MODEL_BOOKS, bookList);
+				return VIEW_BOOK_LIST;
+			}
+		));
+		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
+			.thenReturn(VIEW_BOOK_EDIT);
+		
+		HtmlPage bookListView = webClient.getPage(URI_BOOK_LIST);
+		bookListView.getAnchorByHref("/book/edit/" + VALID_ISBN13).click();
+		bookListView.getAnchorByHref("/book/edit/" + VALID_ISBN13_2).click();
+		
+		InOrder inOrder = inOrder(bookWebController);
+		inOrder.verify(bookWebController)
+			.getBookEditView(
+				eq(new IsbnData(VALID_ISBN13_WITHOUT_FORMATTING)),
+				any(BindingResult.class),
+				eq(new BookData(VALID_ISBN13_WITHOUT_FORMATTING, null, null)));
+		inOrder.verify(bookWebController)
+			.getBookEditView(
+				eq(new IsbnData(VALID_ISBN13_2_WITHOUT_FORMATTING)),
+				any(BindingResult.class),
+				eq(new BookData(VALID_ISBN13_2_WITHOUT_FORMATTING, null, null)));
+	}
+
+	@Test
+	public void testBookListView_whenAnonymousUserAndDbIsNotEmpty_shouldNotProvideAnEditLinkForEachBookInTheTable() throws Exception {
+		List<Book> bookList = asList(new Book(VALID_ISBN13, TITLE, AUTHORS_LIST), new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2));
+		when(bookWebController.getBookListView(any(Model.class)))
+			.thenAnswer(answer((Model model)-> {
+				model.addAttribute(MODEL_BOOKS, bookList);
+				return VIEW_BOOK_LIST;
+			}
+		));
+		
+		HtmlPage bookListView = webClient.getPage(URI_BOOK_LIST);
+		
+		assertThatThrownBy(() -> bookListView.getAnchorByHref("/book/edit/" + VALID_ISBN13))
+			.isInstanceOf(ElementNotFoundException.class);
+		assertThatThrownBy(() -> bookListView.getAnchorByHref("/book/edit/" + VALID_ISBN13_2))
+			.isInstanceOf(ElementNotFoundException.class);
 	}
 
 	/* ---------- BookListView layout tests ---------- */

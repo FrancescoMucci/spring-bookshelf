@@ -46,7 +46,12 @@
 								<td class="align-middle" colspan="2" th:text="${book.isbn}">Placeholder for ISBN</td>
 								<td class="align-middle" colspan="2" th:text="${book.title}">Placeholder for title</td>
 								<td class="align-middle" colspan="2" th:text="${book.authors}">Placeholder for authors</td>
-								<td sec:authorize="hasRole('ADMIN')" colspan="2">Edit</td>
+								<td sec:authorize="hasRole('ADMIN')" class="align-middle" colspan="2">
+									<a class="text-muted" th:href="@{'/book/edit/{isbn}'(isbn=${book.isbn})}">
+										<span><i class="fas fa-edit" aria-hidden="true"></i></span>
+										<span>Edit</span>
+									</a>
+								</td>
 								<td sec:authorize="hasRole('ADMIN')" colspan="2">Delete</td>
 							</tr>
 						</tbody>
