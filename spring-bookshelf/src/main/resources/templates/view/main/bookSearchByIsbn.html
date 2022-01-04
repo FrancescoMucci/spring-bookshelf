@@ -28,6 +28,22 @@
 					th:include="shared/fragment/parametric/formButton::fragment('fa-search', 'Book search')">Placeholder for search form button</div>
 			</form>
 		</div>
+		<div th:unless="${books}">
+			<div th:replace="shared/fragment/parametric/advice::fragment(~{this::#card-title}, ~{this::#card-content})">
+					<div id="card-title">Understand how ISBN-13 works</div>
+					<div id="card-content">
+						<a class="card-link"
+							href="https://www.isbn-international.org/content/what-isbn"
+							target="_blank" rel="noopener">What is a ISBN-13?</a>
+						<a class="card-link" 
+							href="https://en.wikipedia.org/wiki/International_Standard_Book_Number#ISBN-13_check_digit_calculation"
+							target="_blank" rel="noopener">How ISBN-13 validation works?</a>
+						<a class="card-link" 
+							href="https://isbndb.com/"
+							target="_blank" rel="noopener">How do I find out the ISBN-13 of a book?</a>
+					</div>
+			</div>
+		</div>
 	</section>
 </body>
 

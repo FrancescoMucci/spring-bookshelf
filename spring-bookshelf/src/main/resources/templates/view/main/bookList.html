@@ -11,16 +11,11 @@
 		<div th:if="${empty}">
 			<header th:replace="shared/fragment/parametric/header::fragment('Empty database', ${empty})"></header>
 			<div sec:authorize="hasRole('ROLE_ADMIN')" 
-				class="container my-5 pb-5 text-center" id="advice-box">
-				<div class="card border-info mb-3">
-					<div class="card-header">Advice</div>
-					<div class="card-body">
-						<h5 class="card-title text-info" id="card-title">Try to add some book to the database</h5>
-						<div id="card-content">
-							<p class="card-text">Use the link <i class="fas fa-plus" aria-hidden="true"> Add new book</i> in the navigation bar</p>
-						</div>
+				th:replace="shared/fragment/parametric/advice::fragment(~{this::#card-title}, ~{this::#card-content})">
+					<div id="card-title">Try to add some book to the database</div>
+					<div id="card-content">
+						<p class="card-text">Use the link <i class="fas fa-plus" aria-hidden="true"> Add new book</i> in the navigation bar</p>
 					</div>
-				</div>
 			</div>
 		</div>
 		<div th:unless="${empty}">

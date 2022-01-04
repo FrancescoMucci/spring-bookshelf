@@ -4,6 +4,7 @@ import static io.github.francescomucci.spring.bookshelf.BookTestingConstants.*;
 import static io.github.francescomucci.spring.bookshelf.web.BookWebControllerConstants.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.AdditionalAnswers.answer;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
@@ -21,6 +22,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
+import io.github.francescomucci.spring.bookshelf.model.Book;
 import io.github.francescomucci.spring.bookshelf.model.dto.BookData;
 import io.github.francescomucci.spring.bookshelf.web.BookWebController;
 import io.github.francescomucci.spring.bookshelf.web.security.WithMockAdmin;
@@ -212,6 +214,42 @@ public class BookSearchByIsbnViewTest {
 		
 		assertThat(searchBookByIsbnForm.asText())
 			.doesNotContain("Invalid ISBN-13; check the advice box to understand how ISBN-13 works");
+	}
+
+	/* ---------- BookSearchByIsbnView ISBN-advice-box tests ---------- */
+
+	@Test
+	public void testBookSearchByIsbnView_untilABookIsFound_shouldContainTheIsbnAdviceBox() throws Exception {
+		when(bookWebController.getBookByIsbn(any(BookData.class), any(BindingResult.class), any(Model.class)))
+			.thenReturn(VIEW_BOOK_SEARCH_BY_ISBN);
+		
+		HtmlPage bookSearchByIsbnView = webClient.getPage(URI_BOOK_GET_BY_ISBN + "?isbn=" + INVALID_ISBN13_WITH_HYPHENS);
+		
+		assertThat(bookSearchByIsbnView.getElementById("advice-box").asText())
+			.contains("Advice", "Understand how ISBN-13 works");
+		assertThat(bookSearchByIsbnView.getAnchorByHref("https://www.isbn-international.org/content/what-isbn").asText())
+			.isEqualTo("What is a ISBN-13?");
+		assertThat(bookSearchByIsbnView.getAnchorByHref("https://en.wikipedia.org/wiki/International_Standard_Book_Number#ISBN-13_check_digit_calculation").asText())
+			.isEqualTo("How ISBN-13 validation works?");
+		assertThat(bookSearchByIsbnView.getAnchorByHref("https://isbndb.com/").asText())
+			.isEqualTo("How do I find out the ISBN-13 of a book?");
+	}
+
+	@Test
+	public void testBookSearchByIsbnView_whenABookIsFound_shouldNotContainTheIsbnAdviceBox() throws Exception {
+		when(bookWebController.getBookByIsbn(any(BookData.class), any(BindingResult.class), any(Model.class)))
+			.thenAnswer(answer((BookData form, BindingResult result, Model model)-> {
+				model.addAttribute(MODEL_BOOKS, new Book(VALID_ISBN13, TITLE, AUTHORS_LIST));
+				return VIEW_BOOK_SEARCH_BY_ISBN;
+			}
+		));
+		
+		HtmlPage bookSearchByIsbnView = webClient.getPage(URI_BOOK_GET_BY_ISBN + "?isbn=" + VALID_ISBN13_WITH_HYPHENS);
+		
+		assertThat(bookSearchByIsbnView.getElementById("advice-box"))
+			.isNull();
+		assertThat(bookSearchByIsbnView.asText())
+			.doesNotContain("Advice", "Understand how ISBN-13 works");
 	}
 
 	/* ---------- BookSearchByIsbnView layout tests ---------- */
