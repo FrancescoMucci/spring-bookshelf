@@ -2,6 +2,7 @@ package io.github.francescomucci.spring.bookshelf.web.view.main;
 
 import static io.github.francescomucci.spring.bookshelf.BookTestingConstants.*;
 import static io.github.francescomucci.spring.bookshelf.web.BookWebControllerConstants.*;
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.AdditionalAnswers.answer;
@@ -11,6 +12,8 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -23,6 +26,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
 import io.github.francescomucci.spring.bookshelf.model.Book;
+import io.github.francescomucci.spring.bookshelf.model.dto.IsbnData;
 import io.github.francescomucci.spring.bookshelf.model.dto.BookData;
 import io.github.francescomucci.spring.bookshelf.web.BookWebController;
 import io.github.francescomucci.spring.bookshelf.web.security.WithMockAdmin;
@@ -36,6 +40,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlFooter;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlHeader;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.html.HtmlTable;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(controllers = BookWebController.class)
@@ -250,6 +255,168 @@ public class BookSearchByIsbnViewTest {
 			.isNull();
 		assertThat(bookSearchByIsbnView.asText())
 			.doesNotContain("Advice", "Understand how ISBN-13 works");
+	}
+
+	/* ---------- BookSearchByIsbnView book table tests ---------- */
+
+	@Test
+	public void testBookSearchByIsbnView_untilABookIsFound_shouldNotContainTheBookTable() throws Exception {
+		when(bookWebController.getBookByIsbn(any(BookData.class), any(BindingResult.class), any(Model.class)))
+			.thenReturn(VIEW_BOOK_SEARCH_BY_ISBN);
+		
+		HtmlPage bookSearchByIsbnView = webClient.getPage(URI_BOOK_GET_BY_ISBN + "?isbn=" + INVALID_ISBN13);
+		
+		assertThat(bookSearchByIsbnView.getElementById("book-table-fragment"))
+			.isNull();
+	}
+
+	@Test
+	public void testBookSearchByIsbnView_whenAnonymousUserAndABookIsFound_shouldContainTheFoundedBookInATableWithoutEditAndDeleteColumns() throws Exception {
+		when(bookWebController.getBookByIsbn(any(BookData.class), any(BindingResult.class), any(Model.class)))
+			.thenAnswer(answer((BookData form, BindingResult result, Model model)-> {
+				model.addAttribute(MODEL_BOOKS, new Book(VALID_ISBN13, TITLE, AUTHORS_LIST));
+				return VIEW_BOOK_SEARCH_BY_ISBN;
+			}
+		));
+		
+		HtmlPage bookSearchByIsbnView = webClient.getPage(URI_BOOK_GET_BY_ISBN + "?isbn=" + VALID_ISBN13_WITH_HYPHENS);
+		HtmlTable bookTable = bookSearchByIsbnView.getHtmlElementById("book-table");
+		
+		assertThat(bookSearchByIsbnView.getElementById("book-table-fragment"))
+			.isNotNull();
+		assertThat(BookViewTestingHelperMethods.removeWindowsCR(bookTable.asText()))
+			.isEqualTo(
+				"ISBN-13"      + "	" + "Title" + "	" + "Authors"      + "\n" +
+				VALID_ISBN13 + "	" + TITLE + "	" + AUTHORS_LIST
+		);
+	}
+
+	@Test
+	@WithMockAdmin
+	public void testBookSearchByIsbnView_whenAndminAndABookIsFound_shouldContainTheFoundedBookInATableWithEditAndDeleteColumns() throws Exception {
+		when(bookWebController.getBookByIsbn(any(BookData.class), any(BindingResult.class), any(Model.class)))
+			.thenAnswer(answer((BookData form, BindingResult result, Model model)-> {
+				model.addAttribute(MODEL_BOOKS, new Book(VALID_ISBN13, TITLE, AUTHORS_LIST));
+				return VIEW_BOOK_SEARCH_BY_ISBN;
+			}
+		));
+		
+		HtmlPage bookSearchByIsbnView = webClient.getPage(URI_BOOK_GET_BY_ISBN + "?isbn=" + VALID_ISBN13_WITH_HYPHENS);
+		HtmlTable bookTable = bookSearchByIsbnView.getHtmlElementById("book-table");
+		
+		assertThat(bookSearchByIsbnView.getElementById("book-table-fragment"))
+			.isNotNull();
+		assertThat(BookViewTestingHelperMethods.removeWindowsCR(bookTable.asText()))
+			.isEqualTo(
+				"ISBN-13"      + "	" + "Title" + "	" + "Authors"      + "	" + "Edit book" + "	" + "Delete book" + "\n" +
+				VALID_ISBN13 + "	" + TITLE + "	" + AUTHORS_LIST + "	" + " Edit "    + "	" + "Delete"
+		);
+	}
+
+	@Test
+	public void testBookSearchByIsbnView_whenAnonymousUserAndABookIsFound_shouldNotProvideAnEditLinkForTheBookInTheTable() throws Exception {
+		when(bookWebController.getBookByIsbn(any(BookData.class), any(BindingResult.class), any(Model.class)))
+			.thenAnswer(answer((BookData form, BindingResult result, Model model)-> {
+				model.addAttribute(MODEL_BOOKS, new Book(VALID_ISBN13, TITLE, AUTHORS_LIST));
+				return VIEW_BOOK_SEARCH_BY_ISBN;
+			}
+		));
+		
+		HtmlPage bookSearchByIsbnView = webClient.getPage(URI_BOOK_GET_BY_ISBN + "?isbn=" + VALID_ISBN13_WITHOUT_FORMATTING);
+		
+		assertThatThrownBy(() -> bookSearchByIsbnView.getAnchorByText("Edit"))
+			.isInstanceOf(ElementNotFoundException.class);
+	}
+
+	@Test
+	@WithMockAdmin
+	public void testBookSearchByIsbnView_whenAdminAndABookIsFound_shouldProvideAnEditLinkForTheBookInTheTable() throws Exception {
+		when(bookWebController.getBookByIsbn(any(BookData.class), any(BindingResult.class), any(Model.class)))
+			.thenAnswer(answer((BookData form, BindingResult result, Model model)-> {
+				model.addAttribute(MODEL_BOOKS, new Book(VALID_ISBN13, TITLE, AUTHORS_LIST));
+				return VIEW_BOOK_SEARCH_BY_ISBN;
+			}
+		));
+		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
+			.thenReturn(VIEW_BOOK_EDIT);
+		
+		HtmlPage bookSearchByIsbnView = webClient.getPage(URI_BOOK_GET_BY_ISBN + "?isbn=" + VALID_ISBN13_WITHOUT_FORMATTING);
+		bookSearchByIsbnView.getAnchorByText("Edit").click();
+		
+		verify(bookWebController)
+			.getBookEditView(
+				eq(new IsbnData(VALID_ISBN13_WITHOUT_FORMATTING)),
+				any(BindingResult.class),
+				eq(new BookData(VALID_ISBN13_WITHOUT_FORMATTING, null, null)));
+	}
+
+	@Test
+	public void testBookSearchByIsbnView_whenAnonymoudUserAndABookIsFound_shouldNotProvideADeleteDialogForTheBookInTheTable() throws Exception {
+		when(bookWebController.getBookByIsbn(any(BookData.class), any(BindingResult.class), any(Model.class)))
+			.thenAnswer(answer((BookData form, BindingResult result, Model model)-> {
+				model.addAttribute(MODEL_BOOKS, new Book(VALID_ISBN13, TITLE, AUTHORS_LIST));
+				return VIEW_BOOK_SEARCH_BY_ISBN;
+			}
+		));
+		
+		List<String> dialogContent = asList(
+				"Do you really want to delete this book?",
+				VALID_ISBN13 + " - " + TITLE + " - " + AUTHORS_LIST,
+				"No", "Yes, delete"
+		);
+		HtmlPage bookSearchByIsbnView = webClient.getPage(URI_BOOK_GET_BY_ISBN + "?isbn=" + VALID_ISBN13_WITHOUT_FORMATTING);
+		
+		assertThat(bookSearchByIsbnView.getElementById("getDeleteBookDialogButton-" + VALID_ISBN13))
+			.isNull();
+		assertThat(bookSearchByIsbnView.getElementById("deleteBookDialog-" + VALID_ISBN13))
+			.isNull();
+		assertThat(bookSearchByIsbnView.asText())
+			.doesNotContain(dialogContent);
+	}
+
+	@Test
+	@WithMockAdmin
+	public void testBookSearchByIsbnView_whenAdminAndABookIsFound_shouldProvideADeleteDialogForTheBookInTheTable() throws Exception {
+		List<String> dialogContent = asList(
+				"Do you really want to delete this book?",
+				VALID_ISBN13 + " - " + TITLE + " - " + AUTHORS_LIST,
+				"No", "Yes, delete"
+		);
+		when(bookWebController.getBookByIsbn(any(BookData.class), any(BindingResult.class), any(Model.class)))
+			.thenAnswer(answer((BookData form, BindingResult result, Model model)-> {
+				model.addAttribute(MODEL_BOOKS, new Book(VALID_ISBN13, TITLE, AUTHORS_LIST));
+				return VIEW_BOOK_SEARCH_BY_ISBN;
+			}
+		));
+		when(bookWebController.postDeleteBook(any(IsbnData.class), any(BindingResult.class)))
+			.thenReturn(VIEW_BOOK_LIST);
+		
+		HtmlPage bookSearchByIsbnView = webClient.getPage(URI_BOOK_GET_BY_ISBN + "?isbn=" + VALID_ISBN13_WITHOUT_FORMATTING);
+		assertThat(bookSearchByIsbnView.asText())
+			.doesNotContain(dialogContent);
+
+		bookSearchByIsbnView.getHtmlElementById("getDeleteBookDialogButton-" + VALID_ISBN13).click();
+		webClient.waitForBackgroundJavaScript(1000);
+		assertThat(bookSearchByIsbnView.asText())
+			.contains(dialogContent);
+		
+		bookSearchByIsbnView.getHtmlElementById("deleteBookDialog-" + VALID_ISBN13 + "-closeButton").click();
+		webClient.waitForBackgroundJavaScript(1000);
+		assertThat(bookSearchByIsbnView.asText())
+			.doesNotContain(dialogContent);
+		
+		bookSearchByIsbnView.getHtmlElementById("getDeleteBookDialogButton-" + VALID_ISBN13).click();
+		webClient.waitForBackgroundJavaScript(1000);
+		bookSearchByIsbnView.getHtmlElementById("deleteBookDialog-" + VALID_ISBN13 + "-noButton").click();
+		webClient.waitForBackgroundJavaScript(1000);
+		assertThat(bookSearchByIsbnView.asText())
+			.doesNotContain(dialogContent);
+		
+		bookSearchByIsbnView.getHtmlElementById("getDeleteBookDialogButton-" + VALID_ISBN13).click();
+		webClient.waitForBackgroundJavaScript(1000);
+		bookSearchByIsbnView.getHtmlElementById("deleteBookDialog-" + VALID_ISBN13 + "-yesButton").click();
+		verify(bookWebController)
+			.postDeleteBook(eq(new IsbnData(VALID_ISBN13_WITHOUT_FORMATTING)), any(BindingResult.class));
 	}
 
 	/* ---------- BookSearchByIsbnView layout tests ---------- */

@@ -10,7 +10,7 @@
 	<section>
 		<div th:if="${empty}">
 			<header th:replace="shared/fragment/parametric/header::fragment('Empty database', ${empty})"></header>
-			<div sec:authorize="hasRole('ROLE_ADMIN')" 
+			<div sec:authorize="hasRole('ADMIN')"
 				th:replace="shared/fragment/parametric/advice::fragment(~{this::#card-title}, ~{this::#card-content})">
 					<div id="card-title">Try to add some book to the database</div>
 					<div id="card-content">
@@ -23,69 +23,7 @@
 				'Book list table',
 				'This table contains all the book in the database')">
 			</header>
-			<div id="book-table-fragment">
-				<div class="container my-5 pb-5">
-					<table class="table table-striped table-bordered text-center" id="book-table"
-						aria-label="Book table">
-						<thead>
-							<tr class="thead-dark align-middle">
-								<th colspan="2" scope="col">ISBN-13</th>
-								<th colspan="2" scope="col">Title</th>
-								<th colspan="2" scope="col">Authors</th>
-								<th sec:authorize="hasRole('ADMIN')" colspan="2" scope="col">Edit book</th>
-								<th sec:authorize="hasRole('ADMIN')" colspan="2" scope="col">Delete book</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr th:each="book : ${books}">
-								<td class="align-middle" colspan="2" th:text="${book.isbn}">Placeholder for ISBN</td>
-								<td class="align-middle" colspan="2" th:text="${book.title}">Placeholder for title</td>
-								<td class="align-middle" colspan="2" th:text="${book.authors}">Placeholder for authors</td>
-								<td sec:authorize="hasRole('ADMIN')" class="align-middle" colspan="2">
-									<a class="text-muted" th:href="@{'/book/edit/{isbn}'(isbn=${book.isbn})}">
-										<span><i class="fas fa-edit" aria-hidden="true"></i></span>
-										<span>Edit</span>
-									</a>
-								</td>
-								<td sec:authorize="hasRole('ADMIN')" class="align-middle" colspan="2">
-									<button type="button" th:id="|getDeleteBookDialogButton-${book.isbn}|" class="btn btn-link text-muted"
-										data-toggle="modal" th:data-row=${book} th:data-target="|#deleteBookDialog-${book.isbn}|">
-										<span><i class="fas fa-trash-alt" aria-hidden="true"></i></span>
-										<span>Delete</span>
-									</button>
-								</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-				<div sec:authorize="hasRole('ADMIN')" th:each="book : ${books}"
-					 class="modal fade" th:id="|deleteBookDialog-${book.isbn}|">
-					<div class="modal-dialog modal-dialog-centered">
-						<div class="modal-content">
-							<div class="modal-header bg-dark text-light">
-								<h5 class="modal-title">Do you really want to delete this book?</h5>
-								<button type="button" class="close" data-dismiss="modal" th:id="|deleteBookDialog-${book.isbn}-closeButton|"
-									aria-label="Show delete book dialog button">
-									<i class="text-light fas fa-times" aria-hidden="true"></i>
-								</button>
-							</div>
-							<div class="modal-body" th:text="|${book.isbn} - ${book.title} - ${book.authors}|">Placeholder for book data</div>
-							<div class="modal-footer">
-								<button type="button" class="btn btn-outline-dark" data-dismiss="modal" th:id="|deleteBookDialog-${book.isbn}-noButton|">
-									<span><i class="fas fa-times-circle" aria-hidden="true"></i></span>
-									<span>No</span>
-								</button>
-								<form th:name="|deleteBookDialogForm-${book.isbn}|" th:action="@{'/book/delete/{isbn}'(isbn=${book.isbn})}" method="post">
-									<button type="submit" class="btn btn-outline-dark" th:id="|deleteBookDialog-${book.isbn}-yesButton|">
-										<span><i class="fas fa-trash-alt" aria-hidden="true"></i></span>
-										<span>Yes, delete</span>
-									</button>
-								</form>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
+			<div th:replace="shared/fragment/non-parametric/bookTable::fragment">Placeholder for book table</div>
 		</div>
 	</section>
 </body>

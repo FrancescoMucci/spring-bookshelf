@@ -36,7 +36,7 @@ public class TemporaryBookWebController implements BookWebController {
 	}
 
 	/* Temporary web end-point only to manual test bookList view esthetics when DB is empty */
-	@GetMapping(URI_BOOK_LIST + "/empty")
+	@GetMapping(URI_BOOK_LIST + "/test/empty")
 	public String getEmptyBookListView(Model model) {
 		model.addAttribute(MODEL_EMPTY_MESSAGE, MESSAGE_EMPTY_DB);
 		return VIEW_BOOK_LIST;
@@ -74,6 +74,13 @@ public class TemporaryBookWebController implements BookWebController {
 
 	@Override
 	public String getBookByIsbn(BookData searchFormData, BindingResult result, Model model) {
+		return VIEW_BOOK_SEARCH_BY_ISBN;
+	}
+
+	/* Temporary web end-point only to manual test searchByIsbn view esthetics when a book is found */
+	@GetMapping(URI_BOOK_GET_BY_ISBN + "/test/found")
+	public String getExampleBookByIsbn(BookData searchFormData, BindingResult result, Model model) {
+		model.addAttribute(MODEL_BOOKS, new Book(9788804395942L, "Foundation",  asList("Isaac Asimov")));
 		return VIEW_BOOK_SEARCH_BY_ISBN;
 	}
 
