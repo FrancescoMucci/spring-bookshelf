@@ -69,7 +69,7 @@ public class TemporaryBookWebController implements BookWebController {
 
 	@Override
 	public String getBookSearchByIsbnView(BookData searchFormData) {
-		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
+		return VIEW_BOOK_SEARCH_BY_ISBN;
 	}
 
 	@Override
