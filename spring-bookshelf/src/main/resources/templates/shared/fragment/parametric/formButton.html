@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+	<section>
+		<div>
+			<form>
+				<div th:fragment="fragment(btnIcon, btnText)">
+					<button class="btn btn-block btn-outline-dark" type="submit" name="submit-button">
+						<span><i class="fas" th:classappend="${btnIcon}" aria-hidden="true"></i></span>
+						<span th:text="${btnText}">Placeholder for button text</span>
+					</button>
+				</div>
+			</form>
+		</div>
+	</section>
+</body>
+
+</html>

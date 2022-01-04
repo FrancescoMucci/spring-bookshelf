@@ -22,12 +22,8 @@
 						required type="text" name="isbn"
 						placeholder="e.g. 9781401238964"/>
 				</div>
-				<div class="form-group pt-3">
-					<button class="btn btn-block btn-outline-dark" type="submit" name="submit-button">
-						<span><i class="fas fa-search" aria-hidden="true"></i></span>
-						<span>Book search</span>
-					</button>
-				</div>
+				<div class="form-group pt-3"
+					th:include="shared/fragment/parametric/formButton::fragment('fa-search', 'Book search')">Placeholder for search form button</div>
 			</form>
 		</div>
 	</section>
