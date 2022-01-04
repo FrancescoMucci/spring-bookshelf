@@ -74,7 +74,7 @@ public class TemporaryBookWebController implements BookWebController {
 
 	@Override
 	public String getBookByIsbn(BookData searchFormData, BindingResult result, Model model) {
-		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
+		return VIEW_BOOK_SEARCH_BY_ISBN;
 	}
 
 	@Override

@@ -166,6 +166,54 @@ public class BookSearchByIsbnViewTest {
 			.isEmpty();
 	}
 
+	/* ---------- BookSearchByIsbnView search-by-ISBN form validation error messages tests ---------- */
+
+	@Test
+	public void testBookSearchByIsbnView_afterGetRequestToGetByIsbnEndpointWithNullIsbn_shouldContainBlankValidationErrorMessage() throws Exception {
+		when(bookWebController.getBookByIsbn(any(BookData.class), any(BindingResult.class), any(Model.class)))
+			.thenReturn(VIEW_BOOK_SEARCH_BY_ISBN);
+		
+		HtmlPage bookSearchByIsbnView = webClient.getPage(URI_BOOK_GET_BY_ISBN);
+		
+		assertThat(bookSearchByIsbnView.getHtmlElementById("isbn-validation-error").asText())
+			.isEqualTo("Please fill out this field");
+	}
+
+	@Test
+	public void testBookSearchByIsbnView_afterGetRequestToGetByIsbnEndpointWithBlankIsbn_shouldContainIsbnValidationErrorMessage() throws Exception {
+		when(bookWebController.getBookByIsbn(any(BookData.class), any(BindingResult.class), any(Model.class)))
+			.thenReturn(VIEW_BOOK_SEARCH_BY_ISBN);
+		
+		HtmlPage bookSearchByIsbnView = webClient.getPage(URI_BOOK_GET_BY_ISBN + "?isbn=");
+		
+		assertThat(bookSearchByIsbnView.getHtmlElementById("isbn-validation-error").asText())
+			.isEqualTo("Invalid ISBN-13; check the advice box to understand how ISBN-13 works");
+	}
+
+	@Test
+	public void testBookSearchByIsbnView_afterGetRequestToGetByIsbnEndpointWithInvalidIsbn_shouldContainIsbnValidationErrorMessage() throws Exception {
+		when(bookWebController.getBookByIsbn(any(BookData.class), any(BindingResult.class), any(Model.class)))
+			.thenReturn(VIEW_BOOK_SEARCH_BY_ISBN);
+		
+		HtmlPage bookSearchByIsbnView = webClient.getPage(URI_BOOK_GET_BY_ISBN + "?isbn=" + INVALID_ISBN13_WITH_HYPHENS);
+		
+		assertThat(bookSearchByIsbnView.getHtmlElementById("isbn-validation-error").asText())
+			.isEqualTo("Invalid ISBN-13; check the advice box to understand how ISBN-13 works");
+	}
+
+	@Test
+	public void testBookSearchByIsbnView_whenUserFillTheFormWithInvalidIsbnButDoNotPressTheSubmitButton_shouldNotShowValidationErrorMessage() throws Exception {
+		when(bookWebController.getBookSearchByIsbnView(any(BookData.class)))
+			.thenReturn(VIEW_BOOK_SEARCH_BY_ISBN);;
+		
+			HtmlPage bookSearchByIsbnView = webClient.getPage(URI_BOOK_SEARCH_BY_ISBN);
+		HtmlForm searchBookByIsbnForm = bookSearchByIsbnView.getFormByName("search-book-by-isbn-form");
+		searchBookByIsbnForm.getInputByName("isbn").setValueAttribute(INVALID_ISBN13_WITH_HYPHENS);
+		
+		assertThat(searchBookByIsbnForm.asText())
+			.doesNotContain("Invalid ISBN-13; check the advice box to understand how ISBN-13 works");
+	}
+
 	/* ---------- BookSearchByIsbnView layout tests ---------- */
 
 	@Test
