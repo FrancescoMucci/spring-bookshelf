@@ -13,6 +13,23 @@
 			'Book search by ISBN form',
 			'Insert the ISBN-13 of the book you want to retrieve from the database')">
 		</header>
+		<div class="container my-5 text-center">
+			<form name="search-book-by-isbn-form"
+				th:action="@{/book/getByIsbn}" method="get" th:object="${bookData}">
+				<div class="form-group">
+					<label id="isbn-label">ISBN-13</label>
+					<input class="form-control form-control-lg text-center"
+						required type="text" name="isbn"
+						placeholder="e.g. 9781401238964"/>
+				</div>
+				<div class="form-group pt-3">
+					<button class="btn btn-block btn-outline-dark" type="submit" name="submit-button">
+						<span><i class="fas fa-search" aria-hidden="true"></i></span>
+						<span>Book search</span>
+					</button>
+				</div>
+			</form>
+		</div>
 	</section>
 </body>
 

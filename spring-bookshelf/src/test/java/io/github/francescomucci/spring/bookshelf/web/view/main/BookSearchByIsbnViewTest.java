@@ -1,9 +1,12 @@
 package io.github.francescomucci.spring.bookshelf.web.view.main;
 
+import static io.github.francescomucci.spring.bookshelf.BookTestingConstants.*;
 import static io.github.francescomucci.spring.bookshelf.web.BookWebControllerConstants.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -16,6 +19,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 
 import io.github.francescomucci.spring.bookshelf.model.dto.BookData;
 import io.github.francescomucci.spring.bookshelf.web.BookWebController;
@@ -61,6 +65,67 @@ public class BookSearchByIsbnViewTest {
 			.isEqualTo(
 				"Book search by ISBN form" + "\n" + 
 				"Insert the ISBN-13 of the book you want to retrieve from the database");
+	}
+
+	/* ---------- BookSearchByIsbnView search-by-ISBN form basic functionality tests ---------- */
+
+	@Test
+	public void testBookSearchByIsbnView_shouldAlwaysContainAFormToSearchBookByIsbn() throws Exception {
+		when(bookWebController.getBookSearchByIsbnView(any(BookData.class)))
+			.thenReturn(VIEW_BOOK_SEARCH_BY_ISBN);
+		
+		HtmlPage bookSearchByIsbnView = webClient.getPage(URI_BOOK_SEARCH_BY_ISBN);
+		HtmlForm searchBookByIsbnForm = bookSearchByIsbnView.getFormByName("search-book-by-isbn-form");
+		
+		assertThat(searchBookByIsbnForm.getElementsByTagName("label").get(0).asText())
+			.isEqualTo("ISBN-13");
+		assertThat(searchBookByIsbnForm.getInputByName("isbn").getPlaceholder())
+			.isEqualTo("e.g. 9781401238964");
+	}
+
+	@Test
+	public void testBookSearchByIsbnView_whenUserFillTheFormWithValidIsbnAndPressTheSubmitButton_shouldSendGetRequestToGetByIsbnEndpoint() throws Exception {
+		when(bookWebController.getBookSearchByIsbnView(any(BookData.class)))
+			.thenReturn(VIEW_BOOK_SEARCH_BY_ISBN);
+		when(bookWebController.getBookByIsbn(any(BookData.class), any(BindingResult.class), any(Model.class)))
+			.thenReturn(VIEW_BOOK_SEARCH_BY_ISBN);
+		
+		HtmlPage bookSearchByIsbnView = webClient.getPage(URI_BOOK_SEARCH_BY_ISBN);
+		HtmlForm searchBookByIsbnForm = bookSearchByIsbnView.getFormByName("search-book-by-isbn-form");
+		searchBookByIsbnForm.getInputByName("isbn").setValueAttribute(VALID_ISBN13_WITH_HYPHENS);
+		searchBookByIsbnForm.getButtonByName("submit-button").click();
+		
+		verify(bookWebController)
+			.getBookByIsbn(eq(new BookData(VALID_ISBN13_WITH_HYPHENS, null, null)), any(BindingResult.class), any(Model.class));
+	}
+
+	@Test
+	public void testBookSearchByIsbnView_whenUserFillTheFormWithInvalidIsbnAndPressTheSubmitButton_shouldSendGetRequestToGetByIsbnEndpoint() throws Exception {
+		when(bookWebController.getBookSearchByIsbnView(any(BookData.class)))
+			.thenReturn(VIEW_BOOK_SEARCH_BY_ISBN);
+		when(bookWebController.getBookByIsbn(any(BookData.class), any(BindingResult.class), any(Model.class)))
+			.thenReturn(VIEW_BOOK_SEARCH_BY_ISBN);
+		
+		HtmlPage bookSearchByIsbnView = webClient.getPage(URI_BOOK_SEARCH_BY_ISBN);
+		HtmlForm searchBookByIsbnForm = bookSearchByIsbnView.getFormByName("search-book-by-isbn-form");
+		searchBookByIsbnForm.getInputByName("isbn").setValueAttribute(INVALID_ISBN13_WITH_HYPHENS);
+		searchBookByIsbnForm.getButtonByName("submit-button").click();
+		
+		verify(bookWebController)
+			.getBookByIsbn(eq(new BookData(INVALID_ISBN13_WITH_HYPHENS, null, null)), any(BindingResult.class), any(Model.class));
+	}
+
+	@Test
+	public void testBookSearchByIsbnView_whenUserDoNotFillTheIsbnAndPressTheSubmitButton_shouldNotSendGetRequestToGetByIsbnEndpoint() throws Exception {
+		when(bookWebController.getBookSearchByIsbnView(any(BookData.class)))
+			.thenReturn(VIEW_BOOK_SEARCH_BY_ISBN);
+		
+		HtmlPage bookSearchByIsbnView = webClient.getPage(URI_BOOK_SEARCH_BY_ISBN);
+		HtmlForm searchBookByIsbnForm = bookSearchByIsbnView.getFormByName("search-book-by-isbn-form");
+		searchBookByIsbnForm.getButtonByName("submit-button").click();
+
+		verify(bookWebController, never())
+			.getBookByIsbn(any(BookData.class), any(BindingResult.class), any(Model.class));
 	}
 
 	/* ---------- BookSearchByIsbnView layout tests ---------- */
