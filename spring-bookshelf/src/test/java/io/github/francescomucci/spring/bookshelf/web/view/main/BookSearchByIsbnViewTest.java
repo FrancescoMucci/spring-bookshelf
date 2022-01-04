@@ -20,12 +20,15 @@ import org.springframework.ui.Model;
 import io.github.francescomucci.spring.bookshelf.model.dto.BookData;
 import io.github.francescomucci.spring.bookshelf.web.BookWebController;
 import io.github.francescomucci.spring.bookshelf.web.security.WithMockAdmin;
+import io.github.francescomucci.spring.bookshelf.web.view.BookViewTestingHelperMethods;
+
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.SilentCssErrorHandler;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlFooter;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
+import com.gargoylesoftware.htmlunit.html.HtmlHeader;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 @RunWith(SpringRunner.class)
@@ -42,6 +45,22 @@ public class BookSearchByIsbnViewTest {
 	public void setup() {
 		webClient.setCssErrorHandler(new SilentCssErrorHandler());
 		webClient.getCookieManager().clearCookies();
+	}
+
+	/* ---------- BookSearchByIsbnView header message tests ---------- */
+
+	@Test
+	public void testBookSearchByIsbnView_shouldAlwaysContainAnInformativeTextInTheHeader() throws Exception {
+		when(bookWebController.getBookSearchByIsbnView(any(BookData.class)))
+			.thenReturn(VIEW_BOOK_SEARCH_BY_ISBN);
+		
+		HtmlPage bookSearchByIsbnView = webClient.getPage(URI_BOOK_SEARCH_BY_ISBN);
+		HtmlHeader header = (HtmlHeader) bookSearchByIsbnView.getElementsByTagName("header").get(0);
+		
+		assertThat(BookViewTestingHelperMethods.removeWindowsCR(header.asText()))
+			.isEqualTo(
+				"Book search by ISBN form" + "\n" + 
+				"Insert the ISBN-13 of the book you want to retrieve from the database");
 	}
 
 	/* ---------- BookSearchByIsbnView layout tests ---------- */
