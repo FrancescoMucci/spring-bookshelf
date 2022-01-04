@@ -128,6 +128,44 @@ public class BookSearchByIsbnViewTest {
 			.getBookByIsbn(any(BookData.class), any(BindingResult.class), any(Model.class));
 	}
 
+	/* ---------- BookSearchByIsbnView search-by-ISBN form pre-filling capabilities tests ---------- */
+
+	@Test
+	public void testBookSearchByIsbnView_afterGetRequestToGetByIsbnEndpointWithValidIsbn_theFormInputShouldBePrefilledWithProvidedIsbn() throws Exception {
+		when(bookWebController.getBookByIsbn(any(BookData.class), any(BindingResult.class), any(Model.class)))
+		.thenReturn(VIEW_BOOK_SEARCH_BY_ISBN);
+		
+		HtmlPage bookSearchByIsbnView = webClient.getPage(URI_BOOK_GET_BY_ISBN + "?isbn=" + VALID_ISBN13_WITH_HYPHENS);
+		HtmlForm searchBookByIsbnForm = bookSearchByIsbnView.getFormByName("search-book-by-isbn-form");
+		
+		assertThat(searchBookByIsbnForm.getInputByName("isbn").getValueAttribute())
+		.isEqualTo(VALID_ISBN13_WITH_HYPHENS);
+	}
+
+	@Test
+	public void testBookSearchByIsbnView_afterGetRequestToGetByIsbnEndpointWithInvalidIsbn_theFormInputShouldBePrefilledWithProvidedIsbn() throws Exception {
+		when(bookWebController.getBookByIsbn(any(BookData.class), any(BindingResult.class), any(Model.class)))
+			.thenReturn(VIEW_BOOK_SEARCH_BY_ISBN);
+		
+		HtmlPage bookSearchByIsbnView = webClient.getPage(URI_BOOK_GET_BY_ISBN + "?isbn=" + INVALID_ISBN13_WITH_HYPHENS);
+		HtmlForm searchBookByIsbnForm = bookSearchByIsbnView.getFormByName("search-book-by-isbn-form");
+		
+		assertThat(searchBookByIsbnForm.getInputByName("isbn").getValueAttribute())
+			.isEqualTo(INVALID_ISBN13_WITH_HYPHENS);
+	}
+
+	@Test
+	public void testBookSearchByIsbnView_whenJustOpened_theFormInputShouldNotBePrefilled() throws Exception {
+		when(bookWebController.getBookSearchByIsbnView(any(BookData.class)))
+			.thenReturn(VIEW_BOOK_SEARCH_BY_ISBN);
+		
+		HtmlPage bookSearchByIsbnView = webClient.getPage(URI_BOOK_SEARCH_BY_ISBN);
+		HtmlForm searchBookByIsbnForm = bookSearchByIsbnView.getFormByName("search-book-by-isbn-form");
+		
+		assertThat(searchBookByIsbnForm.getInputByName("isbn").getValueAttribute())
+			.isEmpty();
+	}
+
 	/* ---------- BookSearchByIsbnView layout tests ---------- */
 
 	@Test
