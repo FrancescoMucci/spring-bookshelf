@@ -127,6 +127,44 @@ public class BookSearchByTitleViewTest {
 			.getBookByTitle(any(BookData.class), any(BindingResult.class), any(Model.class));
 	}
 
+	/* ---------- BookSearchByTitleView search-by-title form pre-filling capabilities tests ---------- */
+
+	@Test
+	public void testBookSearchByTitleView_afterGetRequestToGetByTitleEndpointWithValidTitle_theFormInputShouldBePrefilledWithProvidedTitle() throws Exception {
+		when(bookWebController.getBookByTitle(any(BookData.class), any(BindingResult.class), any(Model.class)))
+			.thenReturn(VIEW_BOOK_SEARCH_BY_TITLE);
+		
+		HtmlPage bookSearchByTitleView = webClient.getPage(URI_BOOK_GET_BY_TITLE + "?title=" + TITLE);
+		HtmlForm searchBookByTitleForm = bookSearchByTitleView.getFormByName("search-book-by-title-form");
+		
+		assertThat(searchBookByTitleForm.getInputByName("title").getValueAttribute())
+			.isEqualTo(TITLE);
+	}
+
+	@Test
+	public void testBookSearchByTitleView_afterGetRequestToGetByTitleEndpointWithInvalidTitle_theFormInputShouldBePrefilledWithProvidedTitle() throws Exception {
+		when(bookWebController.getBookByTitle(any(BookData.class), any(BindingResult.class), any(Model.class)))
+			.thenReturn(VIEW_BOOK_SEARCH_BY_TITLE);
+		
+		HtmlPage bookSearchByTitleView = webClient.getPage(URI_BOOK_GET_BY_TITLE + "?title=" + INVALID_TITLE);
+		HtmlForm searchBookByTitleForm = bookSearchByTitleView.getFormByName("search-book-by-title-form");
+		
+		assertThat(searchBookByTitleForm.getInputByName("title").getValueAttribute())
+			.isEqualTo(INVALID_TITLE);
+	}
+
+	@Test
+	public void testBookSearchByTitleView_whenJustOpened_theFormInputShouldNotBePrefilled() throws Exception {
+		when(bookWebController.getBookSearchByTitleView(any(BookData.class)))
+			.thenReturn(VIEW_BOOK_SEARCH_BY_TITLE);
+		
+		HtmlPage bookSearchByTitleView = webClient.getPage(URI_BOOK_SEARCH_BY_TITLE);
+		HtmlForm searchBookByTitleForm = bookSearchByTitleView.getFormByName("search-book-by-title-form");
+		
+		assertThat(searchBookByTitleForm.getInputByName("title").getValueAttribute())
+			.isEmpty();
+	}
+
 	/* ---------- BookSearchByTitleView layout tests ---------- */
 
 	@Test
