@@ -21,6 +21,9 @@
 					th:include="shared/fragment/parametric/formButton::fragment('fa-search', 'Book search')">Placeholder for search form button</div>
 			</form>
 		</div>
+		<div th:if="${books}">
+			<div th:replace="shared/fragment/non-parametric/bookTable::fragment">Placeholder for book table</div>
+		</div>
 	</section>
 </body>
 
