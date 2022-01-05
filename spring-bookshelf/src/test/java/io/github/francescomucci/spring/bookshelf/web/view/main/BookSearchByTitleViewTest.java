@@ -1,9 +1,12 @@
 package io.github.francescomucci.spring.bookshelf.web.view.main;
 
+import static io.github.francescomucci.spring.bookshelf.BookTestingConstants.*;
 import static io.github.francescomucci.spring.bookshelf.web.BookWebControllerConstants.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -16,6 +19,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 
 import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.SilentCssErrorHandler;
@@ -61,6 +65,66 @@ public class BookSearchByTitleViewTest {
 			.isEqualTo(
 				"Book search by title form" + "\n" +
 				"Insert the title of the book you want to retrieve from the database");
+	}
+
+	/* ---------- BookSearchByTitleView search-by-title form basic functionality tests ---------- */
+
+	@Test
+	public void testBookSearchByTitleView_shouldAlwaysContainAFormToSearchBookByTitle() throws Exception {
+		when(bookWebController.getBookSearchByTitleView(any(BookData.class)))
+			.thenReturn(VIEW_BOOK_SEARCH_BY_TITLE);
+		
+		HtmlPage bookSearchByTitleView = webClient.getPage(URI_BOOK_SEARCH_BY_TITLE);
+		HtmlForm searchBookByTitleForm = bookSearchByTitleView.getFormByName("search-book-by-title-form");
+		
+		assertThat(searchBookByTitleForm.getElementsByTagName("label").get(0).asText())
+			.isEqualTo("Title");
+		assertThat(searchBookByTitleForm.getInputByName("title").getPlaceholder())
+			.isEqualTo("e.g. Foundation");
+	}
+	@Test
+	public void testBookSearchByTitleView_whenUserFillTheFormWithValidTitleAndPressTheSubmitButton_shouldSendGetRequestToGetByTitleEndpoint() throws Exception {
+		when(bookWebController.getBookSearchByTitleView(any(BookData.class)))
+			.thenReturn(VIEW_BOOK_SEARCH_BY_TITLE);
+		when(bookWebController.getBookByTitle(any(BookData.class), any(BindingResult.class), any(Model.class)))
+			.thenReturn(VIEW_BOOK_SEARCH_BY_TITLE);
+		
+		HtmlPage bookSearchByTitleView = webClient.getPage(URI_BOOK_SEARCH_BY_TITLE);
+		HtmlForm searchBookByTitleForm = bookSearchByTitleView.getFormByName("search-book-by-title-form");
+		searchBookByTitleForm.getInputByName("title").setValueAttribute(TITLE);
+		searchBookByTitleForm.getButtonByName("submit-button").click();
+		
+		verify(bookWebController)
+			.getBookByTitle(eq(new BookData(null, TITLE, null)), any(BindingResult.class), any(Model.class));
+	}
+
+	@Test
+	public void testBookSearchByTitleView_whenUserFillTheFormWithInvalidTitleAndPressTheSubmitButton_shouldSendGetRequestToGetByTitleEndpoint() throws Exception {
+		when(bookWebController.getBookSearchByTitleView(any(BookData.class)))
+			.thenReturn(VIEW_BOOK_SEARCH_BY_TITLE);
+		when(bookWebController.getBookByTitle(any(BookData.class), any(BindingResult.class), any(Model.class)))
+			.thenReturn(VIEW_BOOK_SEARCH_BY_TITLE);
+		
+		HtmlPage bookSearchByTitleView = webClient.getPage(URI_BOOK_SEARCH_BY_TITLE);
+		HtmlForm searchBookByTitleForm = bookSearchByTitleView.getFormByName("search-book-by-title-form");
+		searchBookByTitleForm.getInputByName("title").setValueAttribute(INVALID_TITLE);
+		searchBookByTitleForm.getButtonByName("submit-button").click();
+		
+		verify(bookWebController)
+			.getBookByTitle(eq(new BookData(null, INVALID_TITLE, null)), any(BindingResult.class), any(Model.class));
+	}
+
+	@Test
+	public void testBookSearchByTitleView_whenUserDoNotFillTheTitleAndPressTheSubmitButton_shouldNotSendGetRequestToGetByTitleEndpoint() throws Exception {
+		when(bookWebController.getBookSearchByTitleView(any(BookData.class)))
+			.thenReturn(VIEW_BOOK_SEARCH_BY_TITLE);
+		
+		HtmlPage bookSearchByTitleView = webClient.getPage(URI_BOOK_SEARCH_BY_TITLE);
+		HtmlForm searchBookByTitleForm = bookSearchByTitleView.getFormByName("search-book-by-title-form");
+		searchBookByTitleForm.getButtonByName("submit-button").click();
+
+		verify(bookWebController, never())
+			.getBookByTitle(any(BookData.class), any(BindingResult.class), any(Model.class));
 	}
 
 	/* ---------- BookSearchByTitleView layout tests ---------- */
