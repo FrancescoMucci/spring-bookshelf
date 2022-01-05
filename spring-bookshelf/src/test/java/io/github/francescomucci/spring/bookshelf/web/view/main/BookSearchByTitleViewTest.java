@@ -165,6 +165,55 @@ public class BookSearchByTitleViewTest {
 			.isEmpty();
 	}
 
+	/* ---------- BookSearchByTitleView search-by-title form validation error messages tests ---------- */
+
+	@Test
+	public void testBookSearchByTitleView_afterGetRequestToGetByTitleEndpointWithNullTitle_shouldContainBlankValidationErrorMessage() throws Exception {
+		when(bookWebController.getBookByTitle(any(BookData.class), any(BindingResult.class), any(Model.class)))
+			.thenReturn(VIEW_BOOK_SEARCH_BY_TITLE);
+		
+		HtmlPage bookSearchByTitleView = webClient.getPage(URI_BOOK_GET_BY_TITLE +"?title=");
+		
+		assertThat(bookSearchByTitleView.getHtmlElementById("title-validation-error").asText())
+			.isEqualTo("Please fill out this field");
+	}
+
+	@Test
+	public void testBookSearchByTitleView_afterGetRequestToGetByTitleEndpointWithBlankTitle_shouldContainBlankValidationErrorMessage() throws Exception {
+		when(bookWebController.getBookByTitle(any(BookData.class), any(BindingResult.class), any(Model.class)))
+			.thenReturn(VIEW_BOOK_SEARCH_BY_TITLE);
+		
+		HtmlPage bookSearchByTitleView = webClient.getPage(URI_BOOK_GET_BY_TITLE);
+		
+		assertThat(bookSearchByTitleView.getHtmlElementById("title-validation-error").asText())
+			.isEqualTo("Please fill out this field");
+	}
+
+	@Test
+	public void testBookSearchByTitleView_afterGetRequestToGetByTitleEndpointWithInvalidTitle_shouldContainTitleValidationErrorMessage() throws Exception {
+		when(bookWebController.getBookByTitle(any(BookData.class), any(BindingResult.class), any(Model.class)))
+			.thenReturn(VIEW_BOOK_SEARCH_BY_TITLE);
+		
+		HtmlPage bookSearchByTitleView = webClient.getPage(URI_BOOK_GET_BY_TITLE + "?title=" + INVALID_TITLE);
+		HtmlForm searchBookByTitleForm = bookSearchByTitleView.getFormByName("search-book-by-title-form");
+		
+		assertThat(searchBookByTitleForm.asText())
+			.contains("Invalid title; the allowed special characters are: & , : . ! ?");
+	}
+
+	@Test
+	public void testBookSearchByTitleView_whenUserFillTheFormWithInvalidTitleButDoNotPressTheSubmitButton_shouldNotShowValidationErrorMessage() throws Exception {
+		when(bookWebController.getBookSearchByTitleView(any(BookData.class)))
+			.thenReturn(VIEW_BOOK_SEARCH_BY_TITLE);
+		
+		HtmlPage bookSearchByTitleView = webClient.getPage(URI_BOOK_SEARCH_BY_TITLE);
+		HtmlForm searchBookByTitleForm = bookSearchByTitleView.getFormByName("search-book-by-title-form");
+		searchBookByTitleForm.getInputByName("title").setValueAttribute(INVALID_TITLE);
+		
+		assertThat(searchBookByTitleForm.asText())
+			.doesNotContain("Invalid title; the allowed special characters are: & , : . ! ?");
+	}
+
 	/* ---------- BookSearchByTitleView layout tests ---------- */
 
 	@Test
