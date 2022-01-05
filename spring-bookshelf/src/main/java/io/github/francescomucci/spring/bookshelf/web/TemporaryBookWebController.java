@@ -19,7 +19,17 @@ import io.github.francescomucci.spring.bookshelf.model.dto.IsbnData;
 @Controller("TemporaryBookWebController")
 public class TemporaryBookWebController implements BookWebController {
 
+
 	private static final String TEMPORARY_IMPLEMENTATION = "Temporary implementation";
+
+	private static final long ISBN_1 = 9788804395942L;
+	private static final String TITLE_1 = "Foundation";
+	private static final List<String> AUTHORS_1 = asList("Isaac Asimov");
+	private static final long NEW_ISBN_1 = 9780553293357L;
+	
+	private static final long ISBN_2 = 9781401238964L;
+	private static final String TITLE_2 = "Watchmen";
+	private static final List<String> AUTHORS_2 = asList("Alan Moore", "Dave Gibbons");
 
 	@Override
 	public String getBookHomeView() {
@@ -29,8 +39,8 @@ public class TemporaryBookWebController implements BookWebController {
 	@Override
 	public String getBookListView(Model model) {
 		List<Book> bookList = asList(
-			new Book(9788804395942L, "Foundation", asList("Isaac Asimov")), 
-			new Book(9781401238964L, "Watchmen", asList("Alan Moore", "Dave Gibbons")));
+			new Book(ISBN_1, TITLE_1, AUTHORS_1), 
+			new Book(ISBN_2, TITLE_2, AUTHORS_2));
 		model.addAttribute(MODEL_BOOKS, bookList);
 		return VIEW_BOOK_LIST;
 	}
@@ -80,7 +90,7 @@ public class TemporaryBookWebController implements BookWebController {
 	/* Temporary web end-point only to manual test searchByIsbn view esthetics when a book is found */
 	@GetMapping(URI_BOOK_GET_BY_ISBN + "/test/found")
 	public String getBookByIsbnTestFound(BookData searchFormData, BindingResult result, Model model) {
-		model.addAttribute(MODEL_BOOKS, new Book(9788804395942L, "Foundation",  asList("Isaac Asimov")));
+		model.addAttribute(MODEL_BOOKS, new Book(ISBN_1, TITLE_1,  AUTHORS_1));
 		return VIEW_BOOK_SEARCH_BY_ISBN;
 	}
 
@@ -98,8 +108,8 @@ public class TemporaryBookWebController implements BookWebController {
 	@GetMapping(URI_BOOK_GET_BY_TITLE + "/test/found")
 	public String getBookByTitleTestFound(BookData searchFormData, BindingResult result, Model model) {
 		List<Book> bookList = asList(
-				new Book(9788804395942L, "Foundation", asList("Isaac Asimov")), 
-				new Book(9780553293357L, "Foundation vol.1", asList("Isaac Asimov")));
+				new Book(ISBN_1, TITLE_1, AUTHORS_1), 
+				new Book(NEW_ISBN_1, TITLE_1 + " vol.1", AUTHORS_1));
 		model.addAttribute(MODEL_BOOKS, bookList);
 		return VIEW_BOOK_SEARCH_BY_TITLE;
 	}
