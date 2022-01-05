@@ -23,11 +23,13 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlFooter;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
+import com.gargoylesoftware.htmlunit.html.HtmlHeader;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import io.github.francescomucci.spring.bookshelf.model.dto.BookData;
 import io.github.francescomucci.spring.bookshelf.web.BookWebController;
 import io.github.francescomucci.spring.bookshelf.web.security.WithMockAdmin;
+import io.github.francescomucci.spring.bookshelf.web.view.BookViewTestingHelperMethods;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(controllers = BookWebController.class)
@@ -43,6 +45,22 @@ public class BookSearchByTitleViewTest {
 	public void setup() {
 		webClient.setCssErrorHandler(new SilentCssErrorHandler());
 		webClient.getCookieManager().clearCookies();
+	}
+
+	/* ---------- BookSearchByTitleView header message tests ---------- */
+
+	@Test
+	public void testBookSearchByTitleView_shouldAlwaysContainAnInformativeTextInTheHeader() throws Exception {
+		when(bookWebController.getBookSearchByTitleView(any(BookData.class)))
+			.thenReturn(VIEW_BOOK_SEARCH_BY_TITLE);
+		
+		HtmlPage bookSearchByTitleView = webClient.getPage(URI_BOOK_SEARCH_BY_TITLE);
+		HtmlHeader header = (HtmlHeader) bookSearchByTitleView.getElementsByTagName("header").get(0);
+		
+		assertThat(BookViewTestingHelperMethods.removeWindowsCR(header.asText()))
+			.isEqualTo(
+				"Book search by title form" + "\n" +
+				"Insert the title of the book you want to retrieve from the database");
 	}
 
 	/* ---------- BookSearchByTitleView layout tests ---------- */

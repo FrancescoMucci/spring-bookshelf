@@ -8,7 +8,12 @@
 </head>
 
 <body>
-	<section>TBD</section>
+	<section>
+		<header th:replace="shared/fragment/parametric/header::fragment(
+			'Book search by title form',
+			'Insert the title of the book you want to retrieve from the database')">
+		</header>
+	</section>
 </body>
 
 </html>
