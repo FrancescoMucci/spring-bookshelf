@@ -1,8 +1,11 @@
 package io.github.francescomucci.spring.bookshelf.web.view.main;
 
+import static io.github.francescomucci.spring.bookshelf.BookTestingConstants.*;
 import static io.github.francescomucci.spring.bookshelf.web.BookWebControllerConstants.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -15,6 +18,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 
 import com.gargoylesoftware.htmlunit.SilentCssErrorHandler;
 import com.gargoylesoftware.htmlunit.WebClient;
@@ -60,6 +64,119 @@ public class BookNewViewTest {
 			"Book new form" + "\n" + 
 			"Insert book data to create a new book");
 	}
+
+	/* ---------- BookNewView new form basic functionality tests ---------- */
+
+	@Test
+	public void testBookNewView_shouldAlwaysContainAFormToAddNewBook() throws Exception {
+		when(bookWebController.getBookNewView(new BookData()))
+			.thenReturn(VIEW_BOOK_NEW);
+		
+		HtmlPage bookNewView = webClient.getPage(URI_BOOK_NEW);
+		HtmlForm newBookForm = bookNewView.getFormByName("new-book-form");
+		
+		assertThat(newBookForm.getElementsByTagName("label").get(0).asText())
+			.isEqualTo("ISBN-13");
+		assertThat(newBookForm.getInputByName("isbn").getPlaceholder())
+			.isEqualTo("e.g. 9781401238964");
+		
+		assertThat(newBookForm.getElementsByTagName("label").get(1).asText())
+			.isEqualTo("Title");
+		assertThat(newBookForm.getInputByName("title").getPlaceholder())
+			.isEqualTo("e.g. Watchmen");
+		
+		assertThat(newBookForm.getElementsByTagName("label").get(2).asText())
+			.isEqualTo("Authors");
+		assertThat(newBookForm.getInputByName("authors").getPlaceholder())
+			.isEqualTo("e.g. Alan Moore, Dave Gibbons");
+		
+		assertThat(newBookForm.getButtonByName("submit-button").asText())
+			.isEqualTo("Add book");
+	}
+
+	@Test
+	public void testBookNewView_whenUserFillTheFormWithValidInputsAndPressTheSubmitButton_shouldSendPostRequestToAddEndpoint() throws Exception {
+		BookData bookFormData = new BookData(VALID_ISBN13_WITH_HYPHENS, TITLE, AUTHORS_STRING);
+		when(bookWebController.getBookNewView(new BookData()))
+			.thenReturn(VIEW_BOOK_NEW);
+		when(bookWebController.postAddBook(any(BookData.class), any(BindingResult.class)))
+			.thenReturn(VIEW_BOOK_LIST);
+		
+		HtmlPage bookNewView = webClient.getPage(URI_BOOK_NEW);
+		HtmlForm newBookForm = bookNewView.getFormByName("new-book-form");
+		newBookForm.getInputByName("isbn").setValueAttribute(bookFormData.getIsbn());
+		newBookForm.getInputByName("title").setValueAttribute(bookFormData.getTitle());
+		newBookForm.getInputByName("authors").setValueAttribute(bookFormData.getAuthors());
+		newBookForm.getButtonByName("submit-button").click();
+		
+		verify(bookWebController)
+			.postAddBook(eq(bookFormData), any(BindingResult.class));
+	}
+
+	@Test
+	public void testBookNewView_whenUserFillTheFormWithInvalidInputsAndPressTheSubmitButton_shouldSendPostRequestToAddEndpoint() throws Exception {
+		BookData bookFormData = new BookData(INVALID_ISBN13_WITH_HYPHENS, INVALID_TITLE, INVALID_AUTHORS_STRING);
+		when(bookWebController.getBookNewView(new BookData()))
+			.thenReturn(VIEW_BOOK_NEW);
+		when(bookWebController.postAddBook(any(BookData.class), any(BindingResult.class)))
+			.thenReturn(VIEW_BOOK_NEW);
+		
+		HtmlPage bookNewView = webClient.getPage(URI_BOOK_NEW);
+		HtmlForm newBookForm = bookNewView.getFormByName("new-book-form");
+		newBookForm.getInputByName("isbn").setValueAttribute(bookFormData.getIsbn());
+		newBookForm.getInputByName("title").setValueAttribute(bookFormData.getTitle());
+		newBookForm.getInputByName("authors").setValueAttribute(bookFormData.getAuthors());
+		newBookForm.getButtonByName("submit-button").click();
+		
+		verify(bookWebController)
+			.postAddBook(eq(bookFormData), any(BindingResult.class));
+	}
+
+	@Test
+	public void testBookNewView_whenUserDoNotFillTheIsbnAndPressTheSubmitButton_shouldNotSendPostRequestToAddEndpoint() throws Exception {
+		when(bookWebController.getBookNewView(new BookData()))
+			.thenReturn(VIEW_BOOK_NEW);
+		
+		HtmlPage bookNewView = webClient.getPage(URI_BOOK_NEW);
+		HtmlForm newBookForm = bookNewView.getFormByName("new-book-form");
+		newBookForm.getInputByName("title").setValueAttribute(TITLE);
+		newBookForm.getInputByName("authors").setValueAttribute(AUTHORS_STRING);
+		newBookForm.getButtonByName("submit-button").click();
+
+		verify(bookWebController, never())
+			.postAddBook(any(BookData.class), any(BindingResult.class));
+	}
+
+	@Test
+	public void testBookNewView_whenUserDoNotFillTheTitleAndPressTheSubmitButton_shouldNotSendPostRequestToAddEndpoint() throws Exception {
+		when(bookWebController.getBookNewView(new BookData()))
+			.thenReturn(VIEW_BOOK_NEW);
+		
+		HtmlPage bookNewView = webClient.getPage(URI_BOOK_NEW);
+		HtmlForm newBookForm = bookNewView.getFormByName("new-book-form");
+		newBookForm.getInputByName("isbn").setValueAttribute(VALID_ISBN13_WITH_HYPHENS);
+		newBookForm.getInputByName("authors").setValueAttribute(AUTHORS_STRING);
+		newBookForm.getButtonByName("submit-button").click();
+		
+		verify(bookWebController, never())
+			.postAddBook(any(BookData.class), any(BindingResult.class));
+	}
+
+	@Test
+	public void testBookNewView_whenUserDoNotFillTheAuthorsAndPressTheSubmitButton_shouldNotSendPostRequestToAddEndpoint() throws Exception {
+		when(bookWebController.getBookNewView(new BookData()))
+			.thenReturn(VIEW_BOOK_NEW);
+		
+		HtmlPage bookNewView = webClient.getPage(URI_BOOK_NEW);
+		HtmlForm newBookForm = bookNewView.getFormByName("new-book-form");
+		newBookForm.getInputByName("isbn").setValueAttribute(VALID_ISBN13_WITH_HYPHENS);
+		newBookForm.getInputByName("title").setValueAttribute(TITLE);
+		newBookForm.getButtonByName("submit-button").click();
+
+		verify(bookWebController, never())
+			.postAddBook(any(BookData.class), any(BindingResult.class));
+	}
+
 
 	/* ---------- BookNewView layout tests ---------- */
 
