@@ -59,12 +59,15 @@ public class TemporaryBookWebController implements BookWebController {
 
 	@Override
 	public String getBookEditView(IsbnData isbn, BindingResult result, BookData editFormData) {
+		editFormData.setIsbn(isbn.getIsbn());
+		editFormData.setTitle(TITLE_1);
+		editFormData.setAuthors("Isaac Asimov");
 		return VIEW_BOOK_EDIT;
 	}
 
 	@Override
 	public String postSaveBook(BookData editFormData, BindingResult result) {
-		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
+		return VIEW_BOOK_EDIT;
 	}
 
 	@Override

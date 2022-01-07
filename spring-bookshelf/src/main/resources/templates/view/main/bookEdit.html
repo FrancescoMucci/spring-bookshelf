@@ -19,20 +19,12 @@
 				<div class="form-group">
 					<input type="hidden" th:field="*{isbn}"/>
 				</div>
-				<div class="form-group">
-					<label id="title-label">Title</label>
-					<input class="form-control form-control-lg text-center"
-						required type="text" th:name="title" th:field="*{title}"
-						placeholder="e.g. Watchmen"/>
-				</div>
-				<div class="form-group">
-					<label id="authors-label">Authors</label>
-					<input class="form-control form-control-lg text-center"
-						required type="text" th:name="authors" th:field="*{authors}"
-						placeholder="e.g. Alan Moore, Dave Gibbons"/>
-				</div>
+				<div class="form-group"
+					th:include="shared/fragment/parametric/formInput::fragment('Title', 'e.g. Watchmen', 'title')">Placeholder for title input</div>
+				<div class="form-group"
+					th:include="shared/fragment/parametric/formInput::fragment('Authors ', 'e.g. Alan Moore, Dave Gibbons', 'authors')">Placeholder for authors input</div>
 				<div class="form-group pt-3"
-					th:include="shared/fragment/parametric/formButton::fragment('fa-save', 'Save edit')">Placeholder for button</div>
+					th:include="shared/fragment/parametric/formButton::fragment('fa-save', 'Save edit')">Placeholder for save button</div>
 			</form>
 		</div>
 	</section>

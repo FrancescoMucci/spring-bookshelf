@@ -2,6 +2,7 @@ package io.github.francescomucci.spring.bookshelf.web.view.main;
 
 import static io.github.francescomucci.spring.bookshelf.BookTestingConstants.*;
 import static io.github.francescomucci.spring.bookshelf.web.BookWebControllerConstants.*;
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.AdditionalAnswers.answer;
 import static org.mockito.ArgumentMatchers.any;
@@ -9,6 +10,8 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import java.net.URL;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -20,13 +23,16 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
+import com.gargoylesoftware.htmlunit.HttpMethod;
 import com.gargoylesoftware.htmlunit.SilentCssErrorHandler;
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlFooter;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlHeader;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.util.NameValuePair;
 
 import io.github.francescomucci.spring.bookshelf.model.dto.IsbnData;
 import io.github.francescomucci.spring.bookshelf.model.dto.BookData;
@@ -198,6 +204,138 @@ public class BookEditViewTest {
 			.isEqualTo(INVALID_TITLE);
 		assertThat(editBookForm.getInputByName("authors").getValueAttribute())
 			.isEqualTo(INVALID_AUTHORS_STRING);
+	}
+
+	/* ---------- BookEditView edit form validation error messages tests ---------- */
+
+	@Test
+	public void testBookEditView_afterPostRequestToSaveEditedBookWithInvalidTitle_shouldContainTitleValidationErrorMessage() throws Exception {
+		String invalidTitleMessage = "Invalid title; the allowed special characters are: & , : . ! ?";
+		String invalidAuthorsMessage = "Invalid authors; numbers and all special special characters, except the comma, are not allowed";
+		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
+			.thenReturn(VIEW_BOOK_EDIT);
+		when(bookWebController.postSaveBook(any(BookData.class),any(BindingResult.class)))
+			.thenReturn(VIEW_BOOK_EDIT);
+		
+		HtmlPage bookEditView = webClient.getPage("/book/edit/" + VALID_ISBN13_WITHOUT_FORMATTING);
+		HtmlForm editBookForm = bookEditView.getFormByName("edit-book-form");
+		editBookForm.getInputByName("title").setValueAttribute(INVALID_TITLE);
+		editBookForm.getInputByName("authors").setValueAttribute(AUTHORS_STRING);
+		bookEditView = editBookForm.getButtonByName("submit-button").click();
+		editBookForm = bookEditView.getFormByName("edit-book-form");
+		
+		assertThat(editBookForm.asText())
+			.doesNotContain(invalidAuthorsMessage)
+			.contains(invalidTitleMessage);
+	}
+
+	@Test
+	public void testBookEditView_afterPostRequestToSaveEditedBookWithInvalidAuthors_shouldContainAuthorsValidationErrorMessage() throws Exception {
+		String invalidTitleMessage = "Invalid title; the allowed special characters are: & , : . ! ?";
+		String invalidAuthorsMessage = "Invalid authors; numbers and all special special characters, except the comma, are not allowed";
+		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
+			.thenReturn(VIEW_BOOK_EDIT);
+		when(bookWebController.postSaveBook(any(BookData.class),any(BindingResult.class)))
+			.thenReturn(VIEW_BOOK_EDIT);
+		
+		HtmlPage bookEditView = webClient.getPage("/book/edit/" + VALID_ISBN13_WITHOUT_FORMATTING);
+		HtmlForm editBookForm = bookEditView.getFormByName("edit-book-form");
+		editBookForm.getInputByName("title").setValueAttribute(TITLE);
+		editBookForm.getInputByName("authors").setValueAttribute(INVALID_AUTHORS_STRING);
+		bookEditView = editBookForm.getButtonByName("submit-button").click();
+		editBookForm = bookEditView.getFormByName("edit-book-form");
+		
+		assertThat(editBookForm.asText())
+			.doesNotContain(invalidTitleMessage)
+			.contains(invalidAuthorsMessage);
+	}
+
+	@Test
+	public void testBookEditView_afterPostRequestToSaveEditedBookWithInvalidTitleAndAuthors_shouldContainBothValidationErrorMessages() throws Exception {
+		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
+			.thenReturn(VIEW_BOOK_EDIT);
+		when(bookWebController.postSaveBook(any(BookData.class),any(BindingResult.class)))
+			.thenReturn(VIEW_BOOK_EDIT);
+		
+		HtmlPage bookEditView = webClient.getPage("/book/edit/" + VALID_ISBN13_WITHOUT_FORMATTING);
+		HtmlForm editBookForm = bookEditView.getFormByName("edit-book-form");
+		editBookForm.getInputByName("title").setValueAttribute(INVALID_TITLE);
+		editBookForm.getInputByName("authors").setValueAttribute(INVALID_AUTHORS_STRING);
+		bookEditView = editBookForm.getButtonByName("submit-button").click();
+		editBookForm = bookEditView.getFormByName("edit-book-form");
+		
+		assertThat(bookEditView.getHtmlElementById("title-validation-error").asText())
+			.isEqualTo("Invalid title; the allowed special characters are: & , : . ! ?");
+		assertThat(bookEditView.getHtmlElementById("authors-validation-error").asText())
+			.isEqualTo("Invalid authors; numbers and all special special characters, except the comma, are not allowed");
+	}
+
+	@Test
+	public void testBookEditView_afterPostRequestToSaveEditedBookWithBlankTitleAndAuthors_shouldContainBlankValidationErrorMessages() throws Exception {
+		String blankFieldMessage = "Please fill out this field";
+		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
+			.thenReturn(VIEW_BOOK_EDIT);
+		when(bookWebController.postSaveBook(any(BookData.class),any(BindingResult.class)))
+			.thenReturn(VIEW_BOOK_EDIT);
+		
+		HtmlPage bookEditView = webClient.getPage("/book/edit/" + VALID_ISBN13_WITHOUT_FORMATTING);
+		HtmlForm editBookForm = bookEditView.getFormByName("edit-book-form");
+		WebRequest postRequestToSaveBook = new WebRequest(
+			new URL("http://localhost:8080" + URI_BOOK_SAVE), HttpMethod.POST);
+		postRequestToSaveBook.setRequestParameters(asList(
+			new NameValuePair("_csrf", editBookForm.getInputByName("_csrf").getValueAttribute()),
+			new NameValuePair("isbn", VALID_ISBN13_WITHOUT_FORMATTING),
+			new NameValuePair("title", ""),
+			new NameValuePair("authors", "")));
+		bookEditView = webClient.getPage(postRequestToSaveBook);
+		
+		assertThat(bookEditView.getHtmlElementById("title-validation-error").asText())
+			.isEqualTo(blankFieldMessage);
+		assertThat(bookEditView.getHtmlElementById("authors-validation-error").asText())
+			.isEqualTo(blankFieldMessage);
+	}
+
+	@Test
+	public void testBookEditView_afterPostRequestToSaveEditedBookWithNullTitleAndAuthors_shouldContainBlankValidationErrorMessages() throws Exception {
+		String blankFieldMessage = "Please fill out this field";
+		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
+			.thenReturn(VIEW_BOOK_EDIT);
+		when(bookWebController.postSaveBook(any(BookData.class),any(BindingResult.class)))
+			.thenReturn(VIEW_BOOK_EDIT);
+		
+		HtmlPage bookEditView = webClient.getPage("/book/edit/" + VALID_ISBN13_WITHOUT_FORMATTING);
+		HtmlForm editBookForm = bookEditView.getFormByName("edit-book-form");
+		WebRequest postRequestToSaveBook = new WebRequest(
+			new URL("http://localhost:8080" + URI_BOOK_SAVE), HttpMethod.POST);
+		postRequestToSaveBook.setRequestParameters(asList(
+			new NameValuePair("_csrf", editBookForm.getInputByName("_csrf").getValueAttribute()),
+			new NameValuePair("isbn", VALID_ISBN13_WITHOUT_FORMATTING),
+			new NameValuePair("title", null),
+			new NameValuePair("authors", null)));
+		bookEditView = webClient.getPage(postRequestToSaveBook);
+		
+		assertThat(bookEditView.getHtmlElementById("title-validation-error").asText())
+			.isEqualTo(blankFieldMessage);
+		assertThat(bookEditView.getHtmlElementById("authors-validation-error").asText())
+			.isEqualTo(blankFieldMessage);
+	}
+
+	@Test
+	public void testBookEditView_whenUserFillTheFormWithInvalidInputsButDoNotPressTheSubmitButton_shouldNotShowValidationErrorMessages() throws Exception {
+		String invalidTitleMessage = "Invalid title; the allowed special characters are: & , : . ! ?";
+		String invalidAuthorsMessage = "Invalid authors; numbers and all special special characters, except the comma, are not allowed";
+		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
+			.thenReturn(VIEW_BOOK_EDIT);
+		when(bookWebController.postSaveBook(any(BookData.class),any(BindingResult.class)))
+			.thenReturn(VIEW_BOOK_EDIT);
+		
+		HtmlPage bookEditView = webClient.getPage("/book/edit/" + VALID_ISBN13_WITHOUT_FORMATTING);
+		HtmlForm editBookForm = bookEditView.getFormByName("edit-book-form");
+		editBookForm.getInputByName("title").setValueAttribute(INVALID_TITLE);
+		editBookForm.getInputByName("authors").setValueAttribute(INVALID_AUTHORS_STRING);
+		
+		assertThat(editBookForm.asText())
+			.doesNotContain(invalidTitleMessage, invalidAuthorsMessage);
 	}
 
 	/* ---------- BookEditView layout tests ---------- */
