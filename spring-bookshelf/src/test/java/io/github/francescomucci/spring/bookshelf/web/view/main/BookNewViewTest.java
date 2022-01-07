@@ -393,6 +393,25 @@ public class BookNewViewTest {
 			.doesNotContain(invalidIsbnMessage, invalidTitleMessage, invalidAuthorsMessage);
 	}
 
+	/* ---------- BookNewView ISBN-advice-box tests ---------- */
+
+	@Test
+	public void testBookNewView_shouldAlwaysContainTheIsbnAdviceBox() throws Exception {
+		when(bookWebController.getBookNewView(any(BookData.class)))
+			.thenReturn(VIEW_BOOK_NEW);
+		
+		HtmlPage bookNewView = webClient.getPage(URI_BOOK_NEW);
+		
+		assertThat(bookNewView.getElementById("advice-box").asText())
+			.contains("Advice", "Understand how ISBN-13 works");
+		assertThat(bookNewView.getAnchorByHref("https://www.isbn-international.org/content/what-isbn").asText())
+			.isEqualTo("What is a ISBN-13?");
+		assertThat(bookNewView.getAnchorByHref("https://en.wikipedia.org/wiki/International_Standard_Book_Number#ISBN-13_check_digit_calculation").asText())
+			.isEqualTo("How ISBN-13 validation works?");
+		assertThat(bookNewView.getAnchorByHref("https://isbndb.com/").asText())
+			.isEqualTo("How do I find out the ISBN-13 of a book?");
+	}
+
 	/* ---------- BookNewView layout tests ---------- */
 
 	@Test
