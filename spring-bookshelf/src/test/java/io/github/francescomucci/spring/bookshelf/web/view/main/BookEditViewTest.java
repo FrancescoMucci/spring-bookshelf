@@ -326,8 +326,6 @@ public class BookEditViewTest {
 		String invalidAuthorsMessage = "Invalid authors; numbers and all special special characters, except the comma, are not allowed";
 		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
 			.thenReturn(VIEW_BOOK_EDIT);
-		when(bookWebController.postSaveBook(any(BookData.class),any(BindingResult.class)))
-			.thenReturn(VIEW_BOOK_EDIT);
 		
 		HtmlPage bookEditView = webClient.getPage("/book/edit/" + VALID_ISBN13_WITHOUT_FORMATTING);
 		HtmlForm editBookForm = bookEditView.getFormByName("edit-book-form");

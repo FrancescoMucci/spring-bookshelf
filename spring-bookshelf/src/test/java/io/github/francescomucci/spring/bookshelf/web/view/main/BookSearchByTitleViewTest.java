@@ -346,8 +346,6 @@ public class BookSearchByTitleViewTest {
 				return VIEW_BOOK_SEARCH_BY_TITLE;
 			}
 		));
-		when(bookWebController.postDeleteBook(any(IsbnData.class), any(BindingResult.class)))
-			.thenReturn(VIEW_BOOK_LIST);
 		
 		for (Book book : bookList) {
 			

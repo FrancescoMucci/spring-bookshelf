@@ -140,7 +140,7 @@ public class BookSearchByIsbnViewTest {
 	@Test
 	public void testBookSearchByIsbnView_afterGetRequestToGetByIsbnEndpointWithValidIsbn_theFormInputShouldBePrefilledWithProvidedIsbn() throws Exception {
 		when(bookWebController.getBookByIsbn(any(BookData.class), any(BindingResult.class), any(Model.class)))
-		.thenReturn(VIEW_BOOK_SEARCH_BY_ISBN);
+			.thenReturn(VIEW_BOOK_SEARCH_BY_ISBN);
 		
 		HtmlPage bookSearchByIsbnView = webClient.getPage(URI_BOOK_GET_BY_ISBN + "?isbn=" + VALID_ISBN13_WITH_HYPHENS);
 		HtmlForm searchBookByIsbnForm = bookSearchByIsbnView.getFormByName("search-book-by-isbn-form");
