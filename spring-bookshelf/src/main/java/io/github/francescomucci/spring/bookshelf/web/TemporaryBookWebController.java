@@ -72,7 +72,7 @@ public class TemporaryBookWebController implements BookWebController {
 
 	@Override
 	public String getBookNewView(BookData addFormData) {
-		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
+		return VIEW_BOOK_NEW;
 	}
 
 	@Override
