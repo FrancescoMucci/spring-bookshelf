@@ -22,12 +22,14 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlFooter;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
+import com.gargoylesoftware.htmlunit.html.HtmlHeader;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import io.github.francescomucci.spring.bookshelf.model.dto.IsbnData;
 import io.github.francescomucci.spring.bookshelf.model.dto.BookData;
 import io.github.francescomucci.spring.bookshelf.web.BookWebController;
 import io.github.francescomucci.spring.bookshelf.web.security.WithMockAdmin;
+import io.github.francescomucci.spring.bookshelf.web.view.BookViewTestingHelperMethods;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(controllers = BookWebController.class)
@@ -43,6 +45,22 @@ public class BookEditViewTest {
 	@Before
 	public void setup() {
 		webClient.setCssErrorHandler(new SilentCssErrorHandler());
+	}
+
+	/* ---------- BookEditView header message tests ---------- */
+
+	@Test
+	public void testBookEditView_shouldAlwaysContainAnInformativeTextInTheHeader() throws Exception {
+		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
+			.thenReturn(VIEW_BOOK_EDIT);
+		
+		HtmlPage bookEditView = webClient.getPage("/book/edit/" + VALID_ISBN13_WITHOUT_FORMATTING);
+		HtmlHeader header = (HtmlHeader) bookEditView.getElementsByTagName("header").get(0);
+		
+		assertThat(BookViewTestingHelperMethods.removeWindowsCR(header.asText()))
+			.isEqualTo(
+				"Book edit form" + "\n" + 
+				"Edit book title and authors");
 	}
 
 	/* ---------- BookEditView layout tests ---------- */
