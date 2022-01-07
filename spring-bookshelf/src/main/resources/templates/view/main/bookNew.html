@@ -19,19 +19,19 @@
 				<div class="form-group">
 					<label id="isbn-label">ISBN-13</label>
 					<input class="form-control form-control-lg text-center"
-						required type="text" name="isbn"
+						required type="text" name="isbn" th:field="*{isbn}"
 						placeholder="e.g. 9781401238964"/>
 				</div>
 				<div class="form-group">
 					<label id="title-label">Title</label>
 					<input class="form-control form-control-lg text-center"
-						required type="text" name="title"
+						required type="text" name="title" th:field="*{title}"
 						placeholder="e.g. Watchmen"/>
 				</div>
 				<div class="form-group">
 					<label id="authors-label">Authors</label>
 					<input class="form-control form-control-lg text-center"
-						required type="text" name="authors"
+						required type="text" name="authors" th:field="*{authors}"
 						placeholder="e.g. Alan Moore, Dave Gibbons"/>
 				</div>
 				<div class="form-group pt-3"

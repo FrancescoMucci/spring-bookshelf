@@ -177,6 +177,47 @@ public class BookNewViewTest {
 			.postAddBook(any(BookData.class), any(BindingResult.class));
 	}
 
+	/* ---------- BookNewView new form pre-filling capabilities tests ---------- */
+
+	@Test
+	public void testBookNewView_afterPostRequestToAddNewBookWithSomeInvalidInput_theFormInputsShouldBePrefilledWithProvidedInputs() throws Exception {
+		BookData bookFormData = new BookData(INVALID_ISBN13_WITH_HYPHENS, TITLE, AUTHORS_STRING);
+		when(bookWebController.getBookNewView(new BookData()))
+			.thenReturn(VIEW_BOOK_NEW);
+		when(bookWebController.postAddBook(any(BookData.class), any(BindingResult.class)))
+			.thenReturn(VIEW_BOOK_NEW);
+		
+		HtmlPage bookNewView = webClient.getPage(URI_BOOK_NEW);
+		HtmlForm newBookForm = bookNewView.getFormByName("new-book-form");
+		newBookForm.getInputByName("isbn").setValueAttribute(bookFormData.getIsbn());
+		newBookForm.getInputByName("title").setValueAttribute(bookFormData.getTitle());
+		newBookForm.getInputByName("authors").setValueAttribute(bookFormData.getAuthors());
+		bookNewView = newBookForm.getButtonByName("submit-button").click();
+		newBookForm = bookNewView.getFormByName("new-book-form");
+		
+		assertThat(newBookForm.getInputByName("isbn").getValueAttribute())
+			.isEqualTo(INVALID_ISBN13_WITH_HYPHENS);
+		assertThat(newBookForm.getInputByName("title").getValueAttribute())
+			.isEqualTo(TITLE);
+		assertThat(newBookForm.getInputByName("authors").getValueAttribute())
+			.isEqualTo(AUTHORS_STRING);
+	}
+
+	@Test
+	public void testBookNewView_whenJustOpened_theFormInputsShouldNotBePrefilled() throws Exception {
+		when(bookWebController.getBookNewView(new BookData()))
+			.thenReturn(VIEW_BOOK_NEW);
+		
+		HtmlPage bookNewView = webClient.getPage(URI_BOOK_NEW);
+		HtmlForm newBookForm = bookNewView.getFormByName("new-book-form");
+		
+		assertThat(newBookForm.getInputByName("isbn").getValueAttribute())
+			.isEmpty();
+		assertThat(newBookForm.getInputByName("title").getValueAttribute())
+			.isEmpty();
+		assertThat(newBookForm.getInputByName("authors").getValueAttribute())
+			.isEmpty();
+	}
 
 	/* ---------- BookNewView layout tests ---------- */
 

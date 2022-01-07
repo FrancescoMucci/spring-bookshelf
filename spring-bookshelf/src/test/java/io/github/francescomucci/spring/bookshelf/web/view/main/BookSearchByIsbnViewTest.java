@@ -146,7 +146,7 @@ public class BookSearchByIsbnViewTest {
 		HtmlForm searchBookByIsbnForm = bookSearchByIsbnView.getFormByName("search-book-by-isbn-form");
 		
 		assertThat(searchBookByIsbnForm.getInputByName("isbn").getValueAttribute())
-		.isEqualTo(VALID_ISBN13_WITH_HYPHENS);
+			.isEqualTo(VALID_ISBN13_WITH_HYPHENS);
 	}
 
 	@Test
