@@ -4,6 +4,8 @@ import static io.github.francescomucci.spring.bookshelf.BookTestingConstants.*;
 import static io.github.francescomucci.spring.bookshelf.web.BookWebControllerConstants.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -61,6 +63,95 @@ public class BookEditViewTest {
 			.isEqualTo(
 				"Book edit form" + "\n" + 
 				"Edit book title and authors");
+	}
+
+	/* ---------- BookEditView edit form basic functionality tests ---------- */
+
+	@Test
+	public void testBookEditView_shouldAlwaysContainAFormToEditExistingBook() throws Exception {
+		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
+			.thenReturn(VIEW_BOOK_EDIT);
+		
+		HtmlPage bookEditView = webClient.getPage("/book/edit/" + VALID_ISBN13_WITHOUT_FORMATTING);
+		HtmlForm editBookForm = bookEditView.getFormByName("edit-book-form");
+		
+		assertThat(editBookForm.getInputByName("isbn").getAttribute("type"))
+			.isEqualTo("hidden");
+		
+		assertThat(editBookForm.getElementsByTagName("label").get(0).asText())
+			.isEqualTo("Title");
+		assertThat(editBookForm.getInputByName("title").getPlaceholder())
+			.isEqualTo("e.g. Watchmen");
+		
+		assertThat(editBookForm.getElementsByTagName("label").get(1).asText())
+			.isEqualTo("Authors");
+		assertThat(editBookForm.getInputByName("authors").getPlaceholder())
+			.isEqualTo("e.g. Alan Moore, Dave Gibbons");
+		
+		assertThat(editBookForm.getButtonByName("submit-button").asText())
+			.isEqualTo("Save edit");
+	}
+
+	@Test
+	public void testBookEditView_whenUserFillTheFormWithValidInputsAndPressTheSubmitButton_shouldSendPostRequestToSaveEndpoint() throws Exception {
+		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
+			.thenReturn(VIEW_BOOK_EDIT);
+		when(bookWebController.postSaveBook(any(BookData.class),any(BindingResult.class)))
+			.thenReturn(VIEW_BOOK_LIST);
+		
+		HtmlPage bookEditView = webClient.getPage("/book/edit/" + VALID_ISBN13_WITHOUT_FORMATTING);
+		HtmlForm editBookForm = bookEditView.getFormByName("edit-book-form");
+		editBookForm.getInputByName("title").setValueAttribute(NEW_TITLE);
+		editBookForm.getInputByName("authors").setValueAttribute(AUTHORS_STRING);
+		editBookForm.getButtonByName("submit-button").click();
+		
+		verify(bookWebController)
+			.postSaveBook(eq(new BookData(VALID_ISBN13_WITHOUT_FORMATTING, NEW_TITLE, AUTHORS_STRING)), any(BindingResult.class));
+	}
+
+	@Test
+	public void testBookEditView_whenUserFillTheFormWithInvalidInputsAndPressTheSubmitButton_shouldSendPostRequestToSaveEndpoint() throws Exception {
+		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
+			.thenReturn(VIEW_BOOK_EDIT);
+		when(bookWebController.postSaveBook(any(BookData.class),any(BindingResult.class)))
+			.thenReturn(VIEW_BOOK_LIST);
+		
+		HtmlPage bookEditView = webClient.getPage("/book/edit/" + VALID_ISBN13_WITHOUT_FORMATTING);
+		HtmlForm editBookForm = bookEditView.getFormByName("edit-book-form");
+		editBookForm.getInputByName("title").setValueAttribute(INVALID_TITLE);
+		editBookForm.getInputByName("authors").setValueAttribute(INVALID_AUTHORS_STRING);
+		editBookForm.getButtonByName("submit-button").click();
+		
+		verify(bookWebController)
+			.postSaveBook(eq(new BookData(VALID_ISBN13_WITHOUT_FORMATTING, INVALID_TITLE, INVALID_AUTHORS_STRING)), any(BindingResult.class));
+	}
+
+	@Test
+	public void testBookEditView_whenUserDoNotFillTheTitleAndPressTheSubmitButton_shouldNotSendPostRequestToSaveEndpoint() throws Exception {
+		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
+			.thenReturn(VIEW_BOOK_EDIT);
+		
+		HtmlPage bookEditView = webClient.getPage("/book/edit/" + VALID_ISBN13_WITHOUT_FORMATTING);
+		HtmlForm editBookForm = bookEditView.getFormByName("edit-book-form");
+		editBookForm.getInputByName("title").setValueAttribute("");
+		editBookForm.getButtonByName("submit-button").click();
+		
+		verify(bookWebController, never())
+			.postSaveBook(any(BookData.class), any(BindingResult.class));
+	}
+
+	@Test
+	public void testBookEditView_whenUserDoNotFillTheAuthorsAndPressTheSubmitButton_shouldNotSendPostRequestToSaveEndpoint() throws Exception {
+		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
+			.thenReturn(VIEW_BOOK_EDIT);
+		
+		HtmlPage bookEditView = webClient.getPage("/book/edit/" + VALID_ISBN13_WITHOUT_FORMATTING);
+		HtmlForm editBookForm = bookEditView.getFormByName("edit-book-form");
+		editBookForm.getInputByName("authors").setValueAttribute("");
+		editBookForm.getButtonByName("submit-button").click();
+		
+		verify(bookWebController, never())
+			.postSaveBook(any(BookData.class), any(BindingResult.class));
 	}
 
 	/* ---------- BookEditView layout tests ---------- */
