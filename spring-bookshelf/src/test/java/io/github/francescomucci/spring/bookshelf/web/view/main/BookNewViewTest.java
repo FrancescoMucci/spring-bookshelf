@@ -2,6 +2,7 @@ package io.github.francescomucci.spring.bookshelf.web.view.main;
 
 import static io.github.francescomucci.spring.bookshelf.BookTestingConstants.*;
 import static io.github.francescomucci.spring.bookshelf.web.BookWebControllerConstants.*;
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -9,6 +10,8 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import java.net.URL;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -20,13 +23,16 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 
+import com.gargoylesoftware.htmlunit.HttpMethod;
 import com.gargoylesoftware.htmlunit.SilentCssErrorHandler;
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlFooter;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlHeader;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.util.NameValuePair;
 
 import io.github.francescomucci.spring.bookshelf.model.dto.BookData;
 import io.github.francescomucci.spring.bookshelf.web.BookWebController;
@@ -217,6 +223,174 @@ public class BookNewViewTest {
 			.isEmpty();
 		assertThat(newBookForm.getInputByName("authors").getValueAttribute())
 			.isEmpty();
+	}
+
+	/* ---------- BookNewView new form validation error messages tests ---------- */
+
+	@Test
+	public void testBookNewView_afterPostRequestToAddNewBookWithInvalidIsbn_shouldContainIsbnValidationErrorMessage() throws Exception {
+		BookData bookFormData = new BookData(INVALID_ISBN13_WITH_HYPHENS, TITLE, AUTHORS_STRING);
+		String invalidIsbnMessage = "Invalid ISBN-13; check the advice box to understand how ISBN-13 works";
+		String invalidTitleMessage = "Invalid title; the allowed special characters are: & , : . ! ?";
+		String invalidAuthorsMessage = "Invalid authors; numbers and all special special characters, except the comma, are not allowed";
+		when(bookWebController.getBookNewView(new BookData()))
+			.thenReturn(VIEW_BOOK_NEW);
+		when(bookWebController.postAddBook(any(BookData.class), any(BindingResult.class)))
+			.thenReturn(VIEW_BOOK_NEW);
+		
+		HtmlPage bookNewView = webClient.getPage(URI_BOOK_NEW);
+		HtmlForm newBookForm = bookNewView.getFormByName("new-book-form");
+		newBookForm.getInputByName("isbn").setValueAttribute(bookFormData.getIsbn());
+		newBookForm.getInputByName("title").setValueAttribute(bookFormData.getTitle());
+		newBookForm.getInputByName("authors").setValueAttribute(bookFormData.getAuthors());
+		bookNewView = newBookForm.getButtonByName("submit-button").click();
+		newBookForm = bookNewView.getFormByName("new-book-form");
+		
+		assertThat(newBookForm.asText())
+			.doesNotContain(invalidTitleMessage, invalidAuthorsMessage)
+			.contains(invalidIsbnMessage);
+	}
+
+	@Test
+	public void testBookNewView_afterPostRequestToAddNewBookWithInvalidTitle_shouldContainTitleValidationErrorMessage() throws Exception {
+		BookData bookFormData = new BookData(VALID_ISBN13_WITH_HYPHENS, INVALID_TITLE, AUTHORS_STRING);
+		String invalidIsbnMessage = "Invalid ISBN-13; check the advice box to understand how ISBN-13 works";
+		String invalidTitleMessage = "Invalid title; the allowed special characters are: & , : . ! ?";
+		String invalidAuthorsMessage = "Invalid authors; numbers and all special special characters, except the comma, are not allowed";
+		when(bookWebController.getBookNewView(new BookData()))
+			.thenReturn(VIEW_BOOK_NEW);
+		when(bookWebController.postAddBook(any(BookData.class), any(BindingResult.class)))
+			.thenReturn(VIEW_BOOK_NEW);
+		
+		HtmlPage bookNewView = webClient.getPage(URI_BOOK_NEW);
+		HtmlForm newBookForm = bookNewView.getFormByName("new-book-form");
+		newBookForm.getInputByName("isbn").setValueAttribute(bookFormData.getIsbn());
+		newBookForm.getInputByName("title").setValueAttribute(bookFormData.getTitle());
+		newBookForm.getInputByName("authors").setValueAttribute(bookFormData.getAuthors());	
+		bookNewView = newBookForm.getButtonByName("submit-button").click();
+		newBookForm = bookNewView.getFormByName("new-book-form");
+		
+		assertThat(newBookForm.asText())
+			.doesNotContain(invalidIsbnMessage, invalidAuthorsMessage)
+			.contains(invalidTitleMessage);
+	}
+
+	@Test
+	public void testBookNewView_afterPostRequestToAddNewBookWithInvalidAuthors_shouldContainAuthorsValidationErrorMessage() throws Exception {
+		BookData bookFormData = new BookData(VALID_ISBN13_WITH_HYPHENS, TITLE, INVALID_AUTHORS_STRING);
+		String invalidIsbnMessage = "Invalid ISBN-13; check the advice box to understand how ISBN-13 works";
+		String invalidTitleMessage = "Invalid title; the allowed special characters are: & , : . ! ?";
+		String invalidAuthorsMessage = "Invalid authors; numbers and all special special characters, except the comma, are not allowed";
+		when(bookWebController.getBookNewView(new BookData()))
+			.thenReturn(VIEW_BOOK_NEW);
+		when(bookWebController.postAddBook(any(BookData.class), any(BindingResult.class)))
+			.thenReturn(VIEW_BOOK_NEW);
+		
+		HtmlPage bookNewView = webClient.getPage(URI_BOOK_NEW);
+		HtmlForm newBookForm = bookNewView.getFormByName("new-book-form");
+		newBookForm.getInputByName("isbn").setValueAttribute(bookFormData.getIsbn());
+		newBookForm.getInputByName("title").setValueAttribute(bookFormData.getTitle());
+		newBookForm.getInputByName("authors").setValueAttribute(bookFormData.getAuthors());
+		bookNewView = newBookForm.getButtonByName("submit-button").click();
+		newBookForm = bookNewView.getFormByName("new-book-form");
+		
+		assertThat(newBookForm.asText())
+			.doesNotContain(invalidIsbnMessage, invalidTitleMessage)
+			.contains(invalidAuthorsMessage);
+	}
+
+	@Test
+	public void testBookNewView_afterPostRequestToAddNewBookWithAllInvalidInputs_shouldContainAllValidationErrorMessages() throws Exception {
+		BookData bookFormData = new BookData(INVALID_ISBN13_WITH_HYPHENS, INVALID_TITLE, INVALID_AUTHORS_STRING);
+		when(bookWebController.getBookNewView(new BookData()))
+			.thenReturn(VIEW_BOOK_NEW);
+		when(bookWebController.postAddBook(any(BookData.class), any(BindingResult.class)))
+			.thenReturn(VIEW_BOOK_NEW);
+		
+		HtmlPage bookNewView = webClient.getPage(URI_BOOK_NEW);
+		HtmlForm newBookForm = bookNewView.getFormByName("new-book-form");
+		newBookForm.getInputByName("isbn").setValueAttribute(bookFormData.getIsbn());
+		newBookForm.getInputByName("title").setValueAttribute(bookFormData.getTitle());
+		newBookForm.getInputByName("authors").setValueAttribute(bookFormData.getAuthors());
+		bookNewView = newBookForm.getButtonByName("submit-button").click();
+		
+		assertThat(bookNewView.getHtmlElementById("isbn-validation-error").asText())
+			.isEqualTo("Invalid ISBN-13; check the advice box to understand how ISBN-13 works");
+		assertThat(bookNewView.getHtmlElementById("title-validation-error").asText())
+			.isEqualTo("Invalid title; the allowed special characters are: & , : . ! ?");
+		assertThat(bookNewView.getHtmlElementById("authors-validation-error").asText())
+			.isEqualTo("Invalid authors; numbers and all special special characters, except the comma, are not allowed");
+	}
+
+	@Test
+	public void testBookNewView_afterPostRequestToAddNewBookWithBlankInputs_shouldContainBlankValidationErrorMessages() throws Exception {
+		when(bookWebController.getBookNewView(new BookData()))
+			.thenReturn(VIEW_BOOK_NEW);
+		when(bookWebController.postAddBook(any(BookData.class), any(BindingResult.class)))
+			.thenReturn(VIEW_BOOK_NEW);
+		
+		HtmlPage bookNewView = webClient.getPage(URI_BOOK_NEW);
+		HtmlForm newBookForm = bookNewView.getFormByName("new-book-form");
+		WebRequest postRequestToAddBook = new WebRequest(new URL("http://localhost:8080" + URI_BOOK_ADD), HttpMethod.POST);
+		postRequestToAddBook.setRequestParameters(asList(
+			new NameValuePair("_csrf", newBookForm.getInputByName("_csrf").getValueAttribute()),
+			new NameValuePair("isbn", ""),
+			new NameValuePair("title", ""),
+			new NameValuePair("authors", ""))
+		);
+		bookNewView = webClient.getPage(postRequestToAddBook);
+		
+		assertThat(bookNewView.getHtmlElementById("isbn-validation-error").asText())
+			.isEqualTo("Invalid ISBN-13; check the advice box to understand how ISBN-13 works");
+		assertThat(bookNewView.getHtmlElementById("title-validation-error").asText())
+			.isEqualTo("Please fill out this field");
+		assertThat(bookNewView.getHtmlElementById("authors-validation-error").asText())
+			.isEqualTo("Please fill out this field");
+	}
+
+	@Test
+	public void testBookNewView_afterPostRequestToAddNewBookWithNullInputs_shouldContainBlankValidationErrorMessages() throws Exception {
+		when(bookWebController.getBookNewView(new BookData()))
+			.thenReturn(VIEW_BOOK_NEW);
+		when(bookWebController.postAddBook(any(BookData.class), any(BindingResult.class)))
+			.thenReturn(VIEW_BOOK_NEW);
+		
+		HtmlPage bookNewView = webClient.getPage(URI_BOOK_NEW);
+		HtmlForm newBookForm = bookNewView.getFormByName("new-book-form");
+		WebRequest postRequestToAddBook = new WebRequest(new URL("http://localhost:8080" + URI_BOOK_ADD), HttpMethod.POST);
+		postRequestToAddBook.setRequestParameters(asList(
+			new NameValuePair("_csrf", newBookForm.getInputByName("_csrf").getValueAttribute()),
+			new NameValuePair("isbn", null),
+			new NameValuePair("title", null),
+			new NameValuePair("authors", null))
+		);
+		bookNewView = webClient.getPage(postRequestToAddBook);
+		
+		assertThat(bookNewView.getHtmlElementById("isbn-validation-error").asText())
+			.isEqualTo("Please fill out this field");
+		assertThat(bookNewView.getHtmlElementById("title-validation-error").asText())
+			.isEqualTo("Please fill out this field");
+		assertThat(bookNewView.getHtmlElementById("authors-validation-error").asText())
+			.isEqualTo("Please fill out this field");
+	}
+
+	@Test
+	public void testBookNewView_whenUserFillTheFormWithInvalidInputsButDoNotPressTheSubmitButton_shouldNotShowValidationErrorMessages() throws Exception {
+		BookData bookFormData = new BookData(INVALID_ISBN13_WITH_HYPHENS, INVALID_TITLE, INVALID_AUTHORS_STRING);
+		String invalidIsbnMessage = "Invalid ISBN-13; check the advice box to understand how ISBN-13 works";
+		String invalidTitleMessage = "Invalid title; the allowed special characters are: & , : . ! ?";
+		String invalidAuthorsMessage = "Invalid authors; numbers and all special special characters, except the comma, are not allowed";
+		when(bookWebController.getBookNewView(new BookData()))
+			.thenReturn(VIEW_BOOK_NEW);
+		
+		HtmlPage bookNewView = webClient.getPage(URI_BOOK_NEW);
+		HtmlForm newBookForm = bookNewView.getFormByName("new-book-form");
+		newBookForm.getInputByName("isbn").setValueAttribute(bookFormData.getIsbn());
+		newBookForm.getInputByName("title").setValueAttribute(bookFormData.getTitle());
+		newBookForm.getInputByName("authors").setValueAttribute(bookFormData.getAuthors());
+		
+		assertThat(newBookForm.asText())
+			.doesNotContain(invalidIsbnMessage, invalidTitleMessage, invalidAuthorsMessage);
 	}
 
 	/* ---------- BookNewView layout tests ---------- */

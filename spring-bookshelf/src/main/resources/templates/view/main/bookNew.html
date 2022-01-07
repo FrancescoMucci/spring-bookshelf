@@ -16,26 +16,14 @@
 		<div class="container my-5 text-center">
 			<form name="new-book-form"
 				th:action="@{/book/add}" method="post" th:object="${bookData}">
-				<div class="form-group">
-					<label id="isbn-label">ISBN-13</label>
-					<input class="form-control form-control-lg text-center"
-						required type="text" name="isbn" th:field="*{isbn}"
-						placeholder="e.g. 9781401238964"/>
-				</div>
-				<div class="form-group">
-					<label id="title-label">Title</label>
-					<input class="form-control form-control-lg text-center"
-						required type="text" name="title" th:field="*{title}"
-						placeholder="e.g. Watchmen"/>
-				</div>
-				<div class="form-group">
-					<label id="authors-label">Authors</label>
-					<input class="form-control form-control-lg text-center"
-						required type="text" name="authors" th:field="*{authors}"
-						placeholder="e.g. Alan Moore, Dave Gibbons"/>
-				</div>
+				<div class="form-group"
+					th:include="shared/fragment/parametric/formInput::fragment('ISBN-13', 'e.g. 9781401238964', 'isbn')">Placeholder for ISBN input</div>
+				<div class="form-group"
+					th:include="shared/fragment/parametric/formInput::fragment('Title', 'e.g. Watchmen', 'title')">Placeholder for title input</div>
+				<div class="form-group"
+					th:include="shared/fragment/parametric/formInput::fragment('Authors', 'e.g. Alan Moore, Dave Gibbons', 'authors')">Placeholder for authors input</div>
 				<div class="form-group pt-3"
-					th:include="shared/fragment/parametric/formButton::fragment('fa-plus', 'Add book')">Placeholder for button</div>
+					th:include="shared/fragment/parametric/formButton::fragment('fa-plus', 'Add book')">Placeholder for add button</div>
 			</form>
 		</div>
 	</section>
