@@ -59,7 +59,7 @@ public class TemporaryBookWebController implements BookWebController {
 
 	@Override
 	public String getBookEditView(IsbnData isbn, BindingResult result, BookData editFormData) {
-		throw new UnsupportedOperationException(TEMPORARY_IMPLEMENTATION);
+		return VIEW_BOOK_EDIT;
 	}
 
 	@Override
