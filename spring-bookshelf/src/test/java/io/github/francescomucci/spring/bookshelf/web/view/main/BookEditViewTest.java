@@ -3,6 +3,7 @@ package io.github.francescomucci.spring.bookshelf.web.view.main;
 import static io.github.francescomucci.spring.bookshelf.BookTestingConstants.*;
 import static io.github.francescomucci.spring.bookshelf.web.BookWebControllerConstants.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.AdditionalAnswers.answer;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
@@ -152,6 +153,51 @@ public class BookEditViewTest {
 		
 		verify(bookWebController, never())
 			.postSaveBook(any(BookData.class), any(BindingResult.class));
+	}
+
+	/* ---------- BookEditView edit form pre-filling capabilities tests ---------- */
+
+	@Test
+	public void testBookEditView_whenJustOpened_theFormInputsShouldBePrefilled() throws Exception {
+		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
+			.thenAnswer(answer((IsbnData isbn, BindingResult result, BookData editFormData)-> {
+				editFormData.setTitle(TITLE);
+				editFormData.setAuthors(AUTHORS_STRING);
+				return VIEW_BOOK_EDIT;
+			}
+		));
+	
+		HtmlPage bookEditView = webClient.getPage("/book/edit/" + VALID_ISBN13_WITHOUT_FORMATTING);
+		HtmlForm editBookForm = bookEditView.getFormByName("edit-book-form");
+		
+		assertThat(editBookForm.getInputByName("isbn").getValueAttribute())
+			.isEqualTo(VALID_ISBN13_WITHOUT_FORMATTING);
+		assertThat(editBookForm.getInputByName("title").getValueAttribute())
+			.isEqualTo(TITLE);
+		assertThat(editBookForm.getInputByName("authors").getValueAttribute())
+			.isEqualTo(AUTHORS_STRING);
+	}
+
+	@Test
+	public void testBookEditView_afterPostRequestToSaveEditedBookWithSomeInvalidInput_theFormInputsShouldBePrefilledWithProvidedInputs() throws Exception {
+		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
+			.thenReturn(VIEW_BOOK_EDIT);
+		when(bookWebController.postSaveBook(any(BookData.class),any(BindingResult.class)))
+			.thenReturn(VIEW_BOOK_EDIT);
+		
+		HtmlPage bookEditView = webClient.getPage("/book/edit/" + VALID_ISBN13_WITHOUT_FORMATTING);
+		HtmlForm editBookForm = bookEditView.getFormByName("edit-book-form");
+		editBookForm.getInputByName("title").setValueAttribute(INVALID_TITLE);
+		editBookForm.getInputByName("authors").setValueAttribute(INVALID_AUTHORS_STRING);
+		bookEditView = editBookForm.getButtonByName("submit-button").click();
+		editBookForm = bookEditView.getFormByName("edit-book-form");
+		
+		assertThat(editBookForm.getInputByName("isbn").getValueAttribute())
+			.isEqualTo(VALID_ISBN13_WITHOUT_FORMATTING);
+		assertThat(editBookForm.getInputByName("title").getValueAttribute())
+			.isEqualTo(INVALID_TITLE);
+		assertThat(editBookForm.getInputByName("authors").getValueAttribute())
+			.isEqualTo(INVALID_AUTHORS_STRING);
 	}
 
 	/* ---------- BookEditView layout tests ---------- */

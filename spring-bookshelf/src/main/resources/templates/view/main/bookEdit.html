@@ -22,13 +22,13 @@
 				<div class="form-group">
 					<label id="title-label">Title</label>
 					<input class="form-control form-control-lg text-center"
-						required type="text" th:name="title"
+						required type="text" th:name="title" th:field="*{title}"
 						placeholder="e.g. Watchmen"/>
 				</div>
 				<div class="form-group">
 					<label id="authors-label">Authors</label>
 					<input class="form-control form-control-lg text-center"
-						required type="text" th:name="authors"
+						required type="text" th:name="authors" th:field="*{authors}"
 						placeholder="e.g. Alan Moore, Dave Gibbons"/>
 				</div>
 				<div class="form-group pt-3"
