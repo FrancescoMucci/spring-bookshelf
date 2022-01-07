@@ -21,11 +21,13 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlFooter;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
+import com.gargoylesoftware.htmlunit.html.HtmlHeader;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import io.github.francescomucci.spring.bookshelf.model.dto.BookData;
 import io.github.francescomucci.spring.bookshelf.web.BookWebController;
 import io.github.francescomucci.spring.bookshelf.web.security.WithMockAdmin;
+import io.github.francescomucci.spring.bookshelf.web.view.BookViewTestingHelperMethods;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(controllers = BookWebController.class)
@@ -43,7 +45,23 @@ public class BookNewViewTest {
 		webClient.setCssErrorHandler(new SilentCssErrorHandler());
 	}
 
-	/* ---------- BookListView layout tests ---------- */
+	/* ---------- BookNewView header message tests ---------- */
+
+	@Test
+	public void testBookNewView_shouldAlwaysContainAnInformativeTextInTheHeader() throws Exception {
+		when(bookWebController.getBookNewView(any(BookData.class)))
+			.thenReturn(VIEW_BOOK_NEW);
+		
+		HtmlPage bookNewView = webClient.getPage(URI_BOOK_NEW);
+		HtmlHeader header = (HtmlHeader) bookNewView.getElementsByTagName("header").get(0);
+		
+		assertThat(BookViewTestingHelperMethods.removeWindowsCR(header.asText()))
+		.isEqualTo(
+			"Book new form" + "\n" + 
+			"Insert book data to create a new book");
+	}
+
+	/* ---------- BookNewView layout tests ---------- */
 
 	@Test
 	public void testBookNewView_shouldAlwaysHaveATitle() throws Exception {
