@@ -23,11 +23,13 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlFooter;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
+import com.gargoylesoftware.htmlunit.html.HtmlHeader;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import io.github.francescomucci.spring.bookshelf.model.dto.BookData;
 import io.github.francescomucci.spring.bookshelf.web.BookWebController;
 import io.github.francescomucci.spring.bookshelf.web.security.WithMockAdmin;
+import io.github.francescomucci.spring.bookshelf.web.view.BookViewTestingHelperMethods;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(controllers = BookWebController.class)
@@ -43,6 +45,22 @@ public class ErrorViewTest {
 	public void setup() {
 		webClient.setCssErrorHandler(new SilentCssErrorHandler());
 		webClient.getCookieManager().clearCookies();
+	}
+
+	/* ---------- ErrorView header message tests ---------- */
+
+	@Test
+	public void testErrorView_shouldAlwaysContainAWarningMessageInTheHeader() throws Exception {
+		when(bookWebController.getBookListView(any(Model.class)))
+			.thenReturn("error");
+		
+		HtmlPage bookErrorView = webClient.getPage(URI_BOOK_LIST);
+		HtmlHeader header = (HtmlHeader) bookErrorView.getElementsByTagName("header").get(0);
+		
+		assertThat(BookViewTestingHelperMethods.removeWindowsCR(header.asText()))
+			.isEqualTo(
+				"Something went wrong" + "\n" + 
+				"We do not know what but we are going to work on it!");
 	}
 
 	/* ---------- ErrorView layout tests ---------- */
