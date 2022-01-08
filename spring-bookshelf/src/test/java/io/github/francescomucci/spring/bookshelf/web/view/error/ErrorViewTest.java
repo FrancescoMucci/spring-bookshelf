@@ -3,6 +3,7 @@ package io.github.francescomucci.spring.bookshelf.web.view.error;
 import static io.github.francescomucci.spring.bookshelf.web.BookWebControllerConstants.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.AdditionalAnswers.answer;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -14,6 +15,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.ui.Model;
 
@@ -61,6 +63,28 @@ public class ErrorViewTest {
 			.isEqualTo(
 				"Something went wrong" + "\n" + 
 				"We do not know what but we are going to work on it!");
+	}
+
+	/* ---------- ErrorView error-info-box tests ---------- */
+
+	@Test
+	public void testErrorView_shouldAlwaysContainTheErrorInfoBox() throws Exception {
+		when(bookWebController.getBookListView(any(Model.class)))
+			.thenAnswer(answer((Model model)-> {
+				model.addAttribute(MODEL_ERROR_CODE, HttpStatus.INTERNAL_SERVER_ERROR.value());
+				model.addAttribute(MODEL_ERROR_REASON, HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
+				model.addAttribute(MODEL_ERROR_MESSAGE, "Exception message test");
+				return "error";
+			}
+		));
+		
+		HtmlPage bookErrorView = webClient.getPage(URI_BOOK_LIST);
+		
+		assertThat(bookErrorView.getElementById("error-info-box").asText())
+			.contains(
+				"Status", "500", 
+				"Error", "Internal Server Error",
+				"Message", "Exception message test");
 	}
 
 	/* ---------- ErrorView layout tests ---------- */
