@@ -41,7 +41,8 @@
 		</sonar.coverage.jacoco.xmlReportPaths>
 
 		<sonar.exclusions>
-			**/*Application.*
+			**/*Application.*,
+			**/*Temporary*
 		</sonar.exclusions>
 
 		<!-- Exclude domain model classes from code duplication check -->
