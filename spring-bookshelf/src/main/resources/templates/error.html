@@ -36,6 +36,14 @@
 				</div>
 			</div>
 		</div>
+		<div th:replace="shared/fragment/parametric/advice::fragment(~{this::#card-title}, ~{this::#card-content})">
+					<div id="card-title">Be patience and try to understand the HTTP status code</div>
+					<div id="card-content">
+						<a class="card-link"
+							href="https://httpstatuses.com/"
+							target="_blank" rel="noopener">What does the returned status code mean?</a>
+					</div>
+		</div>
 	</section>
 </body>
 </html>

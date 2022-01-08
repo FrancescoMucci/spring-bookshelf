@@ -87,6 +87,21 @@ public class ErrorViewTest {
 				"Message", "Exception message test");
 	}
 
+	/* ---------- ErrorView advice-box tests ---------- */
+
+	@Test
+	public void testErrorView_shouldAlwaysContainTheStatusCodeAdviceBox() throws Exception {
+		when(bookWebController.getBookListView(any(Model.class)))
+			.thenReturn("error");
+		
+		HtmlPage bookErrorView = webClient.getPage(URI_BOOK_LIST);
+		
+		assertThat(bookErrorView.getElementById("advice-box").asText())
+			.contains("Advice", "Be patience and try to understand the HTTP status code");
+		assertThat(bookErrorView.getAnchorByHref("https://httpstatuses.com/").asText())
+			.isEqualTo("What does the returned status code mean?");
+	}
+
 	/* ---------- ErrorView layout tests ---------- */
 
 	@Test
