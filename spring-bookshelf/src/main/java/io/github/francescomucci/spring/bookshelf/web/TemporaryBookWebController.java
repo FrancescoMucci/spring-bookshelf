@@ -117,4 +117,10 @@ public class TemporaryBookWebController implements BookWebController {
 		return VIEW_BOOK_SEARCH_BY_TITLE;
 	}
 
+	/* Temporary web end-point only to manual test error view esthetics */
+	@GetMapping(URI_BOOK_HOME + "/test/error")
+	public String getErrorView() throws Exception {
+		throw new Exception("Error view esthetics test");
+	}
+
 }
