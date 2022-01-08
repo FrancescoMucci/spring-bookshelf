@@ -8,6 +8,11 @@
 </head>
 
 <body>
-	<section>TBD</section>
+	<section>
+		<header th:replace="shared/fragment/parametric/header::fragment(
+			'Book not found',
+			'The inserted ISBN-13 or title is not associated with any book in the database!')">
+		</header>
+	</section>
 </body>
 </html>
