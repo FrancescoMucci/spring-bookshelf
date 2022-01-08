@@ -80,7 +80,7 @@
 
 		<!-- For each rule to be ignore, add another ", eXX" and two corresponding 
 			properties with "eXX" in the name as below -->
-		<sonar.issue.ignore.multicriteria>e01, e02, e03, e04</sonar.issue.ignore.multicriteria>
+		<sonar.issue.ignore.multicriteria>e01, e02, e03, e04, e05</sonar.issue.ignore.multicriteria>
 
 		<!-- "Tests should include assertions" disabled on some classes like *ApplicationTests 
 			which just checks that the Spring application can start, without any assertion -->
@@ -117,6 +117,13 @@
 		<sonar.issue.ignore.multicriteria.e04.resourceKey>
 			**/src/main/resources/templates/view/**
 		</sonar.issue.ignore.multicriteria.e04.resourceKey>
+		<!-- "<html> element should have a language attribute" disabled on the default HTML error page -->
+		<sonar.issue.ignore.multicriteria.e05.ruleKey>
+			Web:S5254
+		</sonar.issue.ignore.multicriteria.e05.ruleKey>
+		<sonar.issue.ignore.multicriteria.e05.resourceKey>
+			**/src/main/resources/templates/error.html
+		</sonar.issue.ignore.multicriteria.e05.resourceKey>
 
 	</properties>
 
