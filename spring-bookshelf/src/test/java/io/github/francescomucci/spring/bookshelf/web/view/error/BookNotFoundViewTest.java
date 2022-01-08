@@ -4,6 +4,7 @@ import static io.github.francescomucci.spring.bookshelf.BookTestingConstants.*;
 import static io.github.francescomucci.spring.bookshelf.web.BookWebControllerConstants.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.AdditionalAnswers.answer;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -14,6 +15,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -29,6 +31,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import io.github.francescomucci.spring.bookshelf.model.dto.IsbnData;
 import io.github.francescomucci.spring.bookshelf.model.dto.BookData;
+import io.github.francescomucci.spring.bookshelf.exception.BookNotFoundException;
 import io.github.francescomucci.spring.bookshelf.web.BookWebController;
 import io.github.francescomucci.spring.bookshelf.web.security.WithMockAdmin;
 import io.github.francescomucci.spring.bookshelf.web.view.BookViewTestingHelperMethods;
@@ -63,6 +66,48 @@ public class BookNotFoundViewTest {
 			.isEqualTo(
 				"Book not found" + "\n" + 
 				"The inserted ISBN-13 or title is not associated with any book in the database!");
+	}
+
+	/* ---------- BookNotFoundView error-info-box tests ---------- */
+
+	@Test
+	public void testBookNotFoundView_shouldAlwaysContainTheErrorInfoBox_caseSearchByIsbn() throws Exception {
+		when(bookWebController.getBookByIsbn(any(BookData.class), any(BindingResult.class), any(Model.class)))
+			.thenAnswer(answer((BookData bookFormData, BindingResult result, Model model)-> {
+				model.addAttribute(MODEL_ERROR_CODE, HttpStatus.NOT_FOUND.value());
+				model.addAttribute(MODEL_ERROR_REASON, HttpStatus.NOT_FOUND.getReasonPhrase());
+				model.addAttribute(MODEL_ERROR_MESSAGE, UNUSED_ISBN13 + BookNotFoundException.BOOK_NOT_FOUND_MSG);
+				return ERROR_BOOK_NOT_FOUND;
+			}
+		));
+		
+		HtmlPage bookNotFoundView = webClient.getPage(URI_BOOK_GET_BY_ISBN + "?isbn=" + UNUSED_ISBN13);
+		
+		assertThat(bookNotFoundView.getElementById("error-info-box").asText())
+			.contains(
+				"Status", "404",
+				"Error", "Not Found",
+				"Message", UNUSED_ISBN13 + ": no book found with this ISBN-13");
+	}
+
+	@Test
+	public void testBookNotFoundView_shouldAlwaysContainTheErrorInfoBox_caseSearchByTitle() throws Exception {
+		when(bookWebController.getBookByTitle(any(BookData.class), any(BindingResult.class), any(Model.class)))
+			.thenAnswer(answer((BookData bookFormData, BindingResult result, Model model)-> {
+				model.addAttribute(MODEL_ERROR_CODE, HttpStatus.NOT_FOUND.value());
+				model.addAttribute(MODEL_ERROR_REASON, HttpStatus.NOT_FOUND.getReasonPhrase());
+				model.addAttribute(MODEL_ERROR_MESSAGE, UNUSED_TITLE + BookNotFoundException.BOOK_NOT_FOUND_TITLE_MSG);
+				return ERROR_BOOK_NOT_FOUND;
+			}
+		));
+		
+		HtmlPage bookNotFoundView = webClient.getPage(URI_BOOK_GET_BY_TITLE + "?title=" + UNUSED_TITLE);
+
+		assertThat(bookNotFoundView.getElementById("error-info-box").asText())
+			.contains(
+				"Status", "404",
+				"Error", "Not Found",
+				"Message", UNUSED_TITLE + ": no book found with this title");
 	}
 
 	/* ---------- BookNotFoundView layout tests ---------- */

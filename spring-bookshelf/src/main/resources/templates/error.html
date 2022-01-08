@@ -13,29 +13,7 @@
 			'Something went wrong',
  			'We do not know what but we are going to work on it!')">
 		</header>
-		<div id="error-info-box" 
-			class="container my-5 text-center">
-			<div class="card-group">
-				<div class="card border-danger">
-					<div class="card-header">Status</div>
-					<div class="card-body text-danger">
-						<p class="card-text" id="error-code" th:text="${status}">Placeholder for error code</p>
-					</div>
-				</div>
-				<div class="card border-danger">
-					<div class="card-header">Error</div>
-					<div class="card-body text-danger">
-						<p class="card-text" id="error-reason" th:text="${error}">Placeholder for error reason</p>
-					</div>
-				</div>
-				<div class="card border-danger">
-					<div class="card-header">Message</div>
-					<div class="card-body text-danger">
-						<p class="card-text" id="error-message" th:text="${message}">Placeholder for error message</p>
-					</div>
-				</div>
-			</div>
-		</div>
+		<div th:replace="shared/fragment/non-parametric/errorInfo::fragment">Placeholder for error-info-box</div>
 		<div th:replace="shared/fragment/parametric/advice::fragment(~{this::#card-title}, ~{this::#card-content})">
 					<div id="card-title">Be patience and try to understand the HTTP status code</div>
 					<div id="card-content">

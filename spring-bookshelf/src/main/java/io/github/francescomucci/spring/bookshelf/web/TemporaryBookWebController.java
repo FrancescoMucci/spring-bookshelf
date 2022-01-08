@@ -5,6 +5,7 @@ import static java.util.Arrays.asList;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import io.github.francescomucci.spring.bookshelf.model.Book;
 import io.github.francescomucci.spring.bookshelf.model.dto.BookData;
 import io.github.francescomucci.spring.bookshelf.model.dto.IsbnData;
+import io.github.francescomucci.spring.bookshelf.exception.BookNotFoundException;
 
 /* Temporary fake implementation of BookWebController only to manual test web-pages esthetics*/
 
@@ -121,6 +123,15 @@ public class TemporaryBookWebController implements BookWebController {
 	@GetMapping(URI_BOOK_HOME + "/test/error")
 	public String getErrorView() throws Exception {
 		throw new Exception("Error view esthetics test");
+	}
+
+	/* Temporary web end-point only to manual test bookNotFound view esthetics */
+	@GetMapping(URI_BOOK_HOME + "/test/bookNotFound")
+	public String getBookNotFoundView(Model model) {
+		model.addAttribute(MODEL_ERROR_CODE, HttpStatus.NOT_FOUND.value());
+		model.addAttribute(MODEL_ERROR_REASON, HttpStatus.NOT_FOUND.getReasonPhrase());
+		model.addAttribute(MODEL_ERROR_MESSAGE, ISBN_2 + BookNotFoundException.BOOK_NOT_FOUND_MSG);
+		return ERROR_BOOK_NOT_FOUND;
 	}
 
 }
