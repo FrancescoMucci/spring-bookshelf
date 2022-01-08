@@ -110,6 +110,22 @@ public class BookNotFoundViewTest {
 				"Message", UNUSED_TITLE + ": no book found with this title");
 	}
 
+	/* ---------- BookNotFoundView advice-box tests ---------- */
+
+	@Test
+	public void testBookNotFoundView_shouldAlwaysContainTheBookNotFoundAdviceBox() throws Exception {
+		when(bookWebController.getBookByIsbn(any(BookData.class), any(BindingResult.class), any(Model.class)))
+			.thenReturn(ERROR_BOOK_NOT_FOUND);
+	
+		HtmlPage bookNotFoundView = webClient.getPage(URI_BOOK_GET_BY_ISBN + "?isbn=" + UNUSED_ISBN13);
+		
+		assertThat(bookNotFoundView.getElementById("advice-box").asText())
+			.contains(
+				"Advice",
+				"Make sure you typed the correct ISBN-13 or title",
+				"If you are sure of what you typed, we are sorry to inform you that the book you are looking for is not present in our database");
+	}
+
 	/* ---------- BookNotFoundView layout tests ---------- */
 
 	@Test
