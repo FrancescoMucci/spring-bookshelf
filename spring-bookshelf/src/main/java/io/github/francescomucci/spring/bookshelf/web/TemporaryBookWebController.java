@@ -11,10 +11,12 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 
+
 import io.github.francescomucci.spring.bookshelf.model.Book;
 import io.github.francescomucci.spring.bookshelf.model.dto.BookData;
 import io.github.francescomucci.spring.bookshelf.model.dto.IsbnData;
 import io.github.francescomucci.spring.bookshelf.exception.BookNotFoundException;
+import io.github.francescomucci.spring.bookshelf.exception.InvalidIsbnException;
 
 /* Temporary fake implementation of BookWebController only to manual test web-pages esthetics*/
 
@@ -128,16 +130,21 @@ public class TemporaryBookWebController implements BookWebController {
 	/* Temporary web end-point only to manual test bookNotFound view esthetics */
 	@GetMapping(URI_BOOK_HOME + "/test/bookNotFound")
 	public String getBookNotFoundView(Model model) {
-		model.addAttribute(MODEL_ERROR_CODE, HttpStatus.NOT_FOUND.value());
-		model.addAttribute(MODEL_ERROR_REASON, HttpStatus.NOT_FOUND.getReasonPhrase());
-		model.addAttribute(MODEL_ERROR_MESSAGE, ISBN_2 + BookNotFoundException.BOOK_NOT_FOUND_MSG);
+		addErrorModelAttributes(model, HttpStatus.NOT_FOUND, ISBN_2 + BookNotFoundException.BOOK_NOT_FOUND_MSG);
 		return ERROR_BOOK_NOT_FOUND;
 	}
 
 	/* Temporary web end-point only to manual test invalidIsbn view esthetics */
 	@GetMapping(URI_BOOK_HOME + "/test/invalidIsbn")
 	public String getInvalidIsbnView(Model model) {
+		addErrorModelAttributes(model, HttpStatus.BAD_REQUEST, 1234567890123L + InvalidIsbnException.INVALID_ISBN_MSG);
 		return ERROR_INVALID_ISBN;
+	}
+
+	private void addErrorModelAttributes(Model model, HttpStatus httpStatus, String message) {
+		model.addAttribute(MODEL_ERROR_CODE, httpStatus.value());
+		model.addAttribute(MODEL_ERROR_REASON, httpStatus.getReasonPhrase());
+		model.addAttribute(MODEL_ERROR_MESSAGE, message);
 	}
 
 }

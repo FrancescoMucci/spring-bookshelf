@@ -25,12 +25,14 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlFooter;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
+import com.gargoylesoftware.htmlunit.html.HtmlHeader;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import io.github.francescomucci.spring.bookshelf.model.dto.IsbnData;
 import io.github.francescomucci.spring.bookshelf.model.dto.BookData;
 import io.github.francescomucci.spring.bookshelf.web.BookWebController;
 import io.github.francescomucci.spring.bookshelf.web.security.WithMockAdmin;
+import io.github.francescomucci.spring.bookshelf.web.view.BookViewTestingHelperMethods;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(controllers = BookWebController.class)
@@ -46,6 +48,22 @@ public class InvalidIsbnViewTest {
 	@Before
 	public void setup() {
 		webClient.setCssErrorHandler(new SilentCssErrorHandler());
+	}
+
+	/* ---------- InvalidIsbnView header message tests ---------- */
+
+	@Test
+	public void testInvalidIsbnView_shouldAlwaysContainAWarningMessageInTheHeader() throws Exception {
+		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
+			.thenReturn(ERROR_INVALID_ISBN);
+		
+		HtmlPage invalidIsbnView = webClient.getPage("/book/edit/" + INVALID_ISBN13);
+		HtmlHeader header = (HtmlHeader) invalidIsbnView.getElementsByTagName("header").get(0);
+		
+		assertThat(BookViewTestingHelperMethods.removeWindowsCR(header.asText()))
+			.isEqualTo(
+				"Invalid ISBN-13" + "\n" + 
+				"The inserted ISBN-13 do not have passed the validation process!");
 	}
 
 	/* ---------- InvalidIsbnView layout tests ---------- */

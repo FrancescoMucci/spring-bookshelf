@@ -8,6 +8,11 @@
 </head>
 
 <body>
-	<section>TBD</section>
+	<section>
+		<header th:replace="shared/fragment/parametric/header::fragment(
+			'Invalid ISBN-13',
+			'The inserted ISBN-13 do not have passed the validation process!')">
+		</header>
+	</section>
 </body>
 </html>
