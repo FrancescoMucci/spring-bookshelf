@@ -96,6 +96,25 @@ public class BookAlreadyExistViewTest {
 				"Message", ALREADY_USED_ISBN13 + ": a book with this ISBN-13 already exist");
 	}
 
+	/* ---------- BookAlreadyExistView advice-box tests ---------- */
+
+	@Test
+	public void testBookAlreadyExistView_shouldAlwaysContainTheBookAlreadyExistAdviceBox() throws Exception {
+		/* This stubbing do not represent a real case scenario: 
+		 * only 'postAddBook' with an already used isbn parameter should throw BookAlreadyExistException.
+		 * This was done only to avoid the tedious step of sending post request to '/book/add'*/
+		when(bookWebController.getBookHomeView())
+			.thenReturn(ERROR_BOOK_ALREADY_EXIST);
+	
+		HtmlPage bookAlreadyExistView = webClient.getPage(URI_BOOK_HOME);
+		
+		assertThat(bookAlreadyExistView.getElementById("advice-box").asText())
+			.contains(
+				"Advice",
+				"Make sure you typed the correct ISBN-13",
+				"If you are sure of the ISBN, we are sorry to inform you that the book you are trying to add is already present in our database");
+	}
+
 	/* ---------- BookAlreadyExistView layout tests ---------- */
 
 	@Test
