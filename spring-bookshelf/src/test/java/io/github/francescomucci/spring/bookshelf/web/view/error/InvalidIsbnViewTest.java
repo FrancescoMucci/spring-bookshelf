@@ -4,6 +4,7 @@ import static io.github.francescomucci.spring.bookshelf.BookTestingConstants.*;
 import static io.github.francescomucci.spring.bookshelf.web.BookWebControllerConstants.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.AdditionalAnswers.answer;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -14,6 +15,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.ui.Model;
@@ -30,6 +32,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import io.github.francescomucci.spring.bookshelf.model.dto.IsbnData;
 import io.github.francescomucci.spring.bookshelf.model.dto.BookData;
+import io.github.francescomucci.spring.bookshelf.exception.InvalidIsbnException;
 import io.github.francescomucci.spring.bookshelf.web.BookWebController;
 import io.github.francescomucci.spring.bookshelf.web.security.WithMockAdmin;
 import io.github.francescomucci.spring.bookshelf.web.view.BookViewTestingHelperMethods;
@@ -64,6 +67,31 @@ public class InvalidIsbnViewTest {
 			.isEqualTo(
 				"Invalid ISBN-13" + "\n" + 
 				"The inserted ISBN-13 do not have passed the validation process!");
+	}
+
+	/* ---------- InvalidIsbnView error-info-box tests ---------- */
+
+	@Test
+	public void testInvalidIsbnView_shouldAlwaysContainTheErrorInfoBox() throws Exception {
+		/* This stubbing do not represent a real case scenario: 
+		 * 'getBookListView' should never throw bookNotFoundException.
+		 * This was done only for an easy setting of the model attributes.*/
+		when(bookWebController.getBookListView(any(Model.class)))
+			.thenAnswer(answer((Model model)-> {
+				model.addAttribute(MODEL_ERROR_CODE, HttpStatus.BAD_REQUEST.value());
+				model.addAttribute(MODEL_ERROR_REASON, HttpStatus.BAD_REQUEST.getReasonPhrase());
+				model.addAttribute(MODEL_ERROR_MESSAGE, INVALID_ISBN13 + InvalidIsbnException.INVALID_ISBN_MSG);
+				return ERROR_INVALID_ISBN;
+			}
+		));
+		
+		HtmlPage invalidIsbnView = webClient.getPage(URI_BOOK_LIST);
+		
+		assertThat(invalidIsbnView.getElementById("error-info-box").asText())
+			.contains(
+				"Status", "400",
+				"Error", "Bad Request",
+				"Message", INVALID_ISBN13 + ": invalid ISBN-13");
 	}
 
 	/* ---------- InvalidIsbnView layout tests ---------- */
