@@ -24,11 +24,13 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlFooter;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
+import com.gargoylesoftware.htmlunit.html.HtmlHeader;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import io.github.francescomucci.spring.bookshelf.model.dto.BookData;
 import io.github.francescomucci.spring.bookshelf.web.BookWebController;
 import io.github.francescomucci.spring.bookshelf.web.security.WithMockAdmin;
+import io.github.francescomucci.spring.bookshelf.web.view.BookViewTestingHelperMethods;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(controllers = BookWebController.class)
@@ -44,6 +46,25 @@ public class BookAlreadyExistViewTest {
 	@Before
 	public void setup() {
 		webClient.setCssErrorHandler(new SilentCssErrorHandler());
+	}
+
+	/* ---------- BookAlreadyExistView header message tests ---------- */
+
+	@Test
+	public void testBookAlreadyExistView_shouldAlwaysContainAWarningMessageInTheHeader() throws Exception {
+		/* This stubbing do not represent a real case scenario: 
+		 * only 'postAddBook' with an already used isbn parameter should throw BookAlreadyExistException.
+		 * This was done only to avoid the tedious step of sending post request to '/book/add'*/
+		when(bookWebController.getBookHomeView())
+			.thenReturn(ERROR_BOOK_ALREADY_EXIST);
+		
+		HtmlPage bookAlreadyExistView = webClient.getPage(URI_BOOK_HOME);
+		HtmlHeader header = (HtmlHeader) bookAlreadyExistView.getElementsByTagName("header").get(0);
+		
+		assertThat(BookViewTestingHelperMethods.removeWindowsCR(header.asText()))
+			.isEqualTo(
+				"Book already exist" + "\n" + 
+				"The inserted ISBN-13 is already associated with a book in the database!");
 	}
 
 	/* ---------- BookAlreadyExistView layout tests ---------- */

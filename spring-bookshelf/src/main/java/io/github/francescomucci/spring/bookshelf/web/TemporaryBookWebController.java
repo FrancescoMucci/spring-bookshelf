@@ -17,6 +17,7 @@ import io.github.francescomucci.spring.bookshelf.model.dto.BookData;
 import io.github.francescomucci.spring.bookshelf.model.dto.IsbnData;
 import io.github.francescomucci.spring.bookshelf.exception.BookNotFoundException;
 import io.github.francescomucci.spring.bookshelf.exception.InvalidIsbnException;
+import io.github.francescomucci.spring.bookshelf.exception.BookAlreadyExistException;
 
 /* Temporary fake implementation of BookWebController only to manual test web-pages esthetics*/
 
@@ -144,6 +145,7 @@ public class TemporaryBookWebController implements BookWebController {
 	/* Temporary web end-point only to manual test bookAlreadyExist view esthetics */
 	@GetMapping(URI_BOOK_HOME + "/test/bookAlreadyExist")
 	public String getBookAlreadyExistView(Model model) {
+		addErrorModelAttributes(model, HttpStatus.CONFLICT, ISBN_1 + BookAlreadyExistException.BOOK_ALREADY_EXIST_MSG);
 		return ERROR_BOOK_ALREADY_EXIST;
 	}
 

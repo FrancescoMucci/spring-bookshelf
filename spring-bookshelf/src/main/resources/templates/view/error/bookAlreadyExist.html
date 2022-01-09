@@ -8,7 +8,12 @@
 </head>
 
 <body>
-	<section>TBD</section>
+	<section>
+		<header th:replace="shared/fragment/parametric/header::fragment(
+			'Book already exist',
+			'The inserted ISBN-13 is already associated with a book in the database!')">
+		</header>
+	</section>
 <body>
 
 </body>
