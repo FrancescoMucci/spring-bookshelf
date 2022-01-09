@@ -94,6 +94,25 @@ public class InvalidIsbnViewTest {
 				"Message", INVALID_ISBN13 + ": invalid ISBN-13");
 	}
 
+	/* ---------- InvalidIsbnView ISBN-advice-box tests ---------- */
+
+	@Test
+	public void testInvalidIsbnView_shouldAlwaysContainTheIsbnAdviceBox() throws Exception {
+		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
+			.thenReturn(ERROR_INVALID_ISBN);
+	
+		HtmlPage invalidIsbnView = webClient.getPage("/book/edit/" + INVALID_ISBN13);
+		
+		assertThat(invalidIsbnView.getElementById("advice-box").asText())
+			.contains("Advice", "Understand how ISBN-13 works");
+		assertThat(invalidIsbnView.getAnchorByHref("https://www.isbn-international.org/content/what-isbn").asText())
+			.isEqualTo("What is a ISBN-13?");
+		assertThat(invalidIsbnView.getAnchorByHref("https://en.wikipedia.org/wiki/International_Standard_Book_Number#ISBN-13_check_digit_calculation").asText())
+			.isEqualTo("How ISBN-13 validation works?");
+		assertThat(invalidIsbnView.getAnchorByHref("https://isbndb.com/").asText())
+			.isEqualTo("How do I find out the ISBN-13 of a book?");
+	}
+
 	/* ---------- InvalidIsbnView layout tests ---------- */
 
 	@Test
