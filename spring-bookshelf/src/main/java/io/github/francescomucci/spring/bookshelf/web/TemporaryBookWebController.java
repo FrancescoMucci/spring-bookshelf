@@ -141,6 +141,12 @@ public class TemporaryBookWebController implements BookWebController {
 		return ERROR_INVALID_ISBN;
 	}
 
+	/* Temporary web end-point only to manual test bookAlreadyExist view esthetics */
+	@GetMapping(URI_BOOK_HOME + "/test/bookAlreadyExist")
+	public String getBookAlreadyExistView(Model model) {
+		return ERROR_BOOK_ALREADY_EXIST;
+	}
+
 	private void addErrorModelAttributes(Model model, HttpStatus httpStatus, String message) {
 		model.addAttribute(MODEL_ERROR_CODE, httpStatus.value());
 		model.addAttribute(MODEL_ERROR_REASON, httpStatus.getReasonPhrase());
