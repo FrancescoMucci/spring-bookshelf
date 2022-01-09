@@ -134,4 +134,10 @@ public class TemporaryBookWebController implements BookWebController {
 		return ERROR_BOOK_NOT_FOUND;
 	}
 
+	/* Temporary web end-point only to manual test invalidIsbn view esthetics */
+	@GetMapping(URI_BOOK_HOME + "/test/invalidIsbn")
+	public String getInvalidIsbnView(Model model) {
+		return ERROR_INVALID_ISBN;
+	}
+
 }
