@@ -1,8 +1,10 @@
 package io.github.francescomucci.spring.bookshelf.web.view.error;
 
+import static io.github.francescomucci.spring.bookshelf.BookTestingConstants.*;
 import static io.github.francescomucci.spring.bookshelf.web.BookWebControllerConstants.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.AdditionalAnswers.answer;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -14,6 +16,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.ui.Model;
@@ -28,6 +31,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlHeader;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import io.github.francescomucci.spring.bookshelf.model.dto.BookData;
+import io.github.francescomucci.spring.bookshelf.exception.BookAlreadyExistException;
 import io.github.francescomucci.spring.bookshelf.web.BookWebController;
 import io.github.francescomucci.spring.bookshelf.web.security.WithMockAdmin;
 import io.github.francescomucci.spring.bookshelf.web.view.BookViewTestingHelperMethods;
@@ -65,6 +69,31 @@ public class BookAlreadyExistViewTest {
 			.isEqualTo(
 				"Book already exist" + "\n" + 
 				"The inserted ISBN-13 is already associated with a book in the database!");
+	}
+
+	/* ---------- BookAlreadyExistView error-info-box tests ---------- */
+
+	@Test
+	public void testBookAlreadyExistView_shouldAlwaysContainTheErrorInfoBox() throws Exception {
+		/* This stubbing do not represent a real case scenario: 
+		 * only 'postAddBook' with an already used isbn parameter should throw BookAlreadyExistException.
+		 * This was done only for an easy setting of the model attributes.*/
+		when(bookWebController.getBookListView(any(Model.class)))
+			.thenAnswer(answer((Model model)-> {
+				model.addAttribute(MODEL_ERROR_CODE, HttpStatus.CONFLICT.value());
+				model.addAttribute(MODEL_ERROR_REASON, HttpStatus.CONFLICT.getReasonPhrase());
+				model.addAttribute(MODEL_ERROR_MESSAGE, ALREADY_USED_ISBN13 + BookAlreadyExistException.BOOK_ALREADY_EXIST_MSG);
+				return ERROR_BOOK_ALREADY_EXIST;
+			}
+		));
+		
+		HtmlPage bookAlreadyExistView = webClient.getPage(URI_BOOK_LIST);
+		
+		assertThat(bookAlreadyExistView.getElementById("error-info-box").asText())
+			.contains(
+				"Status", "409",
+				"Error", "Conflict",
+				"Message", ALREADY_USED_ISBN13 + ": a book with this ISBN-13 already exist");
 	}
 
 	/* ---------- BookAlreadyExistView layout tests ---------- */
