@@ -54,7 +54,7 @@
 			**/exception/*,
 			**/*Constants*,
 			**/*Application.*,
-			<!-- **/*Temporary* -->
+			**/*Temporary*
 		</sonar.coverage.exclusions>
 
 		<sonar.junit.reportPaths>
@@ -65,7 +65,7 @@
 		<!-- To keep track of IT and E2E in the additional test folders -->
 		<sonar.tests>
 			${project.build.testSourceDirectory},
-			${basedir}/src/it/java,
+			${basedir}/src/it/java<!--,-->
 			<!--  ${basedir}/src/e2e/java -->
 		</sonar.tests>
 
@@ -255,7 +255,7 @@
 							<exclude>**/model/**</exclude>
 							<exclude>**/exception/*</exclude>
 							<exclude>**/*Constants*</exclude>
-							<!-- <exclude>**/*Temporary*</exclude> -->
+							<exclude>**/*Temporary*</exclude>
 							<!-- The following is just to avoid the instrumentation error 
 							due to the HtmlUnit class StyleAttributes$Definition (method too large) -->
 							<exclude>**/htmlunit/*</exclude>
@@ -357,6 +357,28 @@
 							</goals>
 						</execution>
 					</executions>
+				</plugin>
+
+				<plugin>
+					<groupId>org.pitest</groupId>
+					<artifactId>pitest-maven</artifactId>
+					<version>1.5.2</version>
+					<configuration>
+						<excludedTestClasses>
+							<excludedTestClass>io.github.francescomucci.spring.bookshelf.**.*IT</excludedTestClass>
+							<excludedTestClass>io.github.francescomucci.spring.bookshelf.**.*E2ETest</excludedTestClass>
+						</excludedTestClasses>
+						<targetClasses>
+							<param>io.github.francescomucci.spring.bookshelf.service.*</param>
+						</targetClasses>
+						<targetTests>
+							<param>io.github.francescomucci.spring.bookshelf.service.*</param>
+						</targetTests>
+						<mutators>
+							<mutator>STRONGER</mutator>
+						</mutators>
+						<mutationThreshold>100</mutationThreshold>
+					</configuration>
 				</plugin>
 
 			</plugins>
@@ -538,6 +560,28 @@
 				</plugins>
 			</build>
 
+		</profile>
+
+		<!-- ########## PIT Mutation Testing profile ########## -->
+
+		<profile>
+			<id>pitest</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.pitest</groupId>
+						<artifactId>pitest-maven</artifactId>
+						<executions>
+							<execution>
+								<phase>test-compile</phase>
+								<goals>
+									<goal>mutationCoverage</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
 
 	</profiles>

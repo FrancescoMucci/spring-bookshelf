@@ -3,8 +3,13 @@ package io.github.francescomucci.spring.bookshelf.model;
 import java.util.List;
 import java.util.Objects;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Document("Book")
 public class Book {
 
+	@Id
 	private Long isbn;
 
 	private String title;
