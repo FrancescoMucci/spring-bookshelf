@@ -1,0 +1,43 @@
+#########################################
+# PIT Mutation Testing on Pull Request  #
+#########################################
+
+name: PIT Mutation Testing on Pull Request
+
+on:
+  pull_request:
+    paths-ignore:
+     - 'README.md'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Clone the GitHub repo in the Runner
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Set up JDK 11 in the Runner
+      uses: actions/setup-java@v1
+      with:
+        java-version: 11
+
+    - name: Cache Maven packages
+      uses: actions/cache@v2
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/spring-bookshelf/pom.xml', '**/*.yml') }}
+        restore-keys: ${{ runner.os }}-m2-
+
+    - name: Run PIT mutation testing
+      run: mvn -f spring-bookshelf test-compile -Ppitest
+
+    - name: Archive PIT mutation testing report on GitHub
+      uses: actions/upload-artifact@v2
+      if: ${{ always() }}
+      with:
+        name: pit-mutation-testing-report
+        path: '**/target/pit-reports'
+
