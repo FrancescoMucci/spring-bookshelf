@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+	<section>
+		<header th:fragment="fragment(title, subtitle)"
+			class="container my-5 text-center" id="header"
+			th:classappend="${error} ? 'alert alert-danger' : (${empty} ? 'alert alert-warning')">
+			<h2>
+				<span th:if="${error} or ${empty}"><i class="fas fa-exclamation-triangle" aria-hidden="true"></i></span>
+				<span th:text="${title}">Placeholder title</span>
+			</h2>
+			<p th:text="${subtitle}">Placeholder subtitle</p>
+		</header>
+	</section>
+</body>
+
+</html>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+	<nav>
+		<ul>
+			<li th:fragment="fragment(URI, itemText, itemIcon)"
+				class="nav-item">
+				<a class="nav-link" th:href="@{${URI}}">
+					<span><i class="fas" th:classappend="${itemIcon}" aria-hidden="true"></i></span>
+					<span th:text="${itemText}">Placeholder for navigation menu item</span>
+				</a>
+			</li>
+		</ul>
+	</nav>
+</body>
+
+</html>

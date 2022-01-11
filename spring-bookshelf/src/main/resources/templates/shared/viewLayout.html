@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+
+<html th:fragment="fragment(title, content)"
+	xmlns:th="http://www.thymeleaf.org"
+	lang="en">
+
+<head>
+	<title th:replace="${title}">Placeholder title</title>
+	<th:block th:include="shared/fragment/layout/non-parametric/head::fragment">Placeholder header content<th:block>
+</head>
+
+<body>
+	<nav th:replace="shared/fragment/layout/non-parametric/navbar::fragment">Placeholder navigation bar</nav>
+	<section th:replace="${content}">Placeholder body content</section>
+	<footer th:replace="shared/fragment/layout/non-parametric/footer::fragment">Placeholder footer</footer>
+</body>
+
+</html>

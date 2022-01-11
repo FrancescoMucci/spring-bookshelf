@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+	<section>
+		<div>
+			<form>
+				<div th:fragment="fragment(inputLabel, inputPlaceholder, inputName)">
+					<label th:id="|${inputName}-label|" th:text="${inputLabel}">Placeholder for input label</label>
+					<input class="form-control form-control-lg text-center"
+						required type="text" th:name="${inputName}" th:field="*{__${inputName}__}"
+						th:placeholder="${inputPlaceholder}"/>
+					<div class="alert alert-warning" th:id="|${inputName}-validation-error|"
+						th:if="${#fields.hasErrors('__${inputName}__')}" th:errors="*{__${inputName}__}">Placeholder for validation error</div>
+				</div>
+			</form>
+		</div>
+	</section>
+</body>
+
+</html>

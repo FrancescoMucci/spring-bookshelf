@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+	<section>
+		<div th:fragment="fragment(cardTitle, cardContent)"
+			class="container my-5 pb-5 text-center" id="advice-box">
+			<div class="card border-info mb-3">
+				<div class="card-header">Advice</div>
+				<div class="card-body">
+					<h5 class="card-title text-info" th:include="${cardTitle}">Placeholder for card title</h5>
+					<div th:replace="${cardContent}">Placeholder for card content</div>
+				</div>
+			</div>
+		</div>
+	</section>
+</body>
+
+</html>

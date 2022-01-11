@@ -41,7 +41,8 @@
 		</sonar.coverage.jacoco.xmlReportPaths>
 
 		<sonar.exclusions>
-			**/*Application.*
+			**/*Application.*,
+			**/*Temporary*
 		</sonar.exclusions>
 
 		<!-- Exclude domain model classes from code duplication check -->
@@ -80,7 +81,7 @@
 
 		<!-- For each rule to be ignore, add another ", eXX" and two corresponding 
 			properties with "eXX" in the name as below -->
-		<sonar.issue.ignore.multicriteria>e01</sonar.issue.ignore.multicriteria>
+		<sonar.issue.ignore.multicriteria>e01, e02, e03, e04, e05</sonar.issue.ignore.multicriteria>
 
 		<!-- "Tests should include assertions" disabled on some classes like *ApplicationTests 
 			which just checks that the Spring application can start, without any assertion -->
@@ -90,6 +91,40 @@
 		<sonar.issue.ignore.multicriteria.e01.resourceKey>
 			**/*ApplicationTests.java
 		</sonar.issue.ignore.multicriteria.e01.resourceKey>
+
+		<!-- "<title> should be present in all pages" disabled on HTML "fragments" (except for viewLayout):
+			these HTML files are used as components to build the HTML views 
+			(only those and viewLayout should always have a title) -->
+		<sonar.issue.ignore.multicriteria.e02.ruleKey>
+			Web:PageWithoutTitleCheck
+		</sonar.issue.ignore.multicriteria.e02.ruleKey>
+		<sonar.issue.ignore.multicriteria.e02.resourceKey>
+			**/src/main/resources/templates/shared/fragment/**
+		</sonar.issue.ignore.multicriteria.e02.resourceKey>
+
+		<!-- "<html> element should have a language attribute" disabled on all HTML "fragments" (except for viewLayout):
+			that attribute is set only on viewLayout, the layout is used to build all the HTML views
+			(only viewLayout should have the 'lang' attribute)-->
+		<sonar.issue.ignore.multicriteria.e03.ruleKey>
+			Web:S5254
+		</sonar.issue.ignore.multicriteria.e03.ruleKey>
+		<sonar.issue.ignore.multicriteria.e03.resourceKey>
+			**/src/main/resources/templates/shared/fragment/**
+		</sonar.issue.ignore.multicriteria.e03.resourceKey>
+		<!-- "<html> element should have a language attribute" disabled on all HTML "views" -->
+		<sonar.issue.ignore.multicriteria.e04.ruleKey>
+			Web:S5254
+		</sonar.issue.ignore.multicriteria.e04.ruleKey>
+		<sonar.issue.ignore.multicriteria.e04.resourceKey>
+			**/src/main/resources/templates/view/**
+		</sonar.issue.ignore.multicriteria.e04.resourceKey>
+		<!-- "<html> element should have a language attribute" disabled on the default HTML error page -->
+		<sonar.issue.ignore.multicriteria.e05.ruleKey>
+			Web:S5254
+		</sonar.issue.ignore.multicriteria.e05.ruleKey>
+		<sonar.issue.ignore.multicriteria.e05.resourceKey>
+			**/src/main/resources/templates/error.html
+		</sonar.issue.ignore.multicriteria.e05.resourceKey>
 
 	</properties>
 
@@ -167,6 +202,34 @@
 					<artifactId>hamcrest-core</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>net.sourceforge.htmlunit</groupId>
+			<artifactId>htmlunit</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- ########## WebJars ########## -->
+
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>bootstrap</artifactId>
+			<version>4.5.2</version>
+		</dependency>
+
+		<!-- To automatically resolve WebJars version -->
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>webjars-locator</artifactId>
+			<version>0.41</version>
+		</dependency>
+
+		<!-- Font Awesome free icon library -->
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>font-awesome</artifactId>
+			<version>5.15.3</version>
 		</dependency>
 
 	</dependencies>

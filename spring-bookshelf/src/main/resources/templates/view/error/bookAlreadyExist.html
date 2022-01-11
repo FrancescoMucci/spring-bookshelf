@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org"
+	th:replace="shared/viewLayout::fragment(~{this::title}, ~{this::section})">
+
+<head>
+	<title>Book already exist error view</title>
+</head>
+
+<body>
+	<section>
+		<header th:replace="shared/fragment/parametric/header::fragment(
+			'Book already exist',
+			'The inserted ISBN-13 is already associated with a book in the database!')">
+		</header>
+		<div th:replace="shared/fragment/non-parametric/errorInfo::fragment">Placeholder for error-info-box</div>
+		<div th:replace="shared/fragment/parametric/advice::fragment(~{this::#card-title}, ~{this::#card-content})">
+					<div id="card-title">Make sure you typed the correct ISBN-13</div>
+					<div id="card-content">
+						<p class="card-text">If you are sure of the ISBN, we are sorry to inform you that the book you are trying to add is already present in our database</p>
+					</div>
+		</div>
+	</section>
+<body>
+
+</body>
+</html>

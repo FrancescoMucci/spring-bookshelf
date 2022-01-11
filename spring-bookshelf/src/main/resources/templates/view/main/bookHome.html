@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org"
+	th:replace="shared/viewLayout::fragment(~{this::title}, ~{this::section})">
+
+<head>
+	<title>Book home view</title>
+</head>
+
+<body>
+	<section>
+		<div sec:authorize="!isAuthenticated()">
+			<header th:replace="shared/fragment/parametric/header::fragment(
+				'Welcome to my book library!',
+				'Feel free to explore, but remember that you need administrator privileges to create, edit or delete books')">
+			</header>
+			<div class="container my-5 text-center">
+				<form name="login-form" id="login-form"
+					th:action="@{/login}" method="post">
+					<div class="form-group">
+						<label id="username-label">User</label>
+						<input class="form-control form-control-lg text-center"
+							required type="text" name="username" placeholder="e.g. Admin"/>
+					</div>
+					<div class="form-group">
+						<label id="password-label">Password</label>
+						<input class="form-control form-control-lg text-center"
+							required type="password" name="password" placeholder="e.g. Password"/>
+					</div>
+					<div class="form-group pt-3"
+						th:include="shared/fragment/parametric/formButton::fragment('fa-sign-in-alt', 'Login')">Placeholder for login form button</div>
+					<div class="form-group form-check">
+						<input class="form-check-input" type="checkbox" id="remember-me" name="remember-me">
+						<label class="form-check-label">Remember me</label>
+					</div>
+					<div class="form-group pb-5">
+						<div th:if="${param.error}" id="authentication-error" class="alert alert-warning">Invalid user name or password</div>
+						<div th:if="${param.logout}" id="logout-message" class="alert alert-success">Logged out successfully</div>
+					</div>
+				</form>
+			</div>
+		</div>
+		<div sec:authorize="isAuthenticated()">
+			<header th:replace="shared/fragment/parametric/header::fragment(
+				'Welcome back!',
+				'Feel free to explore, create, edit or delete books')">
+			</header>
+		</div>
+	</section>
+</body>
+
+</html>
