@@ -210,6 +210,19 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- Alternative to HTMLUnit:
+			implementation of Selenium WebDriver using HTMLUnit -->
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>htmlunit-driver</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-support</artifactId>
+			<scope>test</scope>
+		</dependency>
+
 		<!-- ########## WebJars ########## -->
 
 		<dependency>
