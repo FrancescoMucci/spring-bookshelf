@@ -107,10 +107,29 @@ public class BookSearchByTitleViewIT {
 		webDriver.get(bookSearchByTitleUrl);
 		BookSearchByTitlePage bookSearchByTitlePage = new BookSearchByTitlePage(webDriver);
 		bookSearchByTitlePage.fillSearchFormAndPressSubmitButton("" + book.getTitle());
-		bookSearchByTitlePage.clickShowDeleteDialogAndThenYesDeleteButton(book.getIsbn());
+		MyPage returnedPage = bookSearchByTitlePage.clickShowDeleteDialogAndThenYesDeleteButton(book.getIsbn());
 		
+		assertThat(returnedPage.getPageTitle())
+			.isEqualTo("Book list view");
 		assertThat(bookRepository.findById(book.getIsbn()))
 			.isEmpty();
+	}
+
+	@Test
+	public void testBookSearchByTitleView_deleteBook_whitValidIsbnButUnused_canOpenBookNotFoundView() {
+		/* To send post delete with valid but unused isbn,
+		 * we directly delete the document from database after getting the book list view. */
+		Book book = bookRepository.save(new Book(VALID_ISBN13, TITLE, AUTHORS_LIST));
+		loginWithValidCredentials(webDriver, portNumber);
+		
+		webDriver.get(bookSearchByTitleUrl);
+		BookSearchByTitlePage bookSearchByTitlePage = new BookSearchByTitlePage(webDriver);
+		bookSearchByTitlePage.fillSearchFormAndPressSubmitButton("" + book.getTitle());
+		bookRepository.deleteAll();
+		MyPage returnedPage = bookSearchByTitlePage.clickShowDeleteDialogAndThenYesDeleteButton(book.getIsbn());
+
+		assertThat(returnedPage.getPageTitle())
+			.isEqualTo("Book not found error view");
 	}
 
 	/* ---------- BookSearchByTitleView navigation bar tests ---------- */

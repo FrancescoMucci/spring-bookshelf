@@ -87,10 +87,28 @@ public class BookListViewIT {
 		
 		webDriver.get(bookListUrl);
 		BookListPage bookListPage = new BookListPage(webDriver);
-		bookListPage.clickShowDeleteDialogAndThenYesDeleteButton(book.getIsbn());
+		MyPage returnedPage = bookListPage.clickShowDeleteDialogAndThenYesDeleteButton(book.getIsbn());
 	
+		assertThat(returnedPage.getPageTitle())
+			.isEqualTo("Book list view");
 		assertThat(bookRepository.findById(book.getIsbn()))
 			.isEmpty();
+	}
+
+	@Test
+	public void testBookListView_deleteBook_whitValidIsbnButUnused_canOpenBookNotFoundView() {
+		/* To send post delete with valid but unused isbn,
+		 * we directly delete the document from database after getting the book list view. */
+		Book book = bookRepository.save(new Book(VALID_ISBN13, TITLE, AUTHORS_LIST));
+		loginWithValidCredentials(webDriver, portNumber);
+		
+		webDriver.get(bookListUrl);
+		BookListPage bookListPage = new BookListPage(webDriver);
+		bookRepository.deleteAll();
+		MyPage returnedPage = bookListPage.clickShowDeleteDialogAndThenYesDeleteButton(book.getIsbn());
+		
+		assertThat(returnedPage.getPageTitle())
+			.isEqualTo("Book not found error view");
 	}
 
 	/* ---------- BookListView navigation bar tests ---------- */

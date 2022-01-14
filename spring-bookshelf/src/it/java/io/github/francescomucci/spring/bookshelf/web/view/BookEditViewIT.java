@@ -59,8 +59,10 @@ public class BookEditViewIT {
 		
 		webDriver.get(bookEditUrl + toEditBook.getIsbn());
 		BookEditPage bookEditPage = new BookEditPage(webDriver);
-		bookEditPage.fillEditFormAndPressSubmitButton(NEW_TITLE, AUTHORS_STRING);
+		MyPage returnedPage = bookEditPage.fillEditFormAndPressSubmitButton(NEW_TITLE, AUTHORS_STRING);
 		
+		assertThat(returnedPage.getPageTitle())
+			.isEqualTo("Book list view");
 		assertThat(bookRepository.findById(toEditBook.getIsbn()).get().getTitle())
 			.isEqualTo(NEW_TITLE);
 	}
@@ -72,10 +74,30 @@ public class BookEditViewIT {
 		
 		webDriver.get(bookEditUrl + toEditBook.getIsbn());
 		BookEditPage bookEditPage = new BookEditPage(webDriver);
-		bookEditPage.fillEditFormAndPressSubmitButton(INVALID_TITLE, INVALID_AUTHORS_STRING);
+		MyPage returnedPage = bookEditPage.fillEditFormAndPressSubmitButton(INVALID_TITLE, INVALID_AUTHORS_STRING);
 		
+		assertThat(returnedPage.getPageTitle())
+			.isEqualTo("Book edit view");
 		assertThat(bookRepository.findById(toEditBook.getIsbn()).get().getTitle())
 			.isEqualTo(TITLE);
+	}
+
+	@Test
+	public void testBookEditView_saveEditedBook_withValidButUnusedIbsn_canOpenBookNotFoundView() {
+		/* To send post save with valid but unused isbn,
+		 * we directly delete the book from database after getting the corresponding book edit view. */
+		Book toEditBook = bookRepository.save(new Book(VALID_ISBN13, TITLE, AUTHORS_LIST));
+		loginWithValidCredentials(webDriver, portNumber);
+		
+		webDriver.get(bookEditUrl + toEditBook.getIsbn());
+		BookEditPage bookEditPage = new BookEditPage(webDriver);
+		bookRepository.deleteAll();
+		MyPage returnedPage = bookEditPage.fillEditFormAndPressSubmitButton(NEW_TITLE, AUTHORS_STRING);
+		
+		assertThat(returnedPage.getPageTitle())
+			.isEqualTo("Book not found error view");
+		assertThat(bookRepository.findById(toEditBook.getIsbn()))
+			.isEmpty();
 	}
 
 	/* ---------- BookEditView navigation bar tests ---------- */

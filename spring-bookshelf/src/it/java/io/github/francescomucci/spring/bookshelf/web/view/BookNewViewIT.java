@@ -55,15 +55,17 @@ public class BookNewViewIT {
 
 	@Test
 	public void testBookNewView_addNewBookForm_withValidDataButAlreadyUsed_canOpenBookAlreadyExistPage() {
-		Book book = bookRepository.save(new Book(VALID_ISBN13, TITLE, AUTHORS_LIST));
+		Book alreadyExistingbook = bookRepository.save(new Book(VALID_ISBN13, TITLE, AUTHORS_LIST));
 		loginWithValidCredentials(webDriver, portNumber);
 		
 		webDriver.get(bookNewUrl);
 		BookNewPage bookNewPage = new BookNewPage(webDriver);
-		MyPage returnedPage = bookNewPage.fillAddFormAndPressSubmitButton("" + book.getIsbn(), NEW_TITLE, AUTHORS_STRING);
+		MyPage returnedPage = bookNewPage.fillAddFormAndPressSubmitButton("" + alreadyExistingbook.getIsbn(), NEW_TITLE, AUTHORS_STRING);
 		
 		assertThat(returnedPage.getPageTitle())
 			.isEqualTo("Book already exist error view");
+		assertThat(bookRepository.findById(alreadyExistingbook.getIsbn()).get())
+			.isEqualTo(alreadyExistingbook);
 	}
 
 	@Test
@@ -72,8 +74,10 @@ public class BookNewViewIT {
 		
 		webDriver.get(bookNewUrl);
 		BookNewPage bookNewPage = new BookNewPage(webDriver);
-		bookNewPage.fillAddFormAndPressSubmitButton(VALID_ISBN13_WITH_SPACES, TITLE, AUTHORS_STRING);
+		MyPage returnedPage = bookNewPage.fillAddFormAndPressSubmitButton(VALID_ISBN13_WITH_SPACES, TITLE, AUTHORS_STRING);
 		
+		assertThat(returnedPage.getPageTitle())
+			.isEqualTo("Book list view");
 		assertThat(bookRepository.findById(VALID_ISBN13))
 			.contains(new Book(VALID_ISBN13, TITLE, AUTHORS_LIST));
 	}
@@ -84,8 +88,10 @@ public class BookNewViewIT {
 		
 		webDriver.get(bookNewUrl);
 		BookNewPage bookNewPage = new BookNewPage(webDriver);
-		bookNewPage.fillAddFormAndPressSubmitButton(INVALID_ISBN13_WITH_SPACES, INVALID_TITLE, INVALID_AUTHORS_STRING);
+		MyPage returnedPage = bookNewPage.fillAddFormAndPressSubmitButton(INVALID_ISBN13_WITH_SPACES, INVALID_TITLE, INVALID_AUTHORS_STRING);
 		
+		assertThat(returnedPage.getPageTitle())
+			.isEqualTo("Book new view");
 		assertThat(bookRepository.findById(VALID_ISBN13))
 			.isEmpty();
 	}
