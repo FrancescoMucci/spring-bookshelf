@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org"
+	th:replace="shared/viewLayout::fragment(~{this::title}, ~{this::section})">
+
+<head>
+	<title>Invalid ISBN-13 error view</title>
+</head>
+
+<body>
+	<section>
+		<header th:replace="shared/fragment/parametric/header::fragment(
+			'Invalid ISBN-13',
+			'The inserted ISBN-13 do not have passed the validation process!')">
+		</header>
+		<div th:replace="shared/fragment/non-parametric/errorInfo::fragment">Placeholder for error-info-box</div>
+		<div th:replace="shared/fragment/non-parametric/adviceIsbn::fragment">Placeholder for ISBN-advice-box</div>
+	</section>
+</body>
+</html>

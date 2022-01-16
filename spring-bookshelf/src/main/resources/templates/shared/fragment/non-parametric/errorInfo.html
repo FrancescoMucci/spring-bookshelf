@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+	<section>
+		<div th:fragment="fragment" id="error-info-box" 
+			class="container my-5 text-center">
+			<div class="card-group">
+				<div class="card border-danger mb-3">
+					<div class="card-header">Status</div>
+					<div class="card-body text-danger">
+						<p class="card-text" id="error-code" th:text="${status}">Placeholder for error code</p>
+					</div>
+				</div>
+				<div class="card border-danger mb-3">
+					<div class="card-header">Error</div>
+					<div class="card-body text-danger">
+						<p class="card-text" id="error-reason" th:text="${error}">Placeholder for error reason</p>
+					</div>
+				</div>
+				<div class="card border-danger mb-3">
+					<div class="card-header">Message</div>
+					<div class="card-body text-danger">
+						<p class="card-text" id="error-message" th:text="${message}">Placeholder for error message</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+</body>
+
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org"
+	th:replace="shared/viewLayout::fragment(~{this::title}, ~{this::section})">
+
+<head>
+	<title>Book list view</title>
+</head>
+
+<body>
+	<section>
+		<div th:if="${empty}">
+			<header th:replace="shared/fragment/parametric/header::fragment('Empty database', ${empty})"></header>
+			<div sec:authorize="hasRole('ADMIN')"
+				th:replace="shared/fragment/parametric/advice::fragment(~{this::#card-title}, ~{this::#card-content})">
+					<div id="card-title">Try to add some book to the database</div>
+					<div id="card-content">
+						<p class="card-text">Use the link <i class="fas fa-plus" aria-hidden="true"> Add new book</i> in the navigation bar</p>
+					</div>
+			</div>
+		</div>
+		<div th:unless="${empty}">
+			<header th:replace="shared/fragment/parametric/header::fragment(
+				'Book list table',
+				'This table contains all the book in the database')">
+			</header>
+			<div th:replace="shared/fragment/non-parametric/bookTable::fragment">Placeholder for book table</div>
+		</div>
+	</section>
+</body>
+</html>

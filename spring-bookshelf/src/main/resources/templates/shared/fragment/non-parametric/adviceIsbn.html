@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+	<section>
+		<div th:fragment="fragment"
+			th:replace="shared/fragment/parametric/advice::fragment(~{this::#card-title}, ~{this::#card-content})">
+					<div id="card-title">Understand how ISBN-13 works</div>
+					<div id="card-content">
+						<a class="card-link"
+							href="https://www.isbn-international.org/content/what-isbn"
+							target="_blank" rel="noopener">What is a ISBN-13?</a>
+						<a class="card-link" 
+							href="https://en.wikipedia.org/wiki/International_Standard_Book_Number#ISBN-13_check_digit_calculation"
+							target="_blank" rel="noopener">How ISBN-13 validation works?</a>
+						<a class="card-link" 
+							href="https://isbndb.com/"
+							target="_blank" rel="noopener">How do I find out the ISBN-13 of a book?</a>
+					</div>
+		</div>
+	</section>
+</body>
+
+</html>

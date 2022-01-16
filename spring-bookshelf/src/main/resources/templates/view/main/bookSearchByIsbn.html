@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org"
+	th:replace="shared/viewLayout::fragment(~{this::title}, ~{this::section})">
+
+<head>
+	<title>Book search by ISBN view</title>
+</head>
+
+<body>
+	<section>
+		<header th:replace="shared/fragment/parametric/header::fragment(
+			'Book search by ISBN form',
+			'Insert the ISBN-13 of the book you want to retrieve from the database')">
+		</header>
+		<div class="container my-5 text-center">
+			<form name="search-book-by-isbn-form"
+				th:action="@{/book/getByIsbn}" method="get" th:object="${bookData}">
+				<div class="form-group" th:include="shared/fragment/parametric/formInput::fragment('ISBN-13', 'e.g. 9781401238964', 'isbn')">Placeholder for ISBN input</div>
+				<div class="form-group pt-3"
+					th:include="shared/fragment/parametric/formButton::fragment('fa-search', 'Book search')">Placeholder for search form button</div>
+			</form>
+		</div>
+		<div th:if="${books}">
+			<div th:replace="shared/fragment/non-parametric/bookTable::fragment">Placeholder for book table</div>
+		</div>
+		<div th:unless="${books}">
+			<div th:replace="shared/fragment/non-parametric/adviceIsbn::fragment">Placeholder for ISBN advice box</div>
+		</div>
+	</section>
+</body>
+
+</html>

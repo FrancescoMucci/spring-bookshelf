@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org"
+	th:replace="shared/viewLayout::fragment(~{this::title}, ~{this::section})">
+
+<head>
+	<title>Book new view</title>
+</head>
+
+<body>
+	<section>
+		<header th:replace="shared/fragment/parametric/header::fragment(
+			'Book new form',
+			'Insert book data to create a new book')">
+		</header>
+		<div class="container my-5 text-center">
+			<form name="new-book-form"
+				th:action="@{/book/add}" method="post" th:object="${bookData}">
+				<div class="form-group"
+					th:include="shared/fragment/parametric/formInput::fragment('ISBN-13', 'e.g. 9781401238964', 'isbn')">Placeholder for ISBN input</div>
+				<div class="form-group"
+					th:include="shared/fragment/parametric/formInput::fragment('Title', 'e.g. Watchmen', 'title')">Placeholder for title input</div>
+				<div class="form-group"
+					th:include="shared/fragment/parametric/formInput::fragment('Authors', 'e.g. Alan Moore, Dave Gibbons', 'authors')">Placeholder for authors input</div>
+				<div class="form-group pt-3"
+					th:include="shared/fragment/parametric/formButton::fragment('fa-plus', 'Add book')">Placeholder for add button</div>
+			</form>
+		</div>
+		<div th:replace="shared/fragment/non-parametric/adviceIsbn::fragment">Placeholder for ISBN advice box</div>
+	</section>
+</body>
+
+</html>

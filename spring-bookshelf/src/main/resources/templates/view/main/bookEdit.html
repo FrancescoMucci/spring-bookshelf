@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org"
+	th:replace="shared/viewLayout::fragment(~{this::title}, ~{this::section})">
+
+<head>
+	<title>Book edit view</title>
+</head>
+
+<body>
+	<section>
+		<header th:replace="shared/fragment/parametric/header::fragment(
+ 			'Book edit form',
+ 			'Edit book title and authors')">
+		</header>
+		<div class="container my-5 text-center">
+			<form name="edit-book-form"
+				th:action="@{/book/save}" method="post" th:object="${bookData}">
+				<div class="form-group">
+					<input type="hidden" th:field="*{isbn}"/>
+				</div>
+				<div class="form-group"
+					th:include="shared/fragment/parametric/formInput::fragment('Title', 'e.g. Watchmen', 'title')">Placeholder for title input</div>
+				<div class="form-group"
+					th:include="shared/fragment/parametric/formInput::fragment('Authors ', 'e.g. Alan Moore, Dave Gibbons', 'authors')">Placeholder for authors input</div>
+				<div class="form-group pt-3"
+					th:include="shared/fragment/parametric/formButton::fragment('fa-save', 'Save edit')">Placeholder for save button</div>
+			</form>
+		</div>
+	</section>
+</body>
+
+</html>
