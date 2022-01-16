@@ -1,4 +1,4 @@
-package io.github.francescomucci.spring.bookshelf.web.view;
+package io.github.francescomucci.spring.bookshelf.web.view.main;
 
 import static io.github.francescomucci.spring.bookshelf.BookTestingConstants.*;
 import static io.github.francescomucci.spring.bookshelf.web.view.page.helper.AuthenticationHelperMethods.*;

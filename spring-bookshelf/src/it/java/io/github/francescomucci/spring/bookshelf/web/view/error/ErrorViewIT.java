@@ -1,4 +1,4 @@
-package io.github.francescomucci.spring.bookshelf.web.view;
+package io.github.francescomucci.spring.bookshelf.web.view.error;
 
 import static io.github.francescomucci.spring.bookshelf.web.view.page.helper.AuthenticationHelperMethods.*;
 import static org.assertj.core.api.Assertions.assertThat;
