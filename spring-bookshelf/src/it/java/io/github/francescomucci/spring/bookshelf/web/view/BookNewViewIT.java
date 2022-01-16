@@ -64,8 +64,8 @@ public class BookNewViewIT {
 		
 		assertThat(returnedPage.getPageTitle())
 			.isEqualTo("Book already exist error view");
-		assertThat(bookRepository.findById(alreadyExistingbook.getIsbn()).get())
-			.isEqualTo(alreadyExistingbook);
+		assertThat(bookRepository.findById(alreadyExistingbook.getIsbn()))
+			.contains(alreadyExistingbook);
 	}
 
 	@Test
