@@ -14,6 +14,9 @@ public class MyErrorPage extends MyPage {
 	@FindBy(id = "error-reason")
 	private WebElement errorReason;
 
+	@FindBy(id = "error-message")
+	private WebElement errorMessage;
+
 	public MyErrorPage(WebDriver webDriver) {
 		super(webDriver);
 	}
@@ -24,6 +27,10 @@ public class MyErrorPage extends MyPage {
 
 	public String getErrorReason() {
 		return errorReason.getText();
+	}
+
+	public String getErrorMessage() {
+		return errorMessage.getText();
 	}
 
 }
