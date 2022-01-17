@@ -101,4 +101,31 @@ public class SpringBookshelfApplicationE2E {
 			.contains("Welcome back");
 	}
 
+	/* ---------- SpringBookshelfApplication logout tests ---------- */
+
+	@Test
+	public void testSpringBookshelfApplication_logout_shouldSuccessfullyLogout() {
+		bookHomePage.loginWithValidCredentials();
+		
+		bookHomePage.clickLogoutButton();
+		
+		assertThat(bookHomePage.getHeaderContent())
+			.contains("Welcome to my book library");
+		assertThat(bookHomePage.getLogoutMessage())
+			.isEqualTo("Logged out successfully");
+	}
+
+	@Test
+	public void testSpringBookshelfApplication_logout_whenLoggedWithRememberMe_shouldSuccessfullyLogout() {
+		bookHomePage.checkRemeberMe();
+		bookHomePage.loginWithValidCredentials();
+		
+		bookHomePage.clickLogoutButton();
+		
+		assertThat(bookHomePage.getHeaderContent())
+			.contains("Welcome to my book library");
+		assertThat(bookHomePage.getLogoutMessage())
+			.isEqualTo("Logged out successfully");
+	}
+
 }
