@@ -26,6 +26,7 @@ import io.github.francescomucci.spring.bookshelf.web.view.page.main.BookEditPage
 import io.github.francescomucci.spring.bookshelf.web.view.page.main.BookHomePage;
 import io.github.francescomucci.spring.bookshelf.web.view.page.main.BookListPage;
 import io.github.francescomucci.spring.bookshelf.web.view.page.main.BookNewPage;
+import io.github.francescomucci.spring.bookshelf.web.view.page.main.BookSearchByIsbnPage;
 import io.github.francescomucci.spring.bookshelf.web.view.page.error.MyErrorPage;
 
 /* Before run this test, make sure your SpringBoot application and MongoDB are up and running */
@@ -260,7 +261,7 @@ public class SpringBookshelfApplicationE2E {
 		setupAddingBookToDatabase(
 			new Book(VALID_ISBN13, TITLE, AUTHORS_LIST));
 		setupAddingBookToDatabase(
-				new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2));
+			new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2));
 		
 		bookHomePage.loginWithValidCredentials();
 		BookListPage bookListPage = (BookListPage) bookHomePage.clickNavbarShowBookListLink();
@@ -269,6 +270,49 @@ public class SpringBookshelfApplicationE2E {
 		assertThat(bookListPage.getBookTable())
 			.doesNotContain(VALID_ISBN13_WITHOUT_FORMATTING, TITLE, AUTHORS_STRING)
 			.contains(VALID_ISBN13_2_WITHOUT_FORMATTING, TITLE_2, AUTHORS_STRING_2);
+	}
+
+	/* ---------- SpringBookshelfApplication searchBookByIsbn tests ---------- */
+
+	@Test
+	public void testSpringBookshelfApplication_searchBookByIsbn_withInvalidIsbn_shouldShowValidationErrorMessage() {
+		BookSearchByIsbnPage searchByIsbnPage = (BookSearchByIsbnPage) bookHomePage.clickNavbarSearchBookByIsbnLink();
+		searchByIsbnPage.fillSearchFormAndPressSubmitButton(INVALID_ISBN13_WITH_HYPHENS);
+		
+		assertThat(searchByIsbnPage.getValidationErrorMessage())
+			.contains("Invalid ISBN-13");
+	}
+
+	@Test
+	public void testSpringBookshelfApplication_searchBookByIsbn_withValidButUnusedIsbn_shouldOpenBookNotFoundErrorView() {
+		setupAddingBookToDatabase(
+			new Book(VALID_ISBN13, TITLE, AUTHORS_LIST));
+		setupAddingBookToDatabase(
+			new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2));
+		
+		BookSearchByIsbnPage searchByIsbnPage = (BookSearchByIsbnPage) bookHomePage.clickNavbarSearchBookByIsbnLink();
+		MyErrorPage errorPage = (MyErrorPage) 
+			searchByIsbnPage.fillSearchFormAndPressSubmitButton(UNUSED_ISBN13_WITH_HYPHENS);
+		
+		assertThat(errorPage.getPageTitle())
+			.isEqualTo("Book not found error view");
+		assertThat(errorPage.getErrorMessage())
+			.isEqualTo(UNUSED_ISBN13 + ": no book found with this ISBN-13");
+	}
+
+	@Test
+	public void testSpringBookshelfApplication_searchBookByIsbn_withValidAndUsedIsbn_shouldShowRetrievedBookInATable() {
+		setupAddingBookToDatabase(
+			new Book(VALID_ISBN13, TITLE, AUTHORS_LIST));
+		setupAddingBookToDatabase(
+			new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2));
+		
+		BookSearchByIsbnPage searchByIsbnPage = (BookSearchByIsbnPage) bookHomePage.clickNavbarSearchBookByIsbnLink();
+		searchByIsbnPage.fillSearchFormAndPressSubmitButton(VALID_ISBN13_WITH_HYPHENS);
+		
+		assertThat(searchByIsbnPage.getBookTable())
+			.contains(VALID_ISBN13_WITHOUT_FORMATTING, TITLE, AUTHORS_STRING)
+			.doesNotContain(VALID_ISBN13_2_WITHOUT_FORMATTING, TITLE_2, AUTHORS_STRING_2);
 	}
 
 	/* ---------- Helper methods ---------- */
