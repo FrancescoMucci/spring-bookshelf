@@ -14,4 +14,8 @@ public final class WebSecurityTestingConstants {
 	public static final String INVALID_USER_NAME = "Invalid user name";
 	public static final String INVALID_PASSWORD = "Invalid password";
 
+	/* ----- Remember-me token ----- */
+
+	public static final String REMEMBER_ME_TOKEN = "spring-bookshelf-remember-me";
+
 }

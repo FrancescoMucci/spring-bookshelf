@@ -66,8 +66,8 @@
 		<!-- To keep track of IT and E2E in the additional test folders -->
 		<sonar.tests>
 			${project.build.testSourceDirectory},
-			${basedir}/src/it/java<!--,-->
-			<!--  ${basedir}/src/e2e/java -->
+			${basedir}/src/it/java,
+			${basedir}/src/e2e/java
 		</sonar.tests>
 
 		<!-- To analyze also HTML files -->
@@ -220,6 +220,24 @@
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-support</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- To write E2E test -->
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-java</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- ########## Other dependencies ########## -->
+
+		<!-- Used for Selenium E2E test:
+			automatically download a binary which allows WebDriver to handle the chosen browser -->
+		<dependency>
+			<groupId>io.github.bonigarcia</groupId>
+			<artifactId>webdrivermanager</artifactId>
+			<version>3.5.0</version>
 			<scope>test</scope>
 		</dependency>
 
