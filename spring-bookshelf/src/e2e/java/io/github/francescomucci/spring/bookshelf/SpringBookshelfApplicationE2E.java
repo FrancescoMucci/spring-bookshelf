@@ -253,6 +253,24 @@ public class SpringBookshelfApplicationE2E {
 			.contains(VALID_ISBN13_WITHOUT_FORMATTING, NEW_TITLE, AUTHORS_STRING);
 	}
 
+	/* ---------- SpringBookshelfApplication deleteBook tests ---------- */
+
+	@Test
+	public void testSpringBookshelfApplication_deleteBook_shouldShowUpdatedBookListView() {
+		setupAddingBookToDatabase(
+			new Book(VALID_ISBN13, TITLE, AUTHORS_LIST));
+		setupAddingBookToDatabase(
+				new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2));
+		
+		bookHomePage.loginWithValidCredentials();
+		BookListPage bookListPage = (BookListPage) bookHomePage.clickNavbarShowBookListLink();
+		bookListPage.clickShowDeleteDialogAndThenYesDeleteButton(VALID_ISBN13);
+		
+		assertThat(bookListPage.getBookTable())
+			.doesNotContain(VALID_ISBN13_WITHOUT_FORMATTING, TITLE, AUTHORS_STRING)
+			.contains(VALID_ISBN13_2_WITHOUT_FORMATTING, TITLE_2, AUTHORS_STRING_2);
+	}
+
 	/* ---------- Helper methods ---------- */
 
 	private void setupAddingBookToDatabase(Book book) {
