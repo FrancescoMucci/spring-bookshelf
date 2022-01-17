@@ -22,11 +22,12 @@ import com.mongodb.client.MongoClients;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 import io.github.francescomucci.spring.bookshelf.model.Book;
-import io.github.francescomucci.spring.bookshelf.web.view.page.main.BookEditPage;
 import io.github.francescomucci.spring.bookshelf.web.view.page.main.BookHomePage;
 import io.github.francescomucci.spring.bookshelf.web.view.page.main.BookListPage;
+import io.github.francescomucci.spring.bookshelf.web.view.page.main.BookEditPage;
 import io.github.francescomucci.spring.bookshelf.web.view.page.main.BookNewPage;
 import io.github.francescomucci.spring.bookshelf.web.view.page.main.BookSearchByIsbnPage;
+import io.github.francescomucci.spring.bookshelf.web.view.page.main.BookSearchByTitlePage;
 import io.github.francescomucci.spring.bookshelf.web.view.page.error.MyErrorPage;
 
 /* Before run this test, make sure your SpringBoot application and MongoDB are up and running */
@@ -312,6 +313,57 @@ public class SpringBookshelfApplicationE2E {
 		
 		assertThat(searchByIsbnPage.getBookTable())
 			.contains(VALID_ISBN13_WITHOUT_FORMATTING, TITLE, AUTHORS_STRING)
+			.doesNotContain(VALID_ISBN13_2_WITHOUT_FORMATTING, TITLE_2, AUTHORS_STRING_2);
+	}
+
+	/* ---------- SpringBookshelfApplication searchBookByTitle tests ---------- */
+
+	@Test
+	public void testSpringBookshelfApplication_searchBookByTitle_withInvalidTitle_shouldShowValidationErrorMessage() {
+		setupAddingBookToDatabase(
+			new Book(VALID_ISBN13, TITLE, AUTHORS_LIST));
+		setupAddingBookToDatabase(
+			new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2));
+		
+		BookSearchByTitlePage searchByTitlePage = (BookSearchByTitlePage) bookHomePage.clickNavbarSearchBooksByTitleLink();
+		searchByTitlePage.fillSearchFormAndPressSubmitButton(INVALID_TITLE);
+		
+		assertThat(searchByTitlePage.getValidationErrorMessage())
+			.contains("Invalid title");
+	}
+
+	@Test
+	public void testPocSpringLibraryApplication_searchBookByTitle_withValidButUnusedTitle_shouldOpenBookNotFoundErrorView() {
+		setupAddingBookToDatabase(
+			new Book(VALID_ISBN13, TITLE, AUTHORS_LIST));
+		setupAddingBookToDatabase(
+			new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2));
+		
+		BookSearchByTitlePage searchByTitlePage = (BookSearchByTitlePage) bookHomePage.clickNavbarSearchBooksByTitleLink();
+		MyErrorPage errorPage = (MyErrorPage) 
+			searchByTitlePage.fillSearchFormAndPressSubmitButton(UNUSED_TITLE);
+		
+		assertThat(errorPage.getPageTitle())
+			.isEqualTo("Book not found error view");
+		assertThat(errorPage.getErrorMessage())
+			.isEqualTo(UNUSED_TITLE + ": no book found with this title");
+	}
+
+	@Test
+	public void testSpringBookshelfApplication_searchBookByTitle_withValidAndUsedTitle_shouldShowRetrievedBooksInATable() {
+		setupAddingBookToDatabase(
+			new Book(VALID_ISBN13, TITLE, AUTHORS_LIST));
+		setupAddingBookToDatabase(
+			new Book(NEW_VALID_ISBN13, NEW_TITLE, AUTHORS_LIST));
+		setupAddingBookToDatabase(
+			new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2));
+		
+		BookSearchByTitlePage searchByTitlePage = (BookSearchByTitlePage) bookHomePage.clickNavbarSearchBooksByTitleLink();
+		searchByTitlePage.fillSearchFormAndPressSubmitButton(TITLE);
+		
+		assertThat(searchByTitlePage.getBookTable())
+			.contains(VALID_ISBN13_WITHOUT_FORMATTING, TITLE, AUTHORS_STRING)
+			.contains(VALID_ISBN13_WITHOUT_FORMATTING, NEW_TITLE, AUTHORS_STRING)
 			.doesNotContain(VALID_ISBN13_2_WITHOUT_FORMATTING, TITLE_2, AUTHORS_STRING_2);
 	}
 
