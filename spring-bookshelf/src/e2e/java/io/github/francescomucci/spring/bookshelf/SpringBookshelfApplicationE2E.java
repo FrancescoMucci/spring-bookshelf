@@ -24,6 +24,8 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import io.github.francescomucci.spring.bookshelf.model.Book;
 import io.github.francescomucci.spring.bookshelf.web.view.page.main.BookHomePage;
 import io.github.francescomucci.spring.bookshelf.web.view.page.main.BookListPage;
+import io.github.francescomucci.spring.bookshelf.web.view.page.main.BookNewPage;
+import io.github.francescomucci.spring.bookshelf.web.view.page.error.MyErrorPage;
 
 /* Before run this test, make sure your SpringBoot application and MongoDB are up and running */
 
@@ -172,6 +174,49 @@ public class SpringBookshelfApplicationE2E {
 		assertThat(bookListPage.getBookTable())
 			.contains(VALID_ISBN13_WITHOUT_FORMATTING, TITLE, AUTHORS_STRING)
 			.contains(VALID_ISBN13_2_WITHOUT_FORMATTING, TITLE_2, AUTHORS_STRING_2);
+	}
+
+	/* ---------- SpringBookshelfApplication addNewBook tests ---------- */
+
+	@Test
+	public void testSpringBookshelfApplication_addNewBook_withInvalidData_shouldShowValidationErrorMessages() {
+		bookHomePage.loginWithValidCredentials();
+		BookNewPage bookNewPage = (BookNewPage) bookHomePage.clickNavbarAddNewBookLink();
+		bookNewPage.fillAddFormAndPressSubmitButton(INVALID_ISBN13_WITH_SPACES, INVALID_TITLE, INVALID_AUTHORS_STRING);
+		
+		assertThat(bookNewPage.getIsbnValidationErrorMessage())
+			.contains("Invalid ISBN-13");
+		assertThat(bookNewPage.getTitleValidationErrorMessage())
+			.contains("Invalid title");
+		assertThat(bookNewPage.getAuthorsValidationErrorMessage())
+			.contains("Invalid authors");
+	}
+
+	@Test
+	public void testSpringBookshelfApplication_addNewBook_withValidDataButAlreadyUsedIsbn_shouldOpenBookAlreadyExistErrorView() {
+		setupAddingBookToDatabase(
+			new Book(VALID_ISBN13, TITLE, AUTHORS_LIST));
+		
+		bookHomePage.loginWithValidCredentials();
+		BookNewPage bookNewPage = (BookNewPage) bookHomePage.clickNavbarAddNewBookLink();
+		MyErrorPage errorPage = (MyErrorPage) 
+			bookNewPage.fillAddFormAndPressSubmitButton(VALID_ISBN13_WITH_SPACES, TITLE, AUTHORS_STRING);
+		
+		assertThat(errorPage.getPageTitle())
+			.isEqualTo("Book already exist error view");
+		assertThat(errorPage.getErrorMessage())
+			.isEqualTo(VALID_ISBN13 + ": a book with this ISBN-13 already exist");
+	}
+
+	@Test
+	public void testSpringBookshelfApplication_addNewBook_withValidDataAndUnusedIsbn_shouldOpenBookListViewToShowNewlyAddedBook() {
+		bookHomePage.loginWithValidCredentials();
+		BookNewPage bookNewPage = (BookNewPage) bookHomePage.clickNavbarAddNewBookLink();
+		BookListPage bookListPage = (BookListPage) 
+			bookNewPage.fillAddFormAndPressSubmitButton(UNUSED_ISBN13_WITHOUT_FORMATTING, UNUSED_TITLE, UNUSED_AUTHORS_STRING);
+		
+		assertThat(bookListPage.getBookTable())
+			.contains(UNUSED_ISBN13_WITHOUT_FORMATTING, UNUSED_TITLE, UNUSED_AUTHORS_STRING);
 	}
 
 	/* ---------- Helper methods ---------- */

@@ -20,4 +20,16 @@ public class BookNewPage extends MyPage implements IPageWithForm{
 		return pressSubmitButton(this);
 	}
 
+	public String getIsbnValidationErrorMessage() {
+		return getMessage(this,"isbn-validation-error");
+	}
+
+	public String getTitleValidationErrorMessage() {
+		return getMessage(this,"title-validation-error");
+	}
+
+	public String getAuthorsValidationErrorMessage() {
+		return getMessage(this,"authors-validation-error");
+	}
+
 }

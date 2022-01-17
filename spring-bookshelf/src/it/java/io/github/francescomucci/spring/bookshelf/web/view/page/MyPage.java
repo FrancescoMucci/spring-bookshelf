@@ -7,6 +7,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
+import io.github.francescomucci.spring.bookshelf.web.view.page.error.MyErrorPage;
+import io.github.francescomucci.spring.bookshelf.web.view.page.main.BookEditPage;
 import io.github.francescomucci.spring.bookshelf.web.view.page.main.BookHomePage;
 import io.github.francescomucci.spring.bookshelf.web.view.page.main.BookListPage;
 import io.github.francescomucci.spring.bookshelf.web.view.page.main.BookNewPage;
@@ -89,6 +91,25 @@ public class MyPage {
 	public BookHomePage clickLogoutButton() {
 		logoutButton.click();
 		return new BookHomePage(webDriver);
+	}
+
+	public MyPage nextPage() {
+		switch (this.getPageTitle()) {
+			case "Book home view":
+				return new BookHomePage(webDriver);
+			case "Book list view":
+				return new BookListPage(webDriver);
+			case "Book new view":
+				return new BookNewPage(webDriver);
+			case "Book search by ISBN view":
+				return new BookSearchByIsbnPage(webDriver);
+			case "Book search by title view":
+				return new BookSearchByTitlePage(webDriver);
+			case "Book edit view":
+				return new BookEditPage(webDriver);
+			default:
+				return new MyErrorPage(webDriver);
+		}
 	}
 
 }

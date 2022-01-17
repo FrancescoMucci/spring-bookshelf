@@ -13,7 +13,7 @@ public interface IPageWithForm {
 
 	public default MyPage pressSubmitButton(MyPage page) {
 		page.webDriver.findElement(By.name("submit-button")).click();
-		return (MyPage) this;
+		return page.nextPage();
 	}
 
 	public default String getMessage(MyPage page, String messageId) {
