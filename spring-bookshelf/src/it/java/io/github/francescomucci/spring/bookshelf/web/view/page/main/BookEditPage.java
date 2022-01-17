@@ -2,10 +2,10 @@ package io.github.francescomucci.spring.bookshelf.web.view.page.main;
 
 import org.openqa.selenium.WebDriver;
 
-import io.github.francescomucci.spring.bookshelf.web.view.page.IPageWithForm;
 import io.github.francescomucci.spring.bookshelf.web.view.page.MyPage;
+import io.github.francescomucci.spring.bookshelf.web.view.page.APageWithCreateUpdateForm;
 
-public class BookEditPage extends MyPage implements IPageWithForm {
+public class BookEditPage extends APageWithCreateUpdateForm {
 
 	private static final String EXPECTED_TITLE = "Book edit view";
 

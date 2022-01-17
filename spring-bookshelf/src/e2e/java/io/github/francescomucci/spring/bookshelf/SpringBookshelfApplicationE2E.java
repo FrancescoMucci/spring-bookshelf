@@ -22,6 +22,7 @@ import com.mongodb.client.MongoClients;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 import io.github.francescomucci.spring.bookshelf.model.Book;
+import io.github.francescomucci.spring.bookshelf.web.view.page.main.BookEditPage;
 import io.github.francescomucci.spring.bookshelf.web.view.page.main.BookHomePage;
 import io.github.francescomucci.spring.bookshelf.web.view.page.main.BookListPage;
 import io.github.francescomucci.spring.bookshelf.web.view.page.main.BookNewPage;
@@ -217,6 +218,39 @@ public class SpringBookshelfApplicationE2E {
 		
 		assertThat(bookListPage.getBookTable())
 			.contains(UNUSED_ISBN13_WITHOUT_FORMATTING, UNUSED_TITLE, UNUSED_AUTHORS_STRING);
+	}
+
+	/* ---------- SpringBookshelfApplication editBook tests ---------- */
+
+	@Test
+	public void testSpringBookshelfApplication_editBook_withInvalidFormData_shouldShowValidationErrorMessages() {
+		setupAddingBookToDatabase(
+			new Book(VALID_ISBN13, TITLE, AUTHORS_LIST));
+		
+		bookHomePage.loginWithValidCredentials();
+		BookListPage bookListPage = (BookListPage) bookHomePage.clickNavbarShowBookListLink();
+		BookEditPage bookEditPage = bookListPage.clickEditLink(VALID_ISBN13);
+		bookEditPage.fillEditFormAndPressSubmitButton(INVALID_TITLE, INVALID_AUTHORS_STRING);
+		
+		assertThat(bookEditPage.getTitleValidationErrorMessage())
+			.contains("Invalid title");
+		assertThat(bookEditPage.getAuthorsValidationErrorMessage())
+			.contains("Invalid authors");
+	}
+
+	@Test
+	public void testSpringBookshelfApplication_editBook_withValidFormData_shouldOpenBookListViewToShowUpdatedBook() {
+		setupAddingBookToDatabase(
+			new Book(VALID_ISBN13, TITLE, AUTHORS_LIST));
+		
+		bookHomePage.loginWithValidCredentials();
+		BookListPage bookListPage = (BookListPage) bookHomePage.clickNavbarShowBookListLink();
+		BookEditPage bookEditPage = bookListPage.clickEditLink(VALID_ISBN13);
+		bookListPage = (BookListPage) 
+			bookEditPage.fillEditFormAndPressSubmitButton(NEW_TITLE, AUTHORS_STRING);
+		
+		assertThat(bookListPage.getBookTable())
+			.contains(VALID_ISBN13_WITHOUT_FORMATTING, NEW_TITLE, AUTHORS_STRING);
 	}
 
 	/* ---------- Helper methods ---------- */
