@@ -34,7 +34,7 @@ public abstract class APageWithBookTable extends MyPage {
 	public MyPage clickShowDeleteDialogAndThenYesDeleteButton(Long isbn) {
 		clickShowDeleteDialog(isbn);
 		webDriver.findElement(By.id("deleteBookDialog-" + isbn + "-yesButton")).click();
-		return this;
+		return nextPage();
 	}
 
 	private void clickShowDeleteDialog(Long isbn) {

@@ -66,8 +66,8 @@
 		<!-- To keep track of IT and E2E in the additional test folders -->
 		<sonar.tests>
 			${project.build.testSourceDirectory},
-			${basedir}/src/it/java<!--,-->
-			<!--  ${basedir}/src/e2e/java -->
+			${basedir}/src/it/java,
+			${basedir}/src/e2e/java
 		</sonar.tests>
 
 		<!-- To analyze also HTML files -->
@@ -81,7 +81,7 @@
 
 		<!-- For each rule to be ignore, add another ", eXX" and two corresponding 
 			properties with "eXX" in the name as below -->
-		<sonar.issue.ignore.multicriteria>e01, e02, e03, e04, e05</sonar.issue.ignore.multicriteria>
+		<sonar.issue.ignore.multicriteria>e01, e02, e03, e04, e05, e06</sonar.issue.ignore.multicriteria>
 
 		<!-- "Tests should include assertions" disabled on some classes like *ApplicationTests 
 			which just checks that the Spring application can start, without any assertion -->
@@ -125,6 +125,16 @@
 		<sonar.issue.ignore.multicriteria.e05.resourceKey>
 			**/src/main/resources/templates/error.html
 		</sonar.issue.ignore.multicriteria.e05.resourceKey>
+
+		<!-- "Test classes should comply with a naming convention" disabled on E2E test-case:
+			we want to use a non standard name -->
+		<sonar.issue.ignore.multicriteria.e06.ruleKey>
+			java:S3577
+		</sonar.issue.ignore.multicriteria.e06.ruleKey>
+		<sonar.issue.ignore.multicriteria.e06.resourceKey>
+			**/*E2E.java
+		</sonar.issue.ignore.multicriteria.e06.resourceKey>
+
 
 	</properties>
 
@@ -220,6 +230,24 @@
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-support</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- To write E2E test -->
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-java</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- ########## Other dependencies ########## -->
+
+		<!-- Used for Selenium E2E test:
+			automatically download a binary which allows WebDriver to handle the chosen browser -->
+		<dependency>
+			<groupId>io.github.bonigarcia</groupId>
+			<artifactId>webdrivermanager</artifactId>
+			<version>3.5.0</version>
 			<scope>test</scope>
 		</dependency>
 
