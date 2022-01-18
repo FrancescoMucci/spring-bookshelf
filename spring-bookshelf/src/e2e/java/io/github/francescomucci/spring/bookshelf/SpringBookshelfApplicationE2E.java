@@ -255,24 +255,6 @@ public class SpringBookshelfApplicationE2E {
 			.contains(VALID_ISBN13_WITHOUT_FORMATTING, NEW_TITLE, AUTHORS_STRING);
 	}
 
-	/* ---------- SpringBookshelfApplication deleteBook tests ---------- */
-
-	@Test
-	public void testSpringBookshelfApplication_deleteBook_shouldShowUpdatedBookListView() {
-		setupAddingBookToDatabase(
-			new Book(VALID_ISBN13, TITLE, AUTHORS_LIST));
-		setupAddingBookToDatabase(
-			new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2));
-		
-		bookHomePage.loginWithValidCredentials();
-		BookListPage bookListPage = (BookListPage) bookHomePage.clickNavbarShowBookListLink();
-		bookListPage.clickShowDeleteDialogAndThenYesDeleteButton(VALID_ISBN13);
-		
-		assertThat(bookListPage.getBookTable())
-			.doesNotContain(VALID_ISBN13_WITHOUT_FORMATTING, TITLE, AUTHORS_STRING)
-			.contains(VALID_ISBN13_2_WITHOUT_FORMATTING, TITLE_2, AUTHORS_STRING_2);
-	}
-
 	/* ---------- SpringBookshelfApplication searchBookByIsbn tests ---------- */
 
 	@Test
@@ -365,6 +347,62 @@ public class SpringBookshelfApplicationE2E {
 			.contains(VALID_ISBN13_WITHOUT_FORMATTING, TITLE, AUTHORS_STRING)
 			.contains(VALID_ISBN13_WITHOUT_FORMATTING, NEW_TITLE, AUTHORS_STRING)
 			.doesNotContain(VALID_ISBN13_2_WITHOUT_FORMATTING, TITLE_2, AUTHORS_STRING_2);
+	}
+
+	/* ---------- SpringBookshelfApplication deleteBook tests ---------- */
+
+	@Test
+	public void testSpringBookshelfApplication_deleteBook_whenBookListView_shouldShowUpdatedBookListView() {
+		setupAddingBookToDatabase(
+			new Book(VALID_ISBN13, TITLE, AUTHORS_LIST));
+		setupAddingBookToDatabase(
+			new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2));
+		
+		bookHomePage.loginWithValidCredentials();
+		BookListPage bookListPage = (BookListPage) bookHomePage.clickNavbarShowBookListLink();
+		bookListPage.clickShowDeleteDialogAndThenYesDeleteButton(VALID_ISBN13);
+		
+		assertThat(bookListPage.getBookTable())
+			.doesNotContain(VALID_ISBN13_WITHOUT_FORMATTING, TITLE, AUTHORS_STRING)
+			.contains(VALID_ISBN13_2_WITHOUT_FORMATTING, TITLE_2, AUTHORS_STRING_2);
+	}
+
+	@Test
+	public void testSpringBookshelfApplication_deleteBook_whenBookSearchByIsbnView_shouldShowUpdatedBookListView() {
+		setupAddingBookToDatabase(
+			new Book(VALID_ISBN13, TITLE, AUTHORS_LIST));
+		setupAddingBookToDatabase(
+			new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2));
+		
+		bookHomePage.loginWithValidCredentials();
+		BookSearchByIsbnPage searchByIsbnPage = (BookSearchByIsbnPage) bookHomePage.clickNavbarSearchBookByIsbnLink();
+		searchByIsbnPage.fillSearchFormAndPressSubmitButton(VALID_ISBN13_WITH_HYPHENS);
+		BookListPage bookListPage = (BookListPage) searchByIsbnPage.clickShowDeleteDialogAndThenYesDeleteButton(VALID_ISBN13);
+		
+		assertThat(bookListPage.getBookTable())
+			.doesNotContain(VALID_ISBN13_WITHOUT_FORMATTING, TITLE, AUTHORS_STRING)
+			.contains(VALID_ISBN13_2_WITHOUT_FORMATTING, TITLE_2, AUTHORS_STRING_2);
+	}
+
+	@Test
+	public void testSpringBookshelfApplication_deleteBook_whenBookSearchByTitleView_shouldShowUpdatedBookListView() {
+		setupAddingBookToDatabase(
+			new Book(VALID_ISBN13, TITLE, AUTHORS_LIST));
+		setupAddingBookToDatabase(
+			new Book(NEW_VALID_ISBN13, NEW_TITLE, AUTHORS_LIST));
+		setupAddingBookToDatabase(
+			new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2));
+		
+		bookHomePage.loginWithValidCredentials();
+		BookSearchByTitlePage searchByTitlePage = (BookSearchByTitlePage) bookHomePage.clickNavbarSearchBooksByTitleLink();
+		searchByTitlePage.fillSearchFormAndPressSubmitButton(TITLE);
+		BookListPage bookListPage = (BookListPage) searchByTitlePage.clickShowDeleteDialogAndThenYesDeleteButton(VALID_ISBN13);
+		
+		assertThat(bookListPage.getBookTable())
+			.doesNotContain(VALID_ISBN13_WITHOUT_FORMATTING)
+			.contains(
+				VALID_ISBN13_2_WITHOUT_FORMATTING, TITLE_2, AUTHORS_STRING_2, 
+				NEW_VALID_ISBN13_WITHOUT_FORMATTING, NEW_TITLE, AUTHORS_STRING);
 	}
 
 	/* ---------- Helper methods ---------- */
