@@ -61,8 +61,7 @@ public class BookAlreadyExistViewIT {
 		
 		webDriver.get(newPageUrl);
 		BookNewPage bookNewPage = new BookNewPage(webDriver);
-		bookNewPage.fillAddFormAndPressSubmitButton(VALID_ISBN13_WITH_SPACES, TITLE, AUTHORS_STRING);
-		MyErrorPage errorPage = new MyErrorPage(webDriver);
+		MyErrorPage errorPage = (MyErrorPage) bookNewPage.fillAddFormAndPressSubmitButton(VALID_ISBN13_WITH_SPACES, TITLE, AUTHORS_STRING);
 		
 		assertThat(errorPage.getPageTitle())
 			.isEqualTo("Book already exist error view");
