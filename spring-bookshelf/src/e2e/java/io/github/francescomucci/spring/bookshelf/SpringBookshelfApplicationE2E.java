@@ -73,7 +73,6 @@ public class SpringBookshelfApplicationE2E {
 		webDriver.manage().deleteCookieNamed(REMEMBER_ME_TOKEN);
 		webDriver.quit();
 		
-		mongoClient.getDatabase(db_name).drop();
 		mongoClient.close();
 	}
 
