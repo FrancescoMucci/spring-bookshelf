@@ -78,6 +78,10 @@ public class BookEditViewIT {
 		
 		assertThat(returnedPage.getPageTitle())
 			.isEqualTo("Book edit view");
+		assertThat(bookEditPage.getTitleInputValue())
+			.isEqualTo(INVALID_TITLE);
+		assertThat(bookEditPage.getAuthorsInputValue())
+			.isEqualTo(INVALID_AUTHORS_STRING);
 		assertThat(bookRepository.findById(toEditBook.getIsbn()).get().getTitle())
 			.isEqualTo(TITLE);
 	}

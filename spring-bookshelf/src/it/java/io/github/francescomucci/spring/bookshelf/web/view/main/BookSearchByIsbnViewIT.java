@@ -73,8 +73,12 @@ public class BookSearchByIsbnViewIT {
 		
 		webDriver.get(bookSearchByIsbnUrl);
 		BookSearchByIsbnPage bookSearchByIsbnPage = new BookSearchByIsbnPage(webDriver);
-		bookSearchByIsbnPage.fillSearchFormAndPressSubmitButton("" + book1.getIsbn());
+		MyPage returnedPage = bookSearchByIsbnPage.fillSearchFormAndPressSubmitButton("" + book1.getIsbn());
 		
+		assertThat(returnedPage.getPageTitle())
+			.isEqualTo("Book search by ISBN view");
+		assertThat(bookSearchByIsbnPage.getInputValue())
+			.isEqualTo("" + book1.getIsbn());
 		assertThat(bookSearchByIsbnPage.getBookTable())
 			.contains("" + book1.getIsbn(), book1.getTitle(), "" + book1.getAuthors())
 			.doesNotContain("" + book2.getIsbn(), book2.getTitle(), "" + book2.getAuthors());

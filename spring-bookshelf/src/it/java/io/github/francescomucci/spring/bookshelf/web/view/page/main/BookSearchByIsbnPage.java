@@ -20,6 +20,10 @@ public class BookSearchByIsbnPage extends APageWithBookTable implements IPageWit
 		return pressSubmitButton(this);
 	}
 
+	public String getInputValue() {
+		return getInputValue(this, ISBN);
+	}
+
 	public String getValidationErrorMessage() {
 		return getMessage(this, ISBN + "-validation-error");
 	}

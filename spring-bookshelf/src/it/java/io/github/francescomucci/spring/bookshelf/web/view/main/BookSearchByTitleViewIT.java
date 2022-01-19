@@ -75,8 +75,12 @@ public class BookSearchByTitleViewIT {
 		
 		webDriver.get(bookSearchByTitleUrl);
 		BookSearchByTitlePage bookSearchByTitlePage = new BookSearchByTitlePage(webDriver);
-		bookSearchByTitlePage.fillSearchFormAndPressSubmitButton("" + toBeRetrievedBook1.getTitle());
+		MyPage returnedPage = bookSearchByTitlePage.fillSearchFormAndPressSubmitButton("" + toBeRetrievedBook1.getTitle());
 		
+		assertThat(returnedPage.getPageTitle())
+			.isEqualTo("Book search by title view");
+		assertThat(bookSearchByTitlePage.getInputValue())
+			.isEqualTo(toBeRetrievedBook1.getTitle());
 		assertThat(bookSearchByTitlePage.getBookTable())
 			.contains(
 				"" + toBeRetrievedBook1.getIsbn(), toBeRetrievedBook1.getTitle(), "" + toBeRetrievedBook1.getAuthors(),

@@ -20,6 +20,10 @@ public class BookSearchByTitlePage extends APageWithBookTable implements IPageWi
 		return pressSubmitButton(this);
 	}
 
+	public String getInputValue() {
+		return getInputValue(this, TITLE);
+	}
+
 	public String getValidationErrorMessage() {
 		return getMessage(this, TITLE + "-validation-error");
 	}

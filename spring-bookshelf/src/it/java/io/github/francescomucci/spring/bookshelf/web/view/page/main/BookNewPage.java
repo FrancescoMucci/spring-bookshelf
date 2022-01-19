@@ -7,6 +7,7 @@ import io.github.francescomucci.spring.bookshelf.web.view.page.APageWithCreateUp
 
 public class BookNewPage extends APageWithCreateUpdateForm {
 
+	private static final String ISBN = "isbn";
 	private static final String EXPECTED_TITLE = "Book new view";
 
 	public BookNewPage(WebDriver webDriver) {
@@ -14,14 +15,18 @@ public class BookNewPage extends APageWithCreateUpdateForm {
 	}
 
 	public MyPage fillAddFormAndPressSubmitButton(String isbn, String title, String authors) {
-		clearAndThenfillFormInput(this,"isbn", isbn);
-		clearAndThenfillFormInput(this,"title", title);
-		clearAndThenfillFormInput(this,"authors", authors);
+		clearAndThenfillFormInput(this, ISBN, isbn);
+		clearAndThenfillFormInput(this, TITLE, title);
+		clearAndThenfillFormInput(this, AUTHORS, authors);
 		return pressSubmitButton(this);
 	}
 
+	public String getIsbnInputValue() {
+		return getInputValue(this, ISBN);
+	}
+
 	public String getIsbnValidationErrorMessage() {
-		return getMessage(this,"isbn-validation-error");
+		return getMessage(this, ISBN + VALIDATION_ERROR);
 	}
 
 }

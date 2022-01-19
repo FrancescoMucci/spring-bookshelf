@@ -92,6 +92,12 @@ public class BookNewViewIT {
 		
 		assertThat(returnedPage.getPageTitle())
 			.isEqualTo("Book new view");
+		assertThat(bookNewPage.getIsbnInputValue())
+			.isEqualTo(INVALID_ISBN13_WITH_SPACES);
+		assertThat(bookNewPage.getTitleInputValue())
+			.isEqualTo(INVALID_TITLE);
+		assertThat(bookNewPage.getAuthorsInputValue())
+			.isEqualTo(INVALID_AUTHORS_STRING);
 		assertThat(bookRepository.findById(VALID_ISBN13))
 			.isEmpty();
 	}
