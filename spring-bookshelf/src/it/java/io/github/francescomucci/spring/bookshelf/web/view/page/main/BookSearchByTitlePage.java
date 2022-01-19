@@ -1,5 +1,7 @@
 package io.github.francescomucci.spring.bookshelf.web.view.page.main;
 
+import static io.github.francescomucci.spring.bookshelf.web.view.page.BookFormConstants.*;
+
 import org.openqa.selenium.WebDriver;
 
 import io.github.francescomucci.spring.bookshelf.web.view.page.APageWithBookTable;
@@ -8,24 +10,21 @@ import io.github.francescomucci.spring.bookshelf.web.view.page.MyPage;
 
 public class BookSearchByTitlePage extends APageWithBookTable implements IPageWithForm {
 
-	private static final String EXPECTED_TITLE = "Book search by title view";
-	private static final String TITLE = "title";
-
 	public BookSearchByTitlePage(WebDriver webDriver) {
-		super(webDriver, EXPECTED_TITLE);
+		super(webDriver, BOOK_SEARCH_BY_TITLE_VIEW);
 	}
 
 	public MyPage fillSearchFormAndPressSubmitButton(String inputValue) {
-		clearAndThenfillFormInput(this, TITLE, inputValue);
+		clearAndThenfillFormInput(this, INPUT_TITLE, inputValue);
 		return pressSubmitButton(this);
 	}
 
 	public String getInputValue() {
-		return getInputValue(this, TITLE);
+		return getInputValue(this, INPUT_TITLE);
 	}
 
 	public String getValidationErrorMessage() {
-		return getMessage(this, TITLE + "-validation-error");
+		return getMessage(this, INPUT_TITLE + VALIDATION_ERROR_SUFFIX);
 	}
 
 }

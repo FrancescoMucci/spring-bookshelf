@@ -11,13 +11,11 @@ import io.github.francescomucci.spring.bookshelf.web.view.page.MyPage;
 
 public class BookHomePage extends MyPage implements IPageWithForm {
 
-	private static final String EXPECTED_TITLE = "Book home view";
-
 	@FindBy(id = "remember-me")
 	private WebElement rememberMe;
 
 	public BookHomePage(WebDriver webDriver) {
-		super(webDriver, EXPECTED_TITLE);
+		super(webDriver, BOOK_HOME_VIEW);
 	}
 
 	public BookHomePage fillLoginFormAndPressSubmitButton(String username, String password) {

@@ -1,5 +1,7 @@
 package io.github.francescomucci.spring.bookshelf.web.view.page.main;
 
+import static io.github.francescomucci.spring.bookshelf.web.view.page.BookFormConstants.*;
+
 import org.openqa.selenium.WebDriver;
 
 import io.github.francescomucci.spring.bookshelf.web.view.page.MyPage;
@@ -7,15 +9,13 @@ import io.github.francescomucci.spring.bookshelf.web.view.page.APageWithCreateUp
 
 public class BookEditPage extends APageWithCreateUpdateForm {
 
-	private static final String EXPECTED_TITLE = "Book edit view";
-
 	public BookEditPage(WebDriver webDriver) {
-		super(webDriver, EXPECTED_TITLE);
+		super(webDriver, BOOK_EDIT_VIEW);
 	}
 
 	public MyPage fillEditFormAndPressSubmitButton(String title, String authors) {
-		clearAndThenfillFormInput(this, TITLE, title);
-		clearAndThenfillFormInput(this, AUTHORS, authors);
+		clearAndThenfillFormInput(this, INPUT_TITLE, title);
+		clearAndThenfillFormInput(this, INPUT_AUTHORS, authors);
 		return pressSubmitButton(this);
 	}
 

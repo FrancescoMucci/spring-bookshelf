@@ -1,12 +1,10 @@
 package io.github.francescomucci.spring.bookshelf.web.view.page;
 
+import static io.github.francescomucci.spring.bookshelf.web.view.page.BookFormConstants.*;
+
 import org.openqa.selenium.WebDriver;
 
 public abstract class APageWithCreateUpdateForm extends MyPage implements IPageWithForm {
-
-	protected static final String TITLE = "title";
-	protected static final String AUTHORS = "authors";
-	protected static final String VALIDATION_ERROR = "-validation-error";
 
 	public APageWithCreateUpdateForm(WebDriver webDriver) {
 		super(webDriver);
@@ -17,19 +15,19 @@ public abstract class APageWithCreateUpdateForm extends MyPage implements IPageW
 	}
 
 	public String getTitleInputValue() {
-		return getInputValue(this, TITLE);
+		return getInputValue(this, INPUT_TITLE);
 	}
 
 	public String getTitleValidationErrorMessage() {
-		return getMessage(this, TITLE + VALIDATION_ERROR);
+		return getMessage(this, INPUT_TITLE + VALIDATION_ERROR_SUFFIX);
 	}
 
 	public String getAuthorsInputValue() {
-		return getInputValue(this, AUTHORS);
+		return getInputValue(this, INPUT_AUTHORS);
 	}
 
 	public String getAuthorsValidationErrorMessage() {
-		return getMessage(this, AUTHORS + VALIDATION_ERROR);
+		return getMessage(this, INPUT_AUTHORS + VALIDATION_ERROR_SUFFIX);
 	}
 
 }
