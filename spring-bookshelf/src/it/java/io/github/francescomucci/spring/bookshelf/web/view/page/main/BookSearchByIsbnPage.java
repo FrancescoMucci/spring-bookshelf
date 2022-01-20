@@ -4,27 +4,12 @@ import static io.github.francescomucci.spring.bookshelf.web.view.page.BookFormCo
 
 import org.openqa.selenium.WebDriver;
 
-import io.github.francescomucci.spring.bookshelf.web.view.page.MyPage;
-import io.github.francescomucci.spring.bookshelf.web.view.page.APageWithBookTable;
-import io.github.francescomucci.spring.bookshelf.web.view.page.IPageWithForm;
+import io.github.francescomucci.spring.bookshelf.web.view.page.APageWithSearchForm;
 
-public class BookSearchByIsbnPage extends APageWithBookTable implements IPageWithForm {
+public class BookSearchByIsbnPage extends APageWithSearchForm{
 
 	public BookSearchByIsbnPage(WebDriver webDriver) {
-		super(webDriver, BOOK_SEARCH_BY_ISBN_VIEW);
-	}
-
-	public MyPage fillSearchFormAndPressSubmitButton(String inputValue) {
-		clearAndThenfillFormInput(this, INPUT_ISBN, inputValue);
-		return pressSubmitButton(this);
-	}
-
-	public String getInputValue() {
-		return getInputValue(this, INPUT_ISBN);
-	}
-
-	public String getValidationErrorMessage() {
-		return getMessage(this, INPUT_ISBN + VALIDATION_ERROR_SUFFIX);
+		super(webDriver, BOOK_SEARCH_BY_ISBN_VIEW, INPUT_ISBN);
 	}
 
 }
