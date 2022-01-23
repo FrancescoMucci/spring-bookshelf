@@ -176,7 +176,7 @@ public class BookDataValidationTest {
 		
 		Set<ConstraintViolation<BookData>> violations = validator.validate(bookData);
 		
-		assertThat(violations.size()).isEqualTo(3);
+		assertThat(violations).hasSize(3);
 		assertThat(violations.toString())
 			.contains("Invalid ISBN-13;", "Invalid authors;", "Invalid title;");
 	}
@@ -187,7 +187,7 @@ public class BookDataValidationTest {
 		
 		Set<ConstraintViolation<BookData>> violations = validator.validate(bookData);
 		
-		assertThat(violations.size()).isEqualTo(3);
+		assertThat(violations).hasSize(3);
 		assertThat(violations.toString())
 			.contains("Invalid ISBN-13;", "Please fill out this field");
 	}
@@ -198,7 +198,7 @@ public class BookDataValidationTest {
 		
 		Set<ConstraintViolation<BookData>> violations = validator.validate(bookData);
 		
-		assertThat(violations.size()).isEqualTo(3);
+		assertThat(violations).hasSize(3);
 		violations.forEach(violation -> {
 			assertThat(violation.getMessage())
 				.isEqualTo("Please fill out this field");
