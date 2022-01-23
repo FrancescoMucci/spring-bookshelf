@@ -35,7 +35,7 @@ public class BookDataValidationTest {
 		
 		Set<ConstraintViolation<BookData>> violations = validator.validate(bookData);
 		
-		assertThat(violations.size()).isOne();
+		assertThat(violations).hasSize(1);
 		violations.forEach(violation -> {
 			assertThat(violation.getPropertyPath())
 				.hasToString("isbn");
@@ -50,7 +50,7 @@ public class BookDataValidationTest {
 		
 		Set<ConstraintViolation<BookData>> violations = validator.validate(bookData);
 		
-		assertThat(violations.size()).isOne();
+		assertThat(violations).hasSize(1);
 		violations.forEach(violation -> {
 			assertThat(violation.getPropertyPath())
 				.hasToString("isbn");
@@ -65,7 +65,7 @@ public class BookDataValidationTest {
 		
 		Set<ConstraintViolation<BookData>> violations = validator.validate(bookData);
 		
-		assertThat(violations.size()).isOne();
+		assertThat(violations).hasSize(1);
 		violations.forEach(violation -> {
 			assertThat(violation.getPropertyPath())
 				.hasToString("isbn");
@@ -82,7 +82,7 @@ public class BookDataValidationTest {
 		
 		Set<ConstraintViolation<BookData>> violations = validator.validate(bookData);
 		
-		assertThat(violations.size()).isOne();
+		assertThat(violations).hasSize(1);
 		violations.forEach(violation -> {
 			assertThat(violation.getPropertyPath())
 				.hasToString("title");
@@ -97,7 +97,7 @@ public class BookDataValidationTest {
 		
 		Set<ConstraintViolation<BookData>> violations = validator.validate(bookData);
 		
-		assertThat(violations.size()).isOne();
+		assertThat(violations).hasSize(1);
 		violations.forEach(violation -> {
 			assertThat(violation.getPropertyPath())
 				.hasToString("title");
@@ -112,7 +112,7 @@ public class BookDataValidationTest {
 		
 		Set<ConstraintViolation<BookData>> violations = validator.validate(bookData);
 		
-		assertThat(violations.size()).isOne();
+		assertThat(violations).hasSize(1);
 		violations.forEach(violation -> {
 			assertThat(violation.getPropertyPath())
 				.hasToString("title");
@@ -129,7 +129,7 @@ public class BookDataValidationTest {
 		
 		Set<ConstraintViolation<BookData>> violations = validator.validate(bookData);
 		
-		assertThat(violations.size()).isOne();
+		assertThat(violations).hasSize(1);
 		violations.forEach(violation -> {
 			assertThat(violation.getPropertyPath())
 				.hasToString("authors");
@@ -144,7 +144,7 @@ public class BookDataValidationTest {
 		
 		Set<ConstraintViolation<BookData>> violations = validator.validate(bookData);
 		
-		assertThat(violations.size()).isOne();
+		assertThat(violations).hasSize(1);
 		violations.forEach(violation -> {
 			assertThat(violation.getPropertyPath())
 				.hasToString("authors");
@@ -159,7 +159,7 @@ public class BookDataValidationTest {
 		
 		Set<ConstraintViolation<BookData>> violations = validator.validate(bookData);
 		
-		assertThat(violations.size()).isOne();
+		assertThat(violations).hasSize(1);
 		violations.forEach(violation -> {
 			assertThat(violation.getPropertyPath())
 				.hasToString("authors");
@@ -213,7 +213,7 @@ public class BookDataValidationTest {
 		
 		Set<ConstraintViolation<BookData>> violations = validator.validate(bookData, IsbnConstraints.class);
 		
-		assertThat(violations.size()).isOne();
+		assertThat(violations).hasSize(1);
 		violations.forEach(violation -> {
 			assertThat(violation.getPropertyPath())
 				.hasToString("isbn");
@@ -228,7 +228,7 @@ public class BookDataValidationTest {
 		
 		Set<ConstraintViolation<BookData>> violations = validator.validate(bookData, IsbnConstraints.class);
 		
-		assertThat(violations.size()).isOne();
+		assertThat(violations).hasSize(1);
 		violations.forEach(violation -> {
 			assertThat(violation.getPropertyPath())
 				.hasToString("isbn");
@@ -243,7 +243,7 @@ public class BookDataValidationTest {
 		
 		Set<ConstraintViolation<BookData>> violations = validator.validate(bookData, IsbnConstraints.class);
 		
-		assertThat(violations.size()).isOne();
+		assertThat(violations).hasSize(1);
 		violations.forEach(violation -> {
 			assertThat(violation.getPropertyPath())
 				.hasToString("isbn");
@@ -260,7 +260,7 @@ public class BookDataValidationTest {
 		
 		Set<ConstraintViolation<BookData>> violations = validator.validate(bookData, TitleConstraints.class);
 		
-		assertThat(violations.size()).isOne();
+		assertThat(violations).hasSize(1);
 		violations.forEach(violation -> {
 			assertThat(violation.getPropertyPath())
 				.hasToString("title");
@@ -275,7 +275,7 @@ public class BookDataValidationTest {
 		
 		Set<ConstraintViolation<BookData>> violations = validator.validate(bookData, TitleConstraints.class);
 		
-		assertThat(violations.size()).isOne();
+		assertThat(violations).hasSize(1);
 		violations.forEach(violation -> {
 			assertThat(violation.getPropertyPath())
 				.hasToString("title");
@@ -290,7 +290,7 @@ public class BookDataValidationTest {
 		
 		Set<ConstraintViolation<BookData>> violations = validator.validate(bookData, TitleConstraints.class);
 		
-		assertThat(violations.size()).isOne();
+		assertThat(violations).hasSize(1);
 		violations.forEach(violation -> {
 			assertThat(violation.getPropertyPath())
 				.hasToString("title");
@@ -307,7 +307,7 @@ public class BookDataValidationTest {
 		
 		Set<ConstraintViolation<BookData>> violations = validator.validate(bookData, AuthorsConstraints.class);
 		
-		assertThat(violations.size()).isOne();
+		assertThat(violations).hasSize(1);
 		violations.forEach(violation -> {
 			assertThat(violation.getPropertyPath())
 				.hasToString("authors");
@@ -322,7 +322,7 @@ public class BookDataValidationTest {
 		
 		Set<ConstraintViolation<BookData>> violations = validator.validate(bookData, AuthorsConstraints.class);
 		
-		assertThat(violations.size()).isOne();
+		assertThat(violations).hasSize(1);
 		violations.forEach(violation -> {
 			assertThat(violation.getPropertyPath())
 				.hasToString("authors");
@@ -337,7 +337,7 @@ public class BookDataValidationTest {
 		
 		Set<ConstraintViolation<BookData>> violations = validator.validate(bookData, AuthorsConstraints.class);
 		
-		assertThat(violations.size()).isOne();
+		assertThat(violations).hasSize(1);
 		violations.forEach(violation -> {
 			assertThat(violation.getPropertyPath())
 				.hasToString("authors");
