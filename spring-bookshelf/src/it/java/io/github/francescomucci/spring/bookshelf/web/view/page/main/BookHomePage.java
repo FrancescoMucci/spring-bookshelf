@@ -6,10 +6,9 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-import io.github.francescomucci.spring.bookshelf.web.view.page.IPageWithForm;
-import io.github.francescomucci.spring.bookshelf.web.view.page.MyPage;
+import io.github.francescomucci.spring.bookshelf.web.view.page.APageWithForm;
 
-public class BookHomePage extends MyPage implements IPageWithForm {
+public class BookHomePage extends APageWithForm {
 
 	@FindBy(id = "remember-me")
 	private WebElement rememberMe;
@@ -19,9 +18,9 @@ public class BookHomePage extends MyPage implements IPageWithForm {
 	}
 
 	public BookHomePage fillLoginFormAndPressSubmitButton(String username, String password) {
-		clearAndThenfillFormInput(this,"username", username);
-		clearAndThenfillFormInput(this,"password", password);
-		return (BookHomePage) pressSubmitButton(this);
+		clearAndThenfillFormInput("username", username);
+		clearAndThenfillFormInput("password", password);
+		return (BookHomePage) pressSubmitButton();
 	}
 
 	public BookHomePage loginWithValidCredentials() {
@@ -29,11 +28,11 @@ public class BookHomePage extends MyPage implements IPageWithForm {
 	}
 
 	public String getAuthenticationErrorMessage() {
-		return getMessage(this,"authentication-error");
+		return getMessage("authentication-error");
 	}
 
 	public String getLogoutMessage() {
-		return getMessage(this,"logout-message");
+		return getMessage("logout-message");
 	}
 
 	public void checkRemeberMe() {

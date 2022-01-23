@@ -4,7 +4,7 @@ import static io.github.francescomucci.spring.bookshelf.web.view.page.BookFormCo
 
 import org.openqa.selenium.WebDriver;
 
-public abstract class APageWithCreateUpdateForm extends MyPage implements IPageWithForm {
+public abstract class APageWithCreateUpdateForm extends APageWithForm {
 
 	public APageWithCreateUpdateForm(WebDriver webDriver) {
 		super(webDriver);
@@ -15,19 +15,19 @@ public abstract class APageWithCreateUpdateForm extends MyPage implements IPageW
 	}
 
 	public String getTitleInputValue() {
-		return getInputValue(this, INPUT_TITLE);
+		return getInputValue(INPUT_TITLE);
 	}
 
 	public String getTitleValidationErrorMessage() {
-		return getMessage(this, INPUT_TITLE + VALIDATION_ERROR_SUFFIX);
+		return getMessage(INPUT_TITLE + VALIDATION_ERROR_SUFFIX);
 	}
 
 	public String getAuthorsInputValue() {
-		return getInputValue(this, INPUT_AUTHORS);
+		return getInputValue(INPUT_AUTHORS);
 	}
 
 	public String getAuthorsValidationErrorMessage() {
-		return getMessage(this, INPUT_AUTHORS + VALIDATION_ERROR_SUFFIX);
+		return getMessage(INPUT_AUTHORS + VALIDATION_ERROR_SUFFIX);
 	}
 
 }
