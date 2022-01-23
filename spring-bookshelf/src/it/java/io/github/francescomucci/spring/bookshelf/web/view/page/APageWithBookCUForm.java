@@ -4,13 +4,13 @@ import static io.github.francescomucci.spring.bookshelf.web.view.page.BookFormCo
 
 import org.openqa.selenium.WebDriver;
 
-public abstract class APageWithCreateUpdateForm extends APageWithForm {
+public abstract class APageWithBookCUForm extends APageWithForm {
 
-	public APageWithCreateUpdateForm(WebDriver webDriver) {
+	public APageWithBookCUForm(WebDriver webDriver) {
 		super(webDriver);
 	}
 
-	public APageWithCreateUpdateForm(WebDriver webDriver, String expectedTitle) {
+	public APageWithBookCUForm(WebDriver webDriver, String expectedTitle) {
 		super(webDriver, expectedTitle);
 	}
 

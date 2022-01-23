@@ -5,9 +5,9 @@ import static io.github.francescomucci.spring.bookshelf.web.view.page.BookFormCo
 import org.openqa.selenium.WebDriver;
 
 import io.github.francescomucci.spring.bookshelf.web.view.page.MyPage;
-import io.github.francescomucci.spring.bookshelf.web.view.page.APageWithCreateUpdateForm;
+import io.github.francescomucci.spring.bookshelf.web.view.page.APageWithBookCUForm;
 
-public class BookEditPage extends APageWithCreateUpdateForm {
+public class BookEditPage extends APageWithBookCUForm {
 
 	public BookEditPage(WebDriver webDriver) {
 		super(webDriver, BOOK_EDIT_VIEW);

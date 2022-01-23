@@ -4,16 +4,16 @@ import static io.github.francescomucci.spring.bookshelf.web.view.page.BookFormCo
 
 import org.openqa.selenium.WebDriver;
 
-public abstract class APageWithSearchForm extends APageWithBookTable implements IPageWithForm {
+public abstract class APageWithBookSearchForm extends APageWithBookTable implements IPageWithForm {
 
 	private String inputName;
 
-	public APageWithSearchForm(WebDriver webDriver, String inputName) {
+	public APageWithBookSearchForm(WebDriver webDriver, String inputName) {
 		super(webDriver);
 		setInputName(inputName);
 	}
 
-	public APageWithSearchForm(WebDriver webDriver, String expectedTitle, String inputName) {
+	public APageWithBookSearchForm(WebDriver webDriver, String expectedTitle, String inputName) {
 		super(webDriver, expectedTitle);
 		setInputName(inputName);
 	}
