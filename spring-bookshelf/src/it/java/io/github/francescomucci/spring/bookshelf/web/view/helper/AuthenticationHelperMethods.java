@@ -1,4 +1,4 @@
-package io.github.francescomucci.spring.bookshelf.web.view.page.helper;
+package io.github.francescomucci.spring.bookshelf.web.view.helper;
 
 import org.openqa.selenium.WebDriver;
 

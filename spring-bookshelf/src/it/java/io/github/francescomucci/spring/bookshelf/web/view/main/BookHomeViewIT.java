@@ -1,7 +1,7 @@
 package io.github.francescomucci.spring.bookshelf.web.view.main;
 
 import static io.github.francescomucci.spring.bookshelf.web.security.WebSecurityTestingConstants.*;
-import static io.github.francescomucci.spring.bookshelf.web.view.page.helper.AuthenticationHelperMethods.*;
+import static io.github.francescomucci.spring.bookshelf.web.view.helper.AuthenticationHelperMethods.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.After;
@@ -14,8 +14,8 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import io.github.francescomucci.spring.bookshelf.web.view.helper.SilentHtmlUnitDriver;
 import io.github.francescomucci.spring.bookshelf.web.view.page.MyPage;
-import io.github.francescomucci.spring.bookshelf.web.view.page.helper.SilentHtmlUnitDriver;
 import io.github.francescomucci.spring.bookshelf.web.view.page.main.BookHomePage;
 
 /* Before run this test, make sure MongoDB is up and running (listening on port 27017) */

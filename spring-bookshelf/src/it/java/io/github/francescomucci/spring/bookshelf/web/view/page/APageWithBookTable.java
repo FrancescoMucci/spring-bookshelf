@@ -7,8 +7,6 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import io.github.francescomucci.spring.bookshelf.web.view.page.main.BookEditPage;
-
 public abstract class APageWithBookTable extends MyPage {
 
 	@FindBy(id = "book-table")
@@ -26,9 +24,9 @@ public abstract class APageWithBookTable extends MyPage {
 		return bookTable.getText();
 	}
 
-	public BookEditPage clickEditLink(Long isbn) {
+	public MyPage clickEditLink(Long isbn) {
 		webDriver.findElement(By.cssSelector("a[href='/book/edit/" + isbn + "']")).click();
-		return new BookEditPage(webDriver);
+		return nextPage();
 	}
 
 	public MyPage clickShowDeleteDialogAndThenYesDeleteButton(Long isbn) {

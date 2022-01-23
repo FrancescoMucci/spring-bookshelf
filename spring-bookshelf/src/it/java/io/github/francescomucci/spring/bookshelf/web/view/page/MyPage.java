@@ -17,6 +17,13 @@ import io.github.francescomucci.spring.bookshelf.web.view.page.main.BookSearchBy
 
 public class MyPage {
 
+	protected static final String BOOK_HOME_VIEW = "Book home view";
+	protected static final String BOOK_LIST_VIEW = "Book list view";
+	protected static final String BOOK_NEW_VIEW = "Book new view";
+	protected static final String BOOK_SEARCH_BY_ISBN_VIEW = "Book search by ISBN view";
+	protected static final String BOOK_SEARCH_BY_TITLE_VIEW = "Book search by title view";
+	protected static final String BOOK_EDIT_VIEW = "Book edit view";
+
 	protected WebDriver webDriver;
 
 	@FindBy(tagName = "header")
@@ -95,17 +102,17 @@ public class MyPage {
 
 	public MyPage nextPage() {
 		switch (this.getPageTitle()) {
-			case "Book home view":
+			case BOOK_HOME_VIEW:
 				return new BookHomePage(webDriver);
-			case "Book list view":
+			case BOOK_LIST_VIEW:
 				return new BookListPage(webDriver);
-			case "Book new view":
+			case BOOK_NEW_VIEW:
 				return new BookNewPage(webDriver);
-			case "Book search by ISBN view":
+			case BOOK_SEARCH_BY_ISBN_VIEW:
 				return new BookSearchByIsbnPage(webDriver);
-			case "Book search by title view":
+			case BOOK_SEARCH_BY_TITLE_VIEW:
 				return new BookSearchByTitlePage(webDriver);
-			case "Book edit view":
+			case BOOK_EDIT_VIEW:
 				return new BookEditPage(webDriver);
 			default:
 				return new MyErrorPage(webDriver);

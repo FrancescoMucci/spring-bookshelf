@@ -1,7 +1,7 @@
 package io.github.francescomucci.spring.bookshelf.web.view.error;
 
 import static io.github.francescomucci.spring.bookshelf.BookTestingConstants.*;
-import static io.github.francescomucci.spring.bookshelf.web.view.page.helper.AuthenticationHelperMethods.*;
+import static io.github.francescomucci.spring.bookshelf.web.view.helper.AuthenticationHelperMethods.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.After;
@@ -18,7 +18,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import io.github.francescomucci.spring.bookshelf.model.Book;
 import io.github.francescomucci.spring.bookshelf.repository.BookRepository;
-import io.github.francescomucci.spring.bookshelf.web.view.page.helper.SilentHtmlUnitDriver;
+import io.github.francescomucci.spring.bookshelf.web.view.helper.SilentHtmlUnitDriver;
 import io.github.francescomucci.spring.bookshelf.web.view.page.MyPage;
 import io.github.francescomucci.spring.bookshelf.web.view.page.error.MyErrorPage;
 import io.github.francescomucci.spring.bookshelf.web.view.page.main.BookNewPage;
@@ -61,8 +61,7 @@ public class BookAlreadyExistViewIT {
 		
 		webDriver.get(newPageUrl);
 		BookNewPage bookNewPage = new BookNewPage(webDriver);
-		bookNewPage.fillAddFormAndPressSubmitButton(VALID_ISBN13_WITH_SPACES, TITLE, AUTHORS_STRING);
-		MyErrorPage errorPage = new MyErrorPage(webDriver);
+		MyErrorPage errorPage = (MyErrorPage) bookNewPage.fillAddFormAndPressSubmitButton(VALID_ISBN13_WITH_SPACES, TITLE, AUTHORS_STRING);
 		
 		assertThat(errorPage.getPageTitle())
 			.isEqualTo("Book already exist error view");

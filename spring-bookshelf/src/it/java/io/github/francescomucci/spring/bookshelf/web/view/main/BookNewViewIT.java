@@ -2,7 +2,7 @@ package io.github.francescomucci.spring.bookshelf.web.view.main;
 
 import static io.github.francescomucci.spring.bookshelf.BookTestingConstants.*;
 import static io.github.francescomucci.spring.bookshelf.web.BookWebControllerConstants.*;
-import static io.github.francescomucci.spring.bookshelf.web.view.page.helper.AuthenticationHelperMethods.*;
+import static io.github.francescomucci.spring.bookshelf.web.view.helper.AuthenticationHelperMethods.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.After;
@@ -18,10 +18,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import io.github.francescomucci.spring.bookshelf.model.Book;
 import io.github.francescomucci.spring.bookshelf.repository.BookRepository;
+import io.github.francescomucci.spring.bookshelf.web.view.helper.SilentHtmlUnitDriver;
 import io.github.francescomucci.spring.bookshelf.web.view.page.MyPage;
 import io.github.francescomucci.spring.bookshelf.web.view.page.main.BookHomePage;
 import io.github.francescomucci.spring.bookshelf.web.view.page.main.BookNewPage;
-import io.github.francescomucci.spring.bookshelf.web.view.page.helper.SilentHtmlUnitDriver;
 
 /* Before run this test, make sure MongoDB is up and running (listening on port 27017) */
 
@@ -92,6 +92,12 @@ public class BookNewViewIT {
 		
 		assertThat(returnedPage.getPageTitle())
 			.isEqualTo("Book new view");
+		assertThat(bookNewPage.getIsbnInputValue())
+			.isEqualTo(INVALID_ISBN13_WITH_SPACES);
+		assertThat(bookNewPage.getTitleInputValue())
+			.isEqualTo(INVALID_TITLE);
+		assertThat(bookNewPage.getAuthorsInputValue())
+			.isEqualTo(INVALID_AUTHORS_STRING);
 		assertThat(bookRepository.findById(VALID_ISBN13))
 			.isEmpty();
 	}

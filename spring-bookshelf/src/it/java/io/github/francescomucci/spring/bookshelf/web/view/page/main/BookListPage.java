@@ -6,10 +6,8 @@ import io.github.francescomucci.spring.bookshelf.web.view.page.APageWithBookTabl
 
 public class BookListPage extends APageWithBookTable {
 
-	private static final String EXPECTED_TITLE = "Book list view";
-
 	public BookListPage(WebDriver webDriver) {
-		super(webDriver, EXPECTED_TITLE);
+		super(webDriver, BOOK_LIST_VIEW);
 	}
 
 }

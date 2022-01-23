@@ -2,7 +2,7 @@ package io.github.francescomucci.spring.bookshelf.web.view.main;
 
 import static io.github.francescomucci.spring.bookshelf.BookTestingConstants.*;
 import static io.github.francescomucci.spring.bookshelf.web.BookWebControllerConstants.*;
-import static io.github.francescomucci.spring.bookshelf.web.view.page.helper.AuthenticationHelperMethods.*;
+import static io.github.francescomucci.spring.bookshelf.web.view.helper.AuthenticationHelperMethods.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.After;
@@ -18,7 +18,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import io.github.francescomucci.spring.bookshelf.model.Book;
 import io.github.francescomucci.spring.bookshelf.repository.BookRepository;
-import io.github.francescomucci.spring.bookshelf.web.view.page.helper.SilentHtmlUnitDriver;
+import io.github.francescomucci.spring.bookshelf.web.view.helper.SilentHtmlUnitDriver;
 import io.github.francescomucci.spring.bookshelf.web.view.page.MyPage;
 import io.github.francescomucci.spring.bookshelf.web.view.page.main.BookHomePage;
 import io.github.francescomucci.spring.bookshelf.web.view.page.main.BookSearchByIsbnPage;
@@ -73,8 +73,12 @@ public class BookSearchByIsbnViewIT {
 		
 		webDriver.get(bookSearchByIsbnUrl);
 		BookSearchByIsbnPage bookSearchByIsbnPage = new BookSearchByIsbnPage(webDriver);
-		bookSearchByIsbnPage.fillSearchFormAndPressSubmitButton("" + book1.getIsbn());
+		MyPage returnedPage = bookSearchByIsbnPage.fillSearchFormAndPressSubmitButton("" + book1.getIsbn());
 		
+		assertThat(returnedPage.getPageTitle())
+			.isEqualTo("Book search by ISBN view");
+		assertThat(bookSearchByIsbnPage.getInputValue())
+			.isEqualTo("" + book1.getIsbn());
 		assertThat(bookSearchByIsbnPage.getBookTable())
 			.contains("" + book1.getIsbn(), book1.getTitle(), "" + book1.getAuthors())
 			.doesNotContain("" + book2.getIsbn(), book2.getTitle(), "" + book2.getAuthors());

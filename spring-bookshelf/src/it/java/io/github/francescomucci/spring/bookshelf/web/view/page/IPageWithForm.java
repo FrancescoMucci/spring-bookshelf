@@ -16,6 +16,11 @@ public interface IPageWithForm {
 		return page.nextPage();
 	}
 
+	public default String getInputValue(MyPage page, String inputName) {
+		WebElement formInput = page.webDriver.findElement(By.name(inputName));
+		return formInput.getAttribute("value");
+	}
+
 	public default String getMessage(MyPage page, String messageId) {
 		return page.webDriver.findElement(By.id(messageId)).getText();
 	}

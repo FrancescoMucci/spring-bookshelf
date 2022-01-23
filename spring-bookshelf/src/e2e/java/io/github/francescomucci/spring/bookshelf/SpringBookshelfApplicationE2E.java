@@ -230,7 +230,7 @@ public class SpringBookshelfApplicationE2E {
 		
 		bookHomePage.loginWithValidCredentials();
 		BookListPage bookListPage = (BookListPage) bookHomePage.clickNavbarShowBookListLink();
-		BookEditPage bookEditPage = bookListPage.clickEditLink(VALID_ISBN13);
+		BookEditPage bookEditPage = (BookEditPage) bookListPage.clickEditLink(VALID_ISBN13);
 		bookEditPage.fillEditFormAndPressSubmitButton(INVALID_TITLE, INVALID_AUTHORS_STRING);
 		
 		assertThat(bookEditPage.getTitleValidationErrorMessage())
@@ -246,7 +246,7 @@ public class SpringBookshelfApplicationE2E {
 		
 		bookHomePage.loginWithValidCredentials();
 		BookListPage bookListPage = (BookListPage) bookHomePage.clickNavbarShowBookListLink();
-		BookEditPage bookEditPage = bookListPage.clickEditLink(VALID_ISBN13);
+		BookEditPage bookEditPage = (BookEditPage) bookListPage.clickEditLink(VALID_ISBN13);
 		bookListPage = (BookListPage) 
 			bookEditPage.fillEditFormAndPressSubmitButton(NEW_TITLE, AUTHORS_STRING);
 		
