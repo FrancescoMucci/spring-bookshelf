@@ -48,13 +48,8 @@ public final class BookWebControllerConstants {
 	/* Model attributes */
 
 	public static final String MODEL_BOOKS = "books";
-	public static final String MODEL_EMPTY_MESSAGE= "empty";
 	public static final String MODEL_ERROR_CODE = "status";
 	public static final String MODEL_ERROR_REASON = "error";
 	public static final String MODEL_ERROR_MESSAGE = "message";
-
-	/* Model attributes values*/
-
-	public static final String MESSAGE_EMPTY_DB = "Sorry, the database is empty";
 
 }
