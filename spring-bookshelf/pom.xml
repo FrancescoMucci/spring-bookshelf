@@ -36,10 +36,6 @@
 
 		<sonar.projectKey>FrancescoMucci_spring-bookshelf</sonar.projectKey>
 
-		<sonar.coverage.jacoco.xmlReportPaths>
-			${project.reporting.outputDirectory}/jacoco/jacoco.xml
-		</sonar.coverage.jacoco.xmlReportPaths>
-
 		<sonar.exclusions>
 			**/*Application.*,
 			**/*Temporary*
