@@ -65,11 +65,7 @@ public class BookListViewTest {
 	@Test
 	public void testBookListView_whenDbIsEmpty_shouldContainAWarningMessageInTheHeader() throws Exception {
 		when(bookWebController.getBookListView(any(Model.class)))
-			.thenAnswer(answer((Model model)-> {
-				model.addAttribute(MODEL_EMPTY_MESSAGE, MESSAGE_EMPTY_DB);
-				return VIEW_BOOK_LIST;
-			}
-		));
+			.thenReturn(VIEW_BOOK_LIST);
 		
 		HtmlPage bookListView = webClient.getPage(URI_BOOK_LIST);
 		HtmlHeader header = (HtmlHeader) bookListView.getElementsByTagName("header").get(0);
@@ -77,13 +73,18 @@ public class BookListViewTest {
 		assertThat(BookViewTestingHelperMethods.removeWindowsCR(header.asText()))
 			.isEqualTo(
 				"Empty database" + "\n" +
-				MESSAGE_EMPTY_DB);
+				"Sorry, the database is empty");
 	}
 
 	@Test
 	public void testBookListView_whenDbIsNotEmpty_shouldContainAnInformativeTextInTheHeader() throws Exception {
+		List<Book> bookList = asList(new Book(VALID_ISBN13, TITLE, AUTHORS_LIST), new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2));
 		when(bookWebController.getBookListView(any(Model.class)))
-			.thenReturn(VIEW_BOOK_LIST);
+			.thenAnswer(answer((Model model)-> {
+				model.addAttribute(MODEL_BOOKS, bookList);
+				return VIEW_BOOK_LIST;
+			}
+		));
 		
 		HtmlPage bookListView = webClient.getPage(URI_BOOK_LIST);
 		HtmlHeader header = (HtmlHeader) bookListView.getElementsByTagName("header").get(0);
@@ -100,11 +101,7 @@ public class BookListViewTest {
 	@WithMockAdmin
 	public void testBookListView_whenAdminAndDbIsEmpty_shouldContainSomeAdvice() throws Exception {
 		when(bookWebController.getBookListView(any(Model.class)))
-			.thenAnswer(answer((Model model)-> {
-				model.addAttribute(MODEL_EMPTY_MESSAGE, MESSAGE_EMPTY_DB);
-				return VIEW_BOOK_LIST;
-			}
-		));
+			.thenReturn(VIEW_BOOK_LIST);
 		
 		HtmlPage bookListView = webClient.getPage(URI_BOOK_LIST);
 		
@@ -119,11 +116,7 @@ public class BookListViewTest {
 	@Test
 	public void testBookListView_whenAnonymousUserAndDbIsEmpty_shouldNotContainAnyAdvice() throws Exception {
 		when(bookWebController.getBookListView(any(Model.class)))
-			.thenAnswer(answer((Model model)-> {
-				model.addAttribute(MODEL_EMPTY_MESSAGE, MESSAGE_EMPTY_DB);
-				return VIEW_BOOK_LIST;
-			}
-		));
+			.thenReturn(VIEW_BOOK_LIST);
 		
 		HtmlPage bookListView = webClient.getPage(URI_BOOK_LIST);
 		
@@ -187,11 +180,7 @@ public class BookListViewTest {
 	@Test
 	public void testBookListView_whenDbIsEmpty_shouldNotContainTheBookTable() throws Exception {
 		when(bookWebController.getBookListView(any(Model.class)))
-			.thenAnswer(answer((Model model)-> {
-				model.addAttribute(MODEL_EMPTY_MESSAGE, MESSAGE_EMPTY_DB);
-				return VIEW_BOOK_LIST;
-			}
-		));
+			.thenReturn(VIEW_BOOK_LIST);
 		
 		HtmlPage bookListView = webClient.getPage(URI_BOOK_LIST);
 		

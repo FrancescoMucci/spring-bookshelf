@@ -29,11 +29,8 @@ public class MyBookWebController implements BookWebController {
 	@Override
 	public String getBookListView(Model model) {
 		List<Book> bookList = service.getAllBooks();
-		if (bookList.isEmpty()) {
-			model.addAttribute(MODEL_EMPTY_MESSAGE, MESSAGE_EMPTY_DB);
-		} else {
+		if (!bookList.isEmpty())
 			model.addAttribute(MODEL_BOOKS, bookList);
-		}
 		return VIEW_BOOK_LIST;
 	}
 

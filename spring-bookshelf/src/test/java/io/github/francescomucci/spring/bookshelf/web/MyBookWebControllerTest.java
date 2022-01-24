@@ -73,14 +73,14 @@ public class MyBookWebControllerTest {
 	/* ---------- getBookListView tests ---------- */
 
 	@Test
-	public void testWebController_getBookListView_whenDbIsEmpty_shouldAddEmptyMessaggeToModel() throws Exception {
+	public void testWebController_getBookListView_whenDbIsEmpty_shouldNotAddBookListToModel() throws Exception {
 		when(bookService.getAllBooks())
 			.thenReturn(Collections.emptyList());
 	
 		mvc.perform(get(URI_BOOK_LIST))
 			.andExpect(status().isOk())
 			.andExpect(view().name(VIEW_BOOK_LIST))
-			.andExpect(model().attribute(MODEL_EMPTY_MESSAGE, MESSAGE_EMPTY_DB));
+			.andExpect(model().attributeDoesNotExist(MODEL_BOOKS));
 	}
 
 	@Test

@@ -36,13 +36,8 @@
 
 		<sonar.projectKey>FrancescoMucci_spring-bookshelf</sonar.projectKey>
 
-		<sonar.coverage.jacoco.xmlReportPaths>
-			${project.reporting.outputDirectory}/jacoco/jacoco.xml
-		</sonar.coverage.jacoco.xmlReportPaths>
-
 		<sonar.exclusions>
-			**/*Application.*,
-			**/*Temporary*
+			**/*Application.*
 		</sonar.exclusions>
 
 		<!-- Exclude domain model classes from code duplication check -->
@@ -54,8 +49,7 @@
 			**/model/**,
 			**/exception/*,
 			**/*Constants*,
-			**/*Application.*,
-			**/*Temporary*
+			**/*Application.*
 		</sonar.coverage.exclusions>
 
 		<sonar.junit.reportPaths>
@@ -359,7 +353,6 @@
 							<exclude>**/model/**</exclude>
 							<exclude>**/exception/*</exclude>
 							<exclude>**/*Constants*</exclude>
-							<exclude>**/*Temporary*</exclude>
 							<!-- The following is just to avoid the instrumentation error 
 							due to the HtmlUnit class StyleAttributes$Definition (method too large) -->
 							<exclude>**/htmlunit/*</exclude>

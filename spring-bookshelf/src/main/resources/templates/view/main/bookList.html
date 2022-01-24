@@ -8,7 +8,7 @@
 
 <body>
 	<section>
-		<div th:if="${empty}">
+		<div th:unless="${books}" th:with="empty='Sorry, the database is empty'">
 			<header th:replace="shared/fragment/parametric/header::fragment('Empty database', ${empty})"></header>
 			<div sec:authorize="hasRole('ADMIN')"
 				th:replace="shared/fragment/parametric/advice::fragment(~{this::#card-title}, ~{this::#card-content})">
@@ -18,7 +18,7 @@
 					</div>
 			</div>
 		</div>
-		<div th:unless="${empty}">
+		<div th:if="${books}">
 			<header th:replace="shared/fragment/parametric/header::fragment(
 				'Book list table',
 				'This table contains all the book in the database')">
