@@ -32,7 +32,7 @@ jobs:
         restore-keys: ${{ runner.os }}-m2-
 
     - name: Run PIT mutation testing
-      run: mvn -f spring-bookshelf test-compile -Ppitest
+      run: ./mvnw -f spring-bookshelf test-compile -Ppitest
 
     - name: Archive PIT mutation testing report on GitHub
       uses: actions/upload-artifact@v2
