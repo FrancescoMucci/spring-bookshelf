@@ -6,7 +6,7 @@ public final class BookWebControllerConstants {
 		throw new IllegalStateException("Constants class");
 	}
 
-	/* URIs */
+	/* ----- URIs ----- */
 
 	public static final String URI_HOME = "/";
 	public static final String URI_BOOK_HOME = "/book";
@@ -30,7 +30,7 @@ public final class BookWebControllerConstants {
 
 	public static final String REDIRECT = "redirect:";
 
-	/* Views */
+	/* ----- Views ----- */
 
 	public static final String DIRECTORY_VIEW = "view/main/";
 	public static final String VIEW_BOOK_HOME = DIRECTORY_VIEW + "bookHome";
@@ -45,7 +45,7 @@ public final class BookWebControllerConstants {
 	public static final String ERROR_BOOK_ALREADY_EXIST = DIRECTORY_ERROR + "bookAlreadyExist";
 	public static final String ERROR_INVALID_ISBN = DIRECTORY_ERROR + "invalidIsbn";
 
-	/* Model attributes */
+	/* ----- Model attributes ----- */
 
 	public static final String MODEL_BOOKS = "books";
 	public static final String MODEL_ERROR_CODE = "status";
