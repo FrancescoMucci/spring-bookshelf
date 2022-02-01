@@ -15,6 +15,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      workdir: spring-bookshelf
     steps:
 
     - name: Clone the GitHub repo in the Runner
@@ -37,27 +39,32 @@ jobs:
         restore-keys: ${{ runner.os }}-m2-
 
     - name: Run Unit Tests (with JaCoCo)
-      run: ./mvnw -f spring-bookshelf verify -Pjacoco
+      run: ../mvnw verify -Pjacoco
+      working-directory: ${{ env.workdir }}
 
-    - name: Run Integration Tests
-      run: ./mvnw -f spring-bookshelf verify -Pit-tests
+    - name: Run Integration Tests in a separate build
+      run: ../mvnw verify -Pit-tests
+      working-directory: ${{ env.workdir }}
 
     - name: Send code coverage report (previously collected) to Coveralls
       run: >
-        ./mvnw -f spring-bookshelf coveralls:report
+        ../mvnw coveralls:report
         -DrepoToken=$COVERALLS_REPO_TOKEN
         -DpullRequest=${{ github.event.pull_request.number }}
+      working-directory: ${{ env.workdir }}
       env: 
         COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
 
     - name: Run End-to-end tests in a separate build
-      run: xvfb-run ./mvnw -f spring-bookshelf verify -Pe2e-tests
+      run: xvfb-run ../mvnw verify -Pe2e-tests
+      working-directory: ${{ env.workdir }}
 
     - name: Run SonarQube analysis through SonarCloud
       run: >
-        ./mvnw -f spring-bookshelf sonar:sonar
+        ../mvnw sonar:sonar
         -Dsonar.organization=francescomucci
         -Dsonar.host.url=https://sonarcloud.io
+      working-directory: ${{ env.workdir }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
