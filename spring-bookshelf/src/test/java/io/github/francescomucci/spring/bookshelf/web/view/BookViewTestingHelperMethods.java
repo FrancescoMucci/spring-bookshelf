@@ -7,7 +7,7 @@ public final class BookViewTestingHelperMethods {
 	}
 
 	public static String removeWindowsCR(String s) {
-		return s.replace("/r", "");
+		return s.replace("\r", "");
 	}
 
 }
