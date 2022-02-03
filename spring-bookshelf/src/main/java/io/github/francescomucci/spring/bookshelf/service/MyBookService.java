@@ -62,7 +62,7 @@ public class MyBookService implements BookService {
 		IllegalArgumentException exception = new BookNotFoundException(isbn);
 		if (!bookIsExpected)
 			exception = new BookAlreadyExistException(isbn);
-		if (bookRepository.findById(isbn).isPresent() != bookIsExpected) 
+		if (bookRepository.existsById(isbn) != bookIsExpected) 
 			throw exception;
 	}
 

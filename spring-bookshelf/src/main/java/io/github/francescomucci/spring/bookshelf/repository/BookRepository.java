@@ -21,4 +21,6 @@ public interface BookRepository extends MongoRepository<Book, Long> {
 
 	public void deleteById(long isbn);
 
+	public boolean existsById(long isbn);
+
 }
