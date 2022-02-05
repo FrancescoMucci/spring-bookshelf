@@ -463,7 +463,6 @@
 					<configuration>
 						<excludedTestClasses>
 							<excludedTestClass>io.github.francescomucci.spring.bookshelf.**.*IT</excludedTestClass>
-							<excludedTestClass>io.github.francescomucci.spring.bookshelf.**.*E2ETest</excludedTestClass>
 						</excludedTestClasses>
 						<targetClasses>
 							<param>io.github.francescomucci.spring.bookshelf.service.*</param>
