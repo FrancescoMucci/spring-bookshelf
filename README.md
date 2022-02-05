@@ -4,7 +4,8 @@ A simple Spring Boot web application to manage my personal bookshelf.
 
 - GitHub Actions:
   - [![Java CI with Maven](https://github.com/FrancescoMucci/spring-bookshelf/actions/workflows/maven.yml/badge.svg)](https://github.com/FrancescoMucci/spring-bookshelf/actions/workflows/maven.yml)
-
+  - [![PIT Mutation Testing on Pull Request](https://github.com/FrancescoMucci/spring-bookshelf/actions/workflows/pitest.yml/badge.svg)](https://github.com/FrancescoMucci/spring-bookshelf/actions/workflows/pitest.yml)
+  
 - Coveralls:
   - [![Coverage Status](https://coveralls.io/repos/github/FrancescoMucci/spring-bookshelf/badge.svg)](https://coveralls.io/github/FrancescoMucci/spring-bookshelf)
   

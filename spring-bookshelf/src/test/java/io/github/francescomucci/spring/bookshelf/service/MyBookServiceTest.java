@@ -105,10 +105,9 @@ public class MyBookServiceTest {
 
 	@Test
 	public void testService_addNewBook_whenIsbnAlreadyUsed_shouldThrowBookAlreadyExistException() {
-		Book existingBook = new Book(ALREADY_USED_ISBN13, NEW_TITLE, AUTHORS_LIST);
 		Book newBook = new Book(ALREADY_USED_ISBN13, NEW_TITLE, AUTHORS_LIST);
-		when(bookRepository.findById(ALREADY_USED_ISBN13))
-			.thenReturn(Optional.of(existingBook));
+		when(bookRepository.existsById(ALREADY_USED_ISBN13))
+			.thenReturn(true);
 		
 		assertThatThrownBy(() -> bookService.addNewBook(newBook))
 			.isInstanceOf(BookAlreadyExistException.class)
@@ -120,8 +119,8 @@ public class MyBookServiceTest {
 	@Test
 	public void testService_addNewBook_whenIsbnIsUnused_shouldSaveTheNewBookInTheRepo() {
 		Book newBook = new Book(UNUSED_ISBN13, TITLE, AUTHORS_LIST);
-		when(bookRepository.findById(UNUSED_ISBN13))
-			.thenReturn(Optional.empty());
+		when(bookRepository.existsById(UNUSED_ISBN13))
+			.thenReturn(false);
 		when(bookRepository.save(newBook))
 			.thenReturn(newBook);
 		
@@ -136,8 +135,8 @@ public class MyBookServiceTest {
 	@Test
 	public void testService_replaceBook_whenIsbnIsUnused_shouldThrowBookNotFoundException() {
 		Book editedBook = new Book(UNUSED_ISBN13, NEW_TITLE, AUTHORS_LIST);
-		when(bookRepository.findById(UNUSED_ISBN13))
-			.thenReturn(Optional.empty());
+		when(bookRepository.existsById(UNUSED_ISBN13))
+			.thenReturn(false);
 		
 		assertThatThrownBy(() -> bookService.replaceBook(editedBook))
 			.isInstanceOf(BookNotFoundException.class)
@@ -148,10 +147,9 @@ public class MyBookServiceTest {
 
 	@Test
 	public void testService_replaceBook_whenIsbnIsUsed_shouldSaveTheReplacementInTheRepo() {
-		Book oldBook = new Book(VALID_ISBN13, TITLE, AUTHORS_LIST);
 		Book replacementBook = new Book(VALID_ISBN13, NEW_TITLE, AUTHORS_LIST);
-		when(bookRepository.findById(VALID_ISBN13))
-			.thenReturn(Optional.of(oldBook));
+		when(bookRepository.existsById(VALID_ISBN13))
+			.thenReturn(true);
 		when(bookRepository.save(any(Book.class)))
 			.thenReturn(replacementBook);
 	
@@ -165,8 +163,8 @@ public class MyBookServiceTest {
 
 	@Test
 	public void testService_delateBookByIsbn_whenIsbnIsUnused_shouldThrowBookNotFoundException() {
-		when(bookRepository.findById(UNUSED_ISBN13))
-			.thenReturn(Optional.empty());
+		when(bookRepository.existsById(UNUSED_ISBN13))
+			.thenReturn(false);
 		
 		assertThatThrownBy(() -> bookService.delateBookByIsbn(UNUSED_ISBN13))
 			.isInstanceOf(BookNotFoundException.class)
@@ -177,8 +175,8 @@ public class MyBookServiceTest {
 
 	@Test
 	public void testService_delateBookByIsbn_whenIsbnIsUsed_shouldDelegateTheDeletionToTheRepo() {
-		when(bookRepository.findById(VALID_ISBN13))
-			.thenReturn(Optional.of(new Book(VALID_ISBN13, TITLE, AUTHORS_LIST)));
+		when(bookRepository.existsById(VALID_ISBN13))
+			.thenReturn(true);
 		
 		bookService.delateBookByIsbn(VALID_ISBN13);
 		

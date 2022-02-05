@@ -159,4 +159,30 @@ public class BookRepositoryIT {
 		assertThat(mongoDb.findAll(Book.class)).containsExactly(otherBook);
 	}
 
+	/*----------- existById tests ----------*/
+
+	@Test
+	public void testBookRepository_existById_whenCheckedBookNotInMongoDb_shouldReturnFalse() {
+		Book book1 = new Book(VALID_ISBN13, TITLE, AUTHORS_LIST);
+		Book book2 = new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2);
+		mongoDb.save(book1);
+		mongoDb.save(book2);
+		
+		boolean checkResult = bookRepository.existsById(UNUSED_ISBN13);
+		
+		assertThat(checkResult).isFalse();
+	}
+
+	@Test
+	public void testBookRepository_existById_whenCheckedBookInMongoDb_shouldReturnTrue() {
+		Book toBeChecked = new Book(VALID_ISBN13, TITLE, AUTHORS_LIST);
+		Book otherBook = new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2);
+		mongoDb.save(toBeChecked);
+		mongoDb.save(otherBook);
+		
+		boolean checkResult = bookRepository.existsById(VALID_ISBN13);
+		
+		assertThat(checkResult).isTrue();
+	}
+
 }
