@@ -69,23 +69,23 @@ public class BookSearchByTitleViewIT {
 
 	@Test
 	public void testBookSearchByTitleView_searchForm_whenSearchedTitleIsFound_shouldShowRetrievedBooks() {
-		Book otherBook = bookRepository.save(new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2));
-		Book toBeRetrievedBook2 = bookRepository.save(new Book(NEW_VALID_ISBN13, NEW_TITLE, AUTHORS_LIST));
-		Book toBeRetrievedBook1 = bookRepository.save(new Book(VALID_ISBN13, TITLE, AUTHORS_LIST));
+		bookRepository.save(new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2));
+		bookRepository.save(new Book(NEW_VALID_ISBN13, "Foundation vol.1", AUTHORS_LIST));
+		bookRepository.save(new Book(VALID_ISBN13, "Foundation", AUTHORS_LIST));
 		
 		webDriver.get(bookSearchByTitleUrl);
 		BookSearchByTitlePage bookSearchByTitlePage = new BookSearchByTitlePage(webDriver);
-		MyPage returnedPage = bookSearchByTitlePage.fillSearchFormAndPressSubmitButton("" + toBeRetrievedBook1.getTitle());
+		MyPage returnedPage = bookSearchByTitlePage.fillSearchFormAndPressSubmitButton("Foundation");
 		
 		assertThat(returnedPage.getPageTitle())
 			.isEqualTo("Book search by title view");
 		assertThat(bookSearchByTitlePage.getInputValue())
-			.isEqualTo(toBeRetrievedBook1.getTitle());
+			.isEqualTo("Foundation");
 		assertThat(bookSearchByTitlePage.getBookTable())
 			.contains(
-				"" + toBeRetrievedBook1.getIsbn(), toBeRetrievedBook1.getTitle(), "" + toBeRetrievedBook1.getAuthors(),
-				"" + toBeRetrievedBook2.getIsbn(), toBeRetrievedBook2.getTitle(), "" + toBeRetrievedBook2.getAuthors())
-			.doesNotContain("" + otherBook.getIsbn(), otherBook.getTitle(), "" + otherBook.getAuthors());
+				VALID_ISBN13_WITHOUT_FORMATTING, "Foundation", AUTHORS_STRING,
+				NEW_VALID_ISBN13_WITHOUT_FORMATTING, "Foundation vol.1", AUTHORS_STRING)
+			.doesNotContain(VALID_ISBN13_2_WITHOUT_FORMATTING, TITLE_2, AUTHORS_STRING_2);
 	}
 
 

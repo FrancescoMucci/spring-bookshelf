@@ -3,6 +3,7 @@ package io.github.francescomucci.spring.bookshelf.web;
 import static io.github.francescomucci.spring.bookshelf.web.BookWebControllerConstants.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -34,7 +35,7 @@ public class MyBookWebController implements BookWebController {
 	public String getBookListView(Model model) {
 		List<Book> bookList = service.getAllBooks();
 		if (!bookList.isEmpty())
-			model.addAttribute(MODEL_BOOKS, bookList);
+			model.addAttribute(MODEL_BOOKS, toBookDataList(bookList));
 		return VIEW_BOOK_LIST;
 	}
 
@@ -50,9 +51,9 @@ public class MyBookWebController implements BookWebController {
 	public String getBookEditView(IsbnData isbn, BindingResult result, BookData editFormData) {
 		if (result.hasErrors())
 			throw new InvalidIsbnException(isbn.getIsbn());
-		Book bookToEdit = service.getBookByIsbn(isbn.toLong());
-		editFormData.setTitle(bookToEdit.getTitle());
-		editFormData.setAuthors(bookToEdit.getAuthors().toString().replace("[", "").replace("]", ""));
+		BookData bookToEditData = map.toBookData(service.getBookByIsbn(isbn.toLong()));
+		editFormData.setTitle(bookToEditData.getTitle());
+		editFormData.setAuthors(bookToEditData.getAuthors());
 		return VIEW_BOOK_EDIT;
 	}
 
@@ -88,7 +89,7 @@ public class MyBookWebController implements BookWebController {
 	@Override
 	public String getBookByIsbn(BookData searchByIsbnFormData, BindingResult result, Model model) {
 		if (!result.hasErrors())
-			model.addAttribute(MODEL_BOOKS, service.getBookByIsbn(searchByIsbnFormData.toLong()));
+			model.addAttribute(MODEL_BOOKS, map.toBookData(service.getBookByIsbn(searchByIsbnFormData.toLong())));
 		return VIEW_BOOK_SEARCH_BY_ISBN;
 	}
 
@@ -100,8 +101,14 @@ public class MyBookWebController implements BookWebController {
 	@Override
 	public String getBookByTitle(BookData searchByTitleFormData, BindingResult result, Model model) {
 		if (!result.hasErrors())
-			model.addAttribute(MODEL_BOOKS, service.getBooksByTitle(searchByTitleFormData.getTitle()));
+			model.addAttribute(MODEL_BOOKS, toBookDataList(service.getBooksByTitle(searchByTitleFormData.getTitle())));
 		return VIEW_BOOK_SEARCH_BY_TITLE;
+	}
+
+	private List<BookData> toBookDataList(List<Book> bookList){
+		return bookList.stream()
+			.map(map::toBookData)
+			.collect(Collectors.toList());
 	}
 
 }

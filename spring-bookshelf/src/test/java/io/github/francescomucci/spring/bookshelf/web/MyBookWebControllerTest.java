@@ -18,7 +18,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 import java.util.Collections;
-import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -88,14 +87,17 @@ public class MyBookWebControllerTest {
 
 	@Test
 	public void testWebController_getBookListView_whenDbIsNotEmpty_shouldAddBookListToModel() throws Exception {
-		List<Book> bookList = asList(new Book(VALID_ISBN13, TITLE, AUTHORS_LIST), new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2));
 		when(bookService.getAllBooks())
-			.thenReturn(bookList);
+			.thenReturn(asList(
+				new Book(VALID_ISBN13, TITLE, AUTHORS_LIST),
+				new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2)));
 	
 		mvc.perform(get(URI_BOOK_LIST))
 			.andExpect(status().isOk())
 			.andExpect(view().name(VIEW_BOOK_LIST))
-			.andExpect(model().attribute(MODEL_BOOKS, bookList));
+			.andExpect(model().attribute(MODEL_BOOKS, asList(
+				new BookData(VALID_ISBN13_WITHOUT_FORMATTING, TITLE, AUTHORS_STRING),
+				new BookData(VALID_ISBN13_2_WITHOUT_FORMATTING, TITLE_2, AUTHORS_STRING_2))));
 	}
 
 	/* ---------- postDeleteBook tests ---------- */
@@ -613,15 +615,15 @@ public class MyBookWebControllerTest {
 
 	@Test
 	public void testWebController_getBookByIsbn_whenIsbnIsValid_shouldAddRetrievedBooksToModelAndReturnSearchByIsbnView() throws Exception {
-		Book book = new Book(VALID_ISBN13, TITLE, AUTHORS_LIST);
 		when(bookService.getBookByIsbn(VALID_ISBN13))
-			.thenReturn(book);
+			.thenReturn(new Book(VALID_ISBN13, TITLE, AUTHORS_LIST));
 		
 		mvc.perform(get(URI_BOOK_GET_BY_ISBN)
 			.param("isbn", VALID_ISBN13_WITHOUT_FORMATTING))
 				.andExpect(status().isOk())
 				.andExpect(view().name(VIEW_BOOK_SEARCH_BY_ISBN))
-				.andExpect(model().attribute(MODEL_BOOKS, book));
+				.andExpect(model().attribute(MODEL_BOOKS, 
+					new BookData(VALID_ISBN13_WITHOUT_FORMATTING, TITLE, AUTHORS_STRING)));
 	}
 
 	/* ---------- getBookSearchByTitleView tests ---------- */
@@ -688,15 +690,18 @@ public class MyBookWebControllerTest {
 
 	@Test
 	public void testWebController_getBookByTitle_whenTitleIsValidAndFound_shouldAddRetrievedBooksToModelAndReturnSearchByTitleView() throws Exception {
-		List<Book> foundedBooks = asList(new Book(VALID_ISBN13, TITLE, AUTHORS_LIST), new Book(NEW_VALID_ISBN13, NEW_TITLE, AUTHORS_LIST));
 		when(bookService.getBooksByTitle(TITLE))
-			.thenReturn(foundedBooks);
+			.thenReturn(asList(
+				new Book(VALID_ISBN13, TITLE, AUTHORS_LIST),
+				new Book(NEW_VALID_ISBN13, NEW_TITLE, AUTHORS_LIST)));
 		
 		mvc.perform(get(URI_BOOK_GET_BY_TITLE)
 			.param("title", TITLE))
 				.andExpect(status().isOk())
 				.andExpect(view().name(VIEW_BOOK_SEARCH_BY_TITLE))
-				.andExpect(model().attribute(MODEL_BOOKS, foundedBooks));
+				.andExpect(model().attribute(MODEL_BOOKS, asList(
+					new BookData(VALID_ISBN13_WITHOUT_FORMATTING, TITLE, AUTHORS_STRING),
+					new BookData(NEW_VALID_ISBN13_WITHOUT_FORMATTING, NEW_TITLE, AUTHORS_STRING))));
 	}
 
 }

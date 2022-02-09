@@ -55,16 +55,16 @@ public class BookListViewIT {
 
 	@Test
 	public void testBookListView_table_canShowRetrievedBooks() {
-		Book book1 = bookRepository.save(new Book(VALID_ISBN13, TITLE, AUTHORS_LIST));
-		Book book2 = bookRepository.save(new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2));
+		bookRepository.save(new Book(VALID_ISBN13, TITLE, AUTHORS_LIST));
+		bookRepository.save(new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2));
 		
 		webDriver.get(bookListUrl);
 		BookListPage bookListPage = new BookListPage(webDriver);
 		String tableContent = bookListPage.getBookTable();
 		
 		assertThat(tableContent).contains(
-			"" + book1.getIsbn(), book1.getTitle(), "" + book1.getAuthors(),
-			"" + book2.getIsbn(), book2.getTitle(), "" + book2.getAuthors());
+			VALID_ISBN13_WITHOUT_FORMATTING, TITLE, AUTHORS_STRING,
+			VALID_ISBN13_2_WITHOUT_FORMATTING, TITLE_2, AUTHORS_STRING_2);
 	}
 
 	@Test
