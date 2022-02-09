@@ -27,7 +27,7 @@ public class MyBookDataMapperTest {
 	}
 
 	@Test
-	public void testMyBookDataMapper_toBook_whenBookIsNotNullAndIsbnHaveHyphenss_shouldReturnCorrespondingBookData() {
+	public void testMyBookDataMapper_toBook_whenBookIsNotNullAndIsbnHasHyphens_shouldReturnCorrespondingBookData() {
 		BookData bookDataToMap = new BookData(VALID_ISBN13_WITH_HYPHENS, TITLE, AUTHORS_STRING);
 		Book mapResult = map.toBook(bookDataToMap);
 		assertThat(mapResult)
@@ -35,7 +35,7 @@ public class MyBookDataMapperTest {
 	}
 
 	@Test
-	public void testMyBookDataMapper_toBook_whenBookIsNotNullAndIsbnHaveSpaces_shouldReturnCorrespondingBookData() {
+	public void testMyBookDataMapper_toBook_whenBookIsNotNullAndIsbnHasSpaces_shouldReturnCorrespondingBookData() {
 		BookData bookDataToMap = new BookData(VALID_ISBN13_WITH_SPACES, TITLE, AUTHORS_STRING);
 		Book mapResult = map.toBook(bookDataToMap);
 		assertThat(mapResult)

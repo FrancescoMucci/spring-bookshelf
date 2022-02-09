@@ -2,9 +2,12 @@ package io.github.francescomucci.spring.bookshelf.web.dto;
 
 import static java.util.Arrays.asList;
 
+import org.springframework.stereotype.Component;
+
 import io.github.francescomucci.spring.bookshelf.model.Book;
 import io.github.francescomucci.spring.bookshelf.model.dto.BookData;
 
+@Component("BookDataMapper")
 public class MyBookDataMapper implements BookDataMapper {
 
 	public BookData toBookData(Book book) {

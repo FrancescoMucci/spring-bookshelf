@@ -14,12 +14,16 @@ import io.github.francescomucci.spring.bookshelf.model.dto.BookData;
 import io.github.francescomucci.spring.bookshelf.model.dto.IsbnData;
 import io.github.francescomucci.spring.bookshelf.exception.InvalidIsbnException;
 import io.github.francescomucci.spring.bookshelf.service.BookService;
+import io.github.francescomucci.spring.bookshelf.web.dto.BookDataMapper;
 
 @Controller("BookWebController")
 public class MyBookWebController implements BookWebController {
 
 	@Autowired
 	private BookService service;
+
+	@Autowired
+	private BookDataMapper map;
 
 	@Override
 	public String getBookHomeView() {
@@ -59,7 +63,7 @@ public class MyBookWebController implements BookWebController {
 				throw new InvalidIsbnException(editFormData.getIsbn());
 			return VIEW_BOOK_EDIT;
 		}
-		service.replaceBook(editFormData.toBook());
+		service.replaceBook(map.toBook(editFormData));
 		return REDIRECT + URI_BOOK_LIST;
 	}
 
@@ -72,7 +76,7 @@ public class MyBookWebController implements BookWebController {
 	public String postAddBook(BookData addFormData, BindingResult result) {
 		if (result.hasErrors()) 
 			return VIEW_BOOK_NEW;
-		service.addNewBook(addFormData.toBook());
+		service.addNewBook(map.toBook(addFormData));
 		return REDIRECT + URI_BOOK_LIST;
 	}
 

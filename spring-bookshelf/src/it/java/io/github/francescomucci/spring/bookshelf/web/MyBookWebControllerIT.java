@@ -67,7 +67,7 @@ public class MyBookWebControllerIT {
 	@WithMockAdmin
 	public void testMyBookWebController_getBookEditView_canRetrieveBookToEditUsingTheService() throws Exception {
 		BookData expectedEditFormData = new BookData(VALID_ISBN13_WITHOUT_FORMATTING, TITLE, AUTHORS_STRING);
-		Book toBeRetrievedBook = expectedEditFormData.toBook();
+		Book toBeRetrievedBook = new Book(VALID_ISBN13, TITLE, AUTHORS_LIST);
 		
 		bookRepository.save(new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2));
 		bookRepository.save(toBeRetrievedBook);

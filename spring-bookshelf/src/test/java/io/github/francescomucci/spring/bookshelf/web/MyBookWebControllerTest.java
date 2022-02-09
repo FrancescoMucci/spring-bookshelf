@@ -25,6 +25,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -36,9 +37,11 @@ import io.github.francescomucci.spring.bookshelf.exception.InvalidIsbnException;
 import io.github.francescomucci.spring.bookshelf.exception.BookAlreadyExistException;
 import io.github.francescomucci.spring.bookshelf.service.BookService;
 import io.github.francescomucci.spring.bookshelf.web.security.WithMockAdmin;
+import io.github.francescomucci.spring.bookshelf.web.dto.MyBookDataMapper;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(controllers = MyBookWebController.class)
+@Import(MyBookDataMapper.class)
 public class MyBookWebControllerTest {
 
 	@MockBean
@@ -326,7 +329,8 @@ public class MyBookWebControllerTest {
 	@WithMockAdmin
 	public void testWebController_postSaveBook_whenAdminUserAndIsbnIsValidButUnused_shouldAddErrorInfoToModelAndReturnBookNotFoundView() throws Exception {
 		BookData editFormData = new BookData(UNUSED_ISBN13_WITHOUT_FORMATTING, UNUSED_TITLE, UNUSED_AUTHORS_STRING);
-		when(bookService.replaceBook(editFormData.toBook()))
+		Book editedBook = new Book(UNUSED_ISBN13, UNUSED_TITLE, UNUSED_AUTHORS_LIST);
+		when(bookService.replaceBook(editedBook))
 			.thenThrow(new BookNotFoundException(UNUSED_ISBN13));
 		
 		mvc.perform(post(URI_BOOK_SAVE)
@@ -345,6 +349,8 @@ public class MyBookWebControllerTest {
 	@WithMockAdmin
 	public void testWebController_postSaveBook_whenAdminUserAndBookFormDataDoNotContainErrors_shouldReplaceBookUsingServiceAndReturnBookListView() throws Exception {
 		BookData editFormData = new BookData(VALID_ISBN13_WITHOUT_FORMATTING, NEW_TITLE, AUTHORS_STRING);
+		Book editedBook = new Book(VALID_ISBN13, NEW_TITLE, AUTHORS_LIST);
+		
 		mvc.perform(post(URI_BOOK_SAVE)
 			.with(csrf())
 			.param("isbn", editFormData.getIsbn())
@@ -353,7 +359,7 @@ public class MyBookWebControllerTest {
 				.andExpect(status().is3xxRedirection())
 				.andExpect(redirectedUrl(URI_BOOK_LIST));
 		
-		verify(bookService).replaceBook(editFormData.toBook());
+		verify(bookService).replaceBook(editedBook);
 		verifyNoMoreInteractions(bookService);
 	}
 
@@ -509,7 +515,8 @@ public class MyBookWebControllerTest {
 	@WithMockAdmin
 	public void testWebController_postAddBook_whenAdminUserAndIsbnIsValidButAlreadyUsed_shouldAddErrorInfoToModelAndReturnBookAlreadyExistView() throws Exception {
 		BookData addFormData = new BookData(ALREADY_USED_ISBN13_WITHOUT_FORMATTING, UNUSED_TITLE, UNUSED_AUTHORS_STRING);
-		when(bookService.addNewBook(addFormData.toBook()))
+		Book newBook = new Book(ALREADY_USED_ISBN13, UNUSED_TITLE, UNUSED_AUTHORS_LIST);
+		when(bookService.addNewBook(newBook))
 			.thenThrow(new BookAlreadyExistException(ALREADY_USED_ISBN13));
 		
 		mvc.perform(post(URI_BOOK_ADD)
@@ -528,6 +535,8 @@ public class MyBookWebControllerTest {
 	@WithMockAdmin
 	public void testWebController_postAddBook_whenAdminUserAndBookFormDataDoNotContainErrors_shouldAddBookUsingServiceAndReturnBookListView() throws Exception {
 		BookData addFormData = new BookData(VALID_ISBN13_WITHOUT_FORMATTING, TITLE, AUTHORS_STRING);
+		Book newBook = new Book(VALID_ISBN13, TITLE, AUTHORS_LIST);
+		
 		mvc.perform(post(URI_BOOK_ADD)
 			.with(csrf())
 			.param("isbn", addFormData.getIsbn())
@@ -536,7 +545,7 @@ public class MyBookWebControllerTest {
 				.andExpect(status().is3xxRedirection())
 				.andExpect(redirectedUrl(URI_BOOK_LIST));
 		
-		verify(bookService).addNewBook(addFormData.toBook());
+		verify(bookService).addNewBook(newBook);
 		verifyNoMoreInteractions(bookService);
 	}
 

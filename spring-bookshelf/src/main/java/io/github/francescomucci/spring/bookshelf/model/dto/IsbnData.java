@@ -33,7 +33,9 @@ public class IsbnData {
 	}
 
 	public Long toLong() {
-		return Long.valueOf(isbn.replace("-", "").replace(" ", ""));
+		return Long.valueOf(isbn
+			.replace("-", "")
+			.replace(" ", ""));
 	}
 
 	@Override
