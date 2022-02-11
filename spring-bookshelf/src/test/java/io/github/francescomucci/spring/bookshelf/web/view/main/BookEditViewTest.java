@@ -34,7 +34,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlHeader;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 
-import io.github.francescomucci.spring.bookshelf.model.dto.IsbnData;
 import io.github.francescomucci.spring.bookshelf.model.dto.BookData;
 import io.github.francescomucci.spring.bookshelf.web.BookWebController;
 import io.github.francescomucci.spring.bookshelf.web.security.WithMockAdmin;
@@ -60,7 +59,7 @@ public class BookEditViewTest {
 
 	@Test
 	public void testBookEditView_shouldAlwaysContainAnInformativeTextInTheHeader() throws Exception {
-		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
+		when(bookWebController.getBookEditView(any(BookData.class), any(BindingResult.class)))
 			.thenReturn(VIEW_BOOK_EDIT);
 		
 		HtmlPage bookEditView = webClient.getPage("/book/edit/" + VALID_ISBN13_WITHOUT_FORMATTING);
@@ -76,7 +75,7 @@ public class BookEditViewTest {
 
 	@Test
 	public void testBookEditView_shouldAlwaysContainAFormToEditExistingBook() throws Exception {
-		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
+		when(bookWebController.getBookEditView(any(BookData.class), any(BindingResult.class)))
 			.thenReturn(VIEW_BOOK_EDIT);
 		
 		HtmlPage bookEditView = webClient.getPage("/book/edit/" + VALID_ISBN13_WITHOUT_FORMATTING);
@@ -101,7 +100,7 @@ public class BookEditViewTest {
 
 	@Test
 	public void testBookEditView_whenUserFillTheFormWithValidInputsAndPressTheSubmitButton_shouldSendPostRequestToSaveEndpoint() throws Exception {
-		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
+		when(bookWebController.getBookEditView(any(BookData.class), any(BindingResult.class)))
 			.thenReturn(VIEW_BOOK_EDIT);
 		when(bookWebController.postSaveBook(any(BookData.class),any(BindingResult.class)))
 			.thenReturn(VIEW_BOOK_LIST);
@@ -118,7 +117,7 @@ public class BookEditViewTest {
 
 	@Test
 	public void testBookEditView_whenUserFillTheFormWithInvalidInputsAndPressTheSubmitButton_shouldSendPostRequestToSaveEndpoint() throws Exception {
-		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
+		when(bookWebController.getBookEditView(any(BookData.class), any(BindingResult.class)))
 			.thenReturn(VIEW_BOOK_EDIT);
 		when(bookWebController.postSaveBook(any(BookData.class),any(BindingResult.class)))
 			.thenReturn(VIEW_BOOK_LIST);
@@ -135,7 +134,7 @@ public class BookEditViewTest {
 
 	@Test
 	public void testBookEditView_whenUserDoNotFillTheTitleAndPressTheSubmitButton_shouldNotSendPostRequestToSaveEndpoint() throws Exception {
-		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
+		when(bookWebController.getBookEditView(any(BookData.class), any(BindingResult.class)))
 			.thenReturn(VIEW_BOOK_EDIT);
 		
 		HtmlPage bookEditView = webClient.getPage("/book/edit/" + VALID_ISBN13_WITHOUT_FORMATTING);
@@ -149,7 +148,7 @@ public class BookEditViewTest {
 
 	@Test
 	public void testBookEditView_whenUserDoNotFillTheAuthorsAndPressTheSubmitButton_shouldNotSendPostRequestToSaveEndpoint() throws Exception {
-		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
+		when(bookWebController.getBookEditView(any(BookData.class), any(BindingResult.class)))
 			.thenReturn(VIEW_BOOK_EDIT);
 		
 		HtmlPage bookEditView = webClient.getPage("/book/edit/" + VALID_ISBN13_WITHOUT_FORMATTING);
@@ -165,8 +164,8 @@ public class BookEditViewTest {
 
 	@Test
 	public void testBookEditView_whenJustOpened_theFormInputsShouldBePrefilled() throws Exception {
-		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
-			.thenAnswer(answer((IsbnData isbn, BindingResult result, BookData editFormData)-> {
+		when(bookWebController.getBookEditView(any(BookData.class), any(BindingResult.class)))
+			.thenAnswer(answer((BookData editFormData, BindingResult result)-> {
 				editFormData.setTitle(TITLE);
 				editFormData.setAuthors(AUTHORS_STRING);
 				return VIEW_BOOK_EDIT;
@@ -186,7 +185,7 @@ public class BookEditViewTest {
 
 	@Test
 	public void testBookEditView_afterPostRequestToSaveEditedBookWithSomeInvalidInput_theFormInputsShouldBePrefilledWithProvidedInputs() throws Exception {
-		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
+		when(bookWebController.getBookEditView(any(BookData.class), any(BindingResult.class)))
 			.thenReturn(VIEW_BOOK_EDIT);
 		when(bookWebController.postSaveBook(any(BookData.class),any(BindingResult.class)))
 			.thenReturn(VIEW_BOOK_EDIT);
@@ -212,7 +211,7 @@ public class BookEditViewTest {
 	public void testBookEditView_afterPostRequestToSaveEditedBookWithInvalidTitle_shouldContainTitleValidationErrorMessage() throws Exception {
 		String invalidTitleMessage = "Invalid title; the allowed special characters are: & , : . ! ?";
 		String invalidAuthorsMessage = "Invalid authors; numbers and all special special characters, except the comma, are not allowed";
-		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
+		when(bookWebController.getBookEditView(any(BookData.class), any(BindingResult.class)))
 			.thenReturn(VIEW_BOOK_EDIT);
 		when(bookWebController.postSaveBook(any(BookData.class),any(BindingResult.class)))
 			.thenReturn(VIEW_BOOK_EDIT);
@@ -233,7 +232,7 @@ public class BookEditViewTest {
 	public void testBookEditView_afterPostRequestToSaveEditedBookWithInvalidAuthors_shouldContainAuthorsValidationErrorMessage() throws Exception {
 		String invalidTitleMessage = "Invalid title; the allowed special characters are: & , : . ! ?";
 		String invalidAuthorsMessage = "Invalid authors; numbers and all special special characters, except the comma, are not allowed";
-		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
+		when(bookWebController.getBookEditView(any(BookData.class), any(BindingResult.class)))
 			.thenReturn(VIEW_BOOK_EDIT);
 		when(bookWebController.postSaveBook(any(BookData.class),any(BindingResult.class)))
 			.thenReturn(VIEW_BOOK_EDIT);
@@ -252,7 +251,7 @@ public class BookEditViewTest {
 
 	@Test
 	public void testBookEditView_afterPostRequestToSaveEditedBookWithInvalidTitleAndAuthors_shouldContainBothValidationErrorMessages() throws Exception {
-		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
+		when(bookWebController.getBookEditView(any(BookData.class), any(BindingResult.class)))
 			.thenReturn(VIEW_BOOK_EDIT);
 		when(bookWebController.postSaveBook(any(BookData.class),any(BindingResult.class)))
 			.thenReturn(VIEW_BOOK_EDIT);
@@ -273,7 +272,7 @@ public class BookEditViewTest {
 	@Test
 	public void testBookEditView_afterPostRequestToSaveEditedBookWithBlankTitleAndAuthors_shouldContainBlankValidationErrorMessages() throws Exception {
 		String blankFieldMessage = "Please fill out this field";
-		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
+		when(bookWebController.getBookEditView(any(BookData.class), any(BindingResult.class)))
 			.thenReturn(VIEW_BOOK_EDIT);
 		when(bookWebController.postSaveBook(any(BookData.class),any(BindingResult.class)))
 			.thenReturn(VIEW_BOOK_EDIT);
@@ -298,7 +297,7 @@ public class BookEditViewTest {
 	@Test
 	public void testBookEditView_afterPostRequestToSaveEditedBookWithNullTitleAndAuthors_shouldContainBlankValidationErrorMessages() throws Exception {
 		String blankFieldMessage = "Please fill out this field";
-		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
+		when(bookWebController.getBookEditView(any(BookData.class), any(BindingResult.class)))
 			.thenReturn(VIEW_BOOK_EDIT);
 		when(bookWebController.postSaveBook(any(BookData.class),any(BindingResult.class)))
 			.thenReturn(VIEW_BOOK_EDIT);
@@ -324,7 +323,7 @@ public class BookEditViewTest {
 	public void testBookEditView_whenUserFillTheFormWithInvalidInputsButDoNotPressTheSubmitButton_shouldNotShowValidationErrorMessages() throws Exception {
 		String invalidTitleMessage = "Invalid title; the allowed special characters are: & , : . ! ?";
 		String invalidAuthorsMessage = "Invalid authors; numbers and all special special characters, except the comma, are not allowed";
-		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
+		when(bookWebController.getBookEditView(any(BookData.class), any(BindingResult.class)))
 			.thenReturn(VIEW_BOOK_EDIT);
 		
 		HtmlPage bookEditView = webClient.getPage("/book/edit/" + VALID_ISBN13_WITHOUT_FORMATTING);
@@ -340,7 +339,7 @@ public class BookEditViewTest {
 
 	@Test
 	public void testBookEditView_shouldAlwaysHaveATitle() throws Exception {
-		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
+		when(bookWebController.getBookEditView(any(BookData.class), any(BindingResult.class)))
 			.thenReturn(VIEW_BOOK_EDIT);
 	
 		HtmlPage bookEditView = webClient.getPage("/book/edit/" + VALID_ISBN13_WITHOUT_FORMATTING);
@@ -351,7 +350,7 @@ public class BookEditViewTest {
 
 	@Test
 	public void testBookEditView_shouldAlwaysProvideALinkToHomePageInTheNavbar() throws Exception {
-		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
+		when(bookWebController.getBookEditView(any(BookData.class), any(BindingResult.class)))
 			.thenReturn(VIEW_BOOK_EDIT);
 		when(bookWebController.getBookHomeView())
 			.thenReturn(VIEW_BOOK_HOME);
@@ -370,7 +369,7 @@ public class BookEditViewTest {
 
 	@Test
 	public void testBookEditView_shouldAlwaysProvideALinkToViewAllBooksInTheNavbar() throws Exception {
-		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
+		when(bookWebController.getBookEditView(any(BookData.class), any(BindingResult.class)))
 			.thenReturn(VIEW_BOOK_EDIT);
 		when(bookWebController.getBookListView(any(Model.class)))
 			.thenReturn(VIEW_BOOK_LIST);
@@ -389,7 +388,7 @@ public class BookEditViewTest {
 
 	@Test
 	public void testBookEditView_shouldAlwaysProvideALinkToSearchBookByIsbnInTheNavbar() throws Exception {
-		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
+		when(bookWebController.getBookEditView(any(BookData.class), any(BindingResult.class)))
 			.thenReturn(VIEW_BOOK_EDIT);
 		when(bookWebController.getBookSearchByIsbnView(any(BookData.class)))
 			.thenReturn(VIEW_BOOK_SEARCH_BY_ISBN);
@@ -408,7 +407,7 @@ public class BookEditViewTest {
 
 	@Test
 	public void testBookEditView_shouldAlwaysProvideALinkToSearchBooksByTitleInTheNavbar() throws Exception {
-		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
+		when(bookWebController.getBookEditView(any(BookData.class), any(BindingResult.class)))
 			.thenReturn(VIEW_BOOK_EDIT);
 		when(bookWebController.getBookSearchByTitleView(any(BookData.class)))
 			.thenReturn(VIEW_BOOK_SEARCH_BY_TITLE);
@@ -427,7 +426,7 @@ public class BookEditViewTest {
 
 	@Test
 	public void testBookEditView_shouldAlwaysProvideALinkToAddNewBookInTheNavbar() throws Exception {
-		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
+		when(bookWebController.getBookEditView(any(BookData.class), any(BindingResult.class)))
 			.thenReturn(VIEW_BOOK_EDIT);
 		when(bookWebController.getBookNewView(any(BookData.class)))
 			.thenReturn(VIEW_BOOK_NEW);
@@ -446,7 +445,7 @@ public class BookEditViewTest {
 
 	@Test
 	public void testBookEditView_shouldAlwaysProvideALinkToLogout() throws Exception {
-		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
+		when(bookWebController.getBookEditView(any(BookData.class), any(BindingResult.class)))
 			.thenReturn(VIEW_BOOK_EDIT);
 		when(bookWebController.getBookHomeView())
 			.thenReturn(VIEW_BOOK_HOME);
@@ -463,7 +462,7 @@ public class BookEditViewTest {
 
 	@Test
 	public void testBookEditView_shouldAlwaysContainTheCopyrightInTheFooter() throws Exception {
-		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
+		when(bookWebController.getBookEditView(any(BookData.class), any(BindingResult.class)))
 			.thenReturn(VIEW_BOOK_EDIT);
 		when(bookWebController.getBookNewView(any(BookData.class)))
 			.thenReturn(VIEW_BOOK_NEW);

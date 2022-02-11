@@ -29,7 +29,7 @@ public interface BookWebController {
 	public String postDeleteBook(@Valid IsbnData isbn, BindingResult result);
 
 	@GetMapping(URI_BOOK_EDIT)
-	public String getBookEditView(@Valid IsbnData isbn, BindingResult result, BookData editFormData);
+	public String getBookEditView(@Validated(IsbnConstraints.class) BookData editFormData, BindingResult result);
 
 	@PostMapping(URI_BOOK_SAVE)
 	public String postSaveBook(@Valid BookData editFormData, BindingResult result);

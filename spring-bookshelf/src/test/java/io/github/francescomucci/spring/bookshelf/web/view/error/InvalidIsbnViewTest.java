@@ -30,7 +30,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlHeader;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
-import io.github.francescomucci.spring.bookshelf.model.dto.IsbnData;
 import io.github.francescomucci.spring.bookshelf.model.dto.BookData;
 import io.github.francescomucci.spring.bookshelf.exception.InvalidIsbnException;
 import io.github.francescomucci.spring.bookshelf.web.BookWebController;
@@ -57,7 +56,7 @@ public class InvalidIsbnViewTest {
 
 	@Test
 	public void testInvalidIsbnView_shouldAlwaysContainAWarningMessageInTheHeader() throws Exception {
-		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
+		when(bookWebController.getBookEditView(any(BookData.class), any(BindingResult.class)))
 			.thenReturn(ERROR_INVALID_ISBN);
 		
 		HtmlPage invalidIsbnView = webClient.getPage("/book/edit/" + INVALID_ISBN13);
@@ -98,7 +97,7 @@ public class InvalidIsbnViewTest {
 
 	@Test
 	public void testInvalidIsbnView_shouldAlwaysContainTheIsbnAdviceBox() throws Exception {
-		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
+		when(bookWebController.getBookEditView(any(BookData.class), any(BindingResult.class)))
 			.thenReturn(ERROR_INVALID_ISBN);
 	
 		HtmlPage invalidIsbnView = webClient.getPage("/book/edit/" + INVALID_ISBN13);
@@ -117,7 +116,7 @@ public class InvalidIsbnViewTest {
 
 	@Test
 	public void testInvalidIsbnView_shouldAlwaysHaveATitle() throws Exception {
-		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
+		when(bookWebController.getBookEditView(any(BookData.class), any(BindingResult.class)))
 			.thenReturn(ERROR_INVALID_ISBN);
 
 		HtmlPage invalidIsbnView = webClient.getPage("/book/edit/" + INVALID_ISBN13);
@@ -128,7 +127,7 @@ public class InvalidIsbnViewTest {
 
 	@Test
 	public void testInvalidIsbnView_shouldAlwaysProvideALinkToHomePageInTheNavbar() throws Exception {
-		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
+		when(bookWebController.getBookEditView(any(BookData.class), any(BindingResult.class)))
 			.thenReturn(ERROR_INVALID_ISBN);
 		when(bookWebController.getBookHomeView())
 			.thenReturn(VIEW_BOOK_HOME);
@@ -145,7 +144,7 @@ public class InvalidIsbnViewTest {
 
 	@Test
 	public void testInvalidIsbnView_shouldAlwaysProvideALinkToViewAllBooksInTheNavbar() throws Exception {
-		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
+		when(bookWebController.getBookEditView(any(BookData.class), any(BindingResult.class)))
 			.thenReturn(ERROR_INVALID_ISBN);
 		when(bookWebController.getBookListView(any(Model.class)))
 			.thenReturn(VIEW_BOOK_LIST);
@@ -164,7 +163,7 @@ public class InvalidIsbnViewTest {
 
 	@Test
 	public void testInvalidIsbnView_shouldAlwaysProvideALinkToSearchBookByIsbnInTheNavbar() throws Exception {
-		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
+		when(bookWebController.getBookEditView(any(BookData.class), any(BindingResult.class)))
 			.thenReturn(ERROR_INVALID_ISBN);
 		when(bookWebController.getBookSearchByIsbnView(any(BookData.class)))
 			.thenReturn(VIEW_BOOK_SEARCH_BY_ISBN);
@@ -183,7 +182,7 @@ public class InvalidIsbnViewTest {
 
 	@Test
 	public void testInvalidIsbnView_shouldAlwaysProvideALinkToSearchBooksByTitleInTheNavbar() throws Exception {
-		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
+		when(bookWebController.getBookEditView(any(BookData.class), any(BindingResult.class)))
 			.thenReturn(ERROR_INVALID_ISBN);
 		when(bookWebController.getBookSearchByTitleView(any(BookData.class)))
 			.thenReturn(VIEW_BOOK_SEARCH_BY_TITLE);
@@ -217,7 +216,7 @@ public class InvalidIsbnViewTest {
 
 	@Test
 	public void testInvalidIsbnView_whenAdmin_shouldProvideALinkToAddNewBookInTheNavbar() throws Exception {
-		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
+		when(bookWebController.getBookEditView(any(BookData.class), any(BindingResult.class)))
 			.thenReturn(ERROR_INVALID_ISBN);
 		when(bookWebController.getBookNewView(any(BookData.class)))
 			.thenReturn(VIEW_BOOK_NEW);
@@ -251,7 +250,7 @@ public class InvalidIsbnViewTest {
 
 	@Test
 	public void testInvalidIsbnView_whenAdmin_shouldProvideALinkToLogout() throws Exception {
-		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
+		when(bookWebController.getBookEditView(any(BookData.class), any(BindingResult.class)))
 			.thenReturn(ERROR_INVALID_ISBN);
 		when(bookWebController.getBookHomeView())
 			.thenReturn(VIEW_BOOK_HOME);
@@ -268,7 +267,7 @@ public class InvalidIsbnViewTest {
 
 	@Test
 	public void testInvalidIsbnView_shouldAlwaysContainTheCopyrightInTheFooter() throws Exception {
-		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
+		when(bookWebController.getBookEditView(any(BookData.class), any(BindingResult.class)))
 			.thenReturn(ERROR_INVALID_ISBN);
 		
 		HtmlPage invalidIsbnView = webClient.getPage("/book/edit/" + INVALID_ISBN13);
