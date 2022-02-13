@@ -337,7 +337,7 @@ public class BookSearchByIsbnViewTest {
 				return VIEW_BOOK_SEARCH_BY_ISBN;
 			}
 		));
-		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
+		when(bookWebController.getBookEditView(any(BookData.class), any(BindingResult.class)))
 			.thenReturn(VIEW_BOOK_EDIT);
 		
 		HtmlPage bookSearchByIsbnView = webClient.getPage(URI_BOOK_GET_BY_ISBN + "?isbn=" + VALID_ISBN13_WITHOUT_FORMATTING);
@@ -345,9 +345,8 @@ public class BookSearchByIsbnViewTest {
 		
 		verify(bookWebController)
 			.getBookEditView(
-				eq(new IsbnData(VALID_ISBN13_WITHOUT_FORMATTING)),
-				any(BindingResult.class),
-				eq(new BookData(VALID_ISBN13_WITHOUT_FORMATTING, null, null)));
+				eq(new BookData(VALID_ISBN13_WITHOUT_FORMATTING, null, null)),
+				any(BindingResult.class));
 	}
 
 	@Test

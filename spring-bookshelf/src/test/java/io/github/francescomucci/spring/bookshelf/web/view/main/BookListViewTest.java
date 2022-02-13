@@ -202,7 +202,7 @@ public class BookListViewTest {
 				return VIEW_BOOK_LIST;
 			}
 		));
-		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
+		when(bookWebController.getBookEditView(any(BookData.class), any(BindingResult.class)))
 			.thenReturn(VIEW_BOOK_EDIT);
 		
 		HtmlPage bookListView = webClient.getPage(URI_BOOK_LIST);
@@ -212,14 +212,12 @@ public class BookListViewTest {
 		InOrder inOrder = inOrder(bookWebController);
 		inOrder.verify(bookWebController)
 			.getBookEditView(
-				eq(new IsbnData(VALID_ISBN13_WITHOUT_FORMATTING)),
-				any(BindingResult.class),
-				eq(new BookData(VALID_ISBN13_WITHOUT_FORMATTING, null, null)));
+				eq(new BookData(VALID_ISBN13_WITHOUT_FORMATTING, null, null)),
+				any(BindingResult.class));
 		inOrder.verify(bookWebController)
 			.getBookEditView(
-				eq(new IsbnData(VALID_ISBN13_2_WITHOUT_FORMATTING)),
-				any(BindingResult.class),
-				eq(new BookData(VALID_ISBN13_2_WITHOUT_FORMATTING, null, null)));
+				eq(new BookData(VALID_ISBN13_2_WITHOUT_FORMATTING, null, null)),
+				any(BindingResult.class));
 	}
 
 	@Test

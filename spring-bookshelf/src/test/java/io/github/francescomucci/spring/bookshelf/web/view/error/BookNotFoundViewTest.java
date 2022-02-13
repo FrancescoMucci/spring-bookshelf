@@ -29,7 +29,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlHeader;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
-import io.github.francescomucci.spring.bookshelf.model.dto.IsbnData;
 import io.github.francescomucci.spring.bookshelf.model.dto.BookData;
 import io.github.francescomucci.spring.bookshelf.exception.BookNotFoundException;
 import io.github.francescomucci.spring.bookshelf.web.BookWebController;
@@ -227,7 +226,7 @@ public class BookNotFoundViewTest {
 	@Test
 	@WithMockAdmin
 	public void testBookNotFoundView_whenAdmin_shouldProvideALinkToAddNewBookInTheNavbar() throws Exception {
-		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
+		when(bookWebController.getBookEditView(any(BookData.class), any(BindingResult.class)))
 			.thenReturn(ERROR_BOOK_NOT_FOUND);
 		when(bookWebController.getBookNewView(any(BookData.class)))
 			.thenReturn(VIEW_BOOK_NEW);
@@ -258,7 +257,7 @@ public class BookNotFoundViewTest {
 	@Test
 	@WithMockAdmin
 	public void testBookNotFoundView_whenAdmin_shouldProvideALinkToLogout() throws Exception {
-		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
+		when(bookWebController.getBookEditView(any(BookData.class), any(BindingResult.class)))
 			.thenReturn(ERROR_BOOK_NOT_FOUND);
 		when(bookWebController.getBookHomeView())
 			.thenReturn(VIEW_BOOK_HOME);

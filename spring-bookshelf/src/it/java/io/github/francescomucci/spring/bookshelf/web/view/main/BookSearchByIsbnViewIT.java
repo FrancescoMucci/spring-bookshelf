@@ -68,20 +68,20 @@ public class BookSearchByIsbnViewIT {
 
 	@Test
 	public void testBookSearchByIsbnView_searchForm_whenSearchedIsbnIsFound_shouldShowRetrievedBook() {
-		Book book1 = bookRepository.save(new Book(VALID_ISBN13, TITLE, AUTHORS_LIST));
-		Book book2 = bookRepository.save(new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2));
+		bookRepository.save(new Book(VALID_ISBN13, TITLE, AUTHORS_LIST));
+		bookRepository.save(new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2));
 		
 		webDriver.get(bookSearchByIsbnUrl);
 		BookSearchByIsbnPage bookSearchByIsbnPage = new BookSearchByIsbnPage(webDriver);
-		MyPage returnedPage = bookSearchByIsbnPage.fillSearchFormAndPressSubmitButton("" + book1.getIsbn());
+		MyPage returnedPage = bookSearchByIsbnPage.fillSearchFormAndPressSubmitButton(VALID_ISBN13_WITHOUT_FORMATTING);
 		
 		assertThat(returnedPage.getPageTitle())
 			.isEqualTo("Book search by ISBN view");
 		assertThat(bookSearchByIsbnPage.getInputValue())
-			.isEqualTo("" + book1.getIsbn());
+			.isEqualTo(VALID_ISBN13_WITHOUT_FORMATTING);
 		assertThat(bookSearchByIsbnPage.getBookTable())
-			.contains("" + book1.getIsbn(), book1.getTitle(), "" + book1.getAuthors())
-			.doesNotContain("" + book2.getIsbn(), book2.getTitle(), "" + book2.getAuthors());
+			.contains(VALID_ISBN13_WITHOUT_FORMATTING, TITLE, AUTHORS_STRING)
+			.doesNotContain(VALID_ISBN13_2_WITHOUT_FORMATTING, TITLE_2, AUTHORS_STRING_2);
 	}
 
 	@Test

@@ -43,11 +43,13 @@ public class MyBookWebControllerIT {
 
 	@Test
 	public void testMyBookWebController_getBookListView_canRetrieveAllBooksUsingTheService() throws Exception {
-		Book book2 = bookRepository.save(new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2));
-		Book book1 = bookRepository.save(new Book(VALID_ISBN13, TITLE, AUTHORS_LIST));
+		bookRepository.save(new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2));
+		bookRepository.save(new Book(VALID_ISBN13, TITLE, AUTHORS_LIST));
 		
 		mvc.perform(get(URI_BOOK_LIST))
-			.andExpect(model().attribute(MODEL_BOOKS, asList(book1, book2)));
+			.andExpect(model().attribute(MODEL_BOOKS, asList(
+				new BookData(VALID_ISBN13_WITHOUT_FORMATTING, TITLE, AUTHORS_STRING),
+				new BookData(VALID_ISBN13_2_WITHOUT_FORMATTING, TITLE_2, AUTHORS_STRING_2))));
 	}
 
 	@Test
@@ -66,8 +68,8 @@ public class MyBookWebControllerIT {
 	@Test
 	@WithMockAdmin
 	public void testMyBookWebController_getBookEditView_canRetrieveBookToEditUsingTheService() throws Exception {
+		Book toBeRetrievedBook = new Book(VALID_ISBN13, TITLE, AUTHORS_LIST);
 		BookData expectedEditFormData = new BookData(VALID_ISBN13_WITHOUT_FORMATTING, TITLE, AUTHORS_STRING);
-		Book toBeRetrievedBook = expectedEditFormData.toBook();
 		
 		bookRepository.save(new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2));
 		bookRepository.save(toBeRetrievedBook);
@@ -106,23 +108,28 @@ public class MyBookWebControllerIT {
 
 	@Test
 	public void testMyBookWebController_getBookByIsbn_canRetrieveBookByIsbnUsingTheService() throws Exception {
+		Book toBeRetrievedBook = new Book(VALID_ISBN13, TITLE, AUTHORS_LIST);
+		BookData foundedBookData = new BookData(VALID_ISBN13_WITHOUT_FORMATTING, TITLE, AUTHORS_STRING);
+		
 		bookRepository.save(new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2));
-		Book toBeRetrievedBook = bookRepository.save(new Book(VALID_ISBN13, TITLE, AUTHORS_LIST));
+		bookRepository.save(toBeRetrievedBook);
 		
 		mvc.perform(get(URI_BOOK_GET_BY_ISBN)
 			.param("isbn", VALID_ISBN13_WITHOUT_FORMATTING))
-				.andExpect(model().attribute(MODEL_BOOKS, toBeRetrievedBook));
+				.andExpect(model().attribute(MODEL_BOOKS, foundedBookData));
 	}
 
 	@Test
 	public void testMyBookWebController_getBookByTitle_canRetrieveBookByTitleUsingTheService() throws Exception {
 		bookRepository.save(new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2));
-		Book toBeRetrievedBook2 = bookRepository.save(new Book(NEW_VALID_ISBN13, NEW_TITLE, AUTHORS_LIST));
-		Book toBeRetrievedBook1 = bookRepository.save(new Book(VALID_ISBN13, TITLE, AUTHORS_LIST));
+		bookRepository.save(new Book(NEW_VALID_ISBN13, "Foundation vol.1", AUTHORS_LIST));
+		bookRepository.save(new Book(VALID_ISBN13, "Foundation", AUTHORS_LIST));
 		
 		mvc.perform(get(URI_BOOK_GET_BY_TITLE)
-			.param("title", TITLE))
-				.andExpect(model().attribute(MODEL_BOOKS, asList(toBeRetrievedBook1, toBeRetrievedBook2)));
+			.param("title", "Foundation"))
+				.andExpect(model().attribute(MODEL_BOOKS, asList(
+					new BookData(VALID_ISBN13_WITHOUT_FORMATTING, "Foundation", AUTHORS_STRING),
+					new BookData(NEW_VALID_ISBN13_WITHOUT_FORMATTING, "Foundation vol.1", AUTHORS_STRING))));
 	}
 
 }

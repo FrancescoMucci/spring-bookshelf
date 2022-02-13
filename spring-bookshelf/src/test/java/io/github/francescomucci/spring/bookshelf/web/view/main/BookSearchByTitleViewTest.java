@@ -315,7 +315,7 @@ public class BookSearchByTitleViewTest {
 				return VIEW_BOOK_SEARCH_BY_TITLE;
 			}
 		));
-		when(bookWebController.getBookEditView(any(IsbnData.class), any(BindingResult.class), any(BookData.class)))
+		when(bookWebController.getBookEditView(any(BookData.class), any(BindingResult.class)))
 			.thenReturn(VIEW_BOOK_EDIT);
 		
 		HtmlPage bookSearchByTitleView = webClient.getPage(URI_BOOK_GET_BY_TITLE + "?title=" + TITLE);
@@ -325,14 +325,12 @@ public class BookSearchByTitleViewTest {
 		InOrder inOrder = inOrder(bookWebController);
 		inOrder.verify(bookWebController)
 			.getBookEditView(
-				eq(new IsbnData(VALID_ISBN13_WITHOUT_FORMATTING)),
-				any(BindingResult.class),
-				eq(new BookData(VALID_ISBN13_WITHOUT_FORMATTING, null, null)));
+				eq(new BookData(VALID_ISBN13_WITHOUT_FORMATTING, null, null)),
+				any(BindingResult.class));
 		inOrder.verify(bookWebController)
 			.getBookEditView(
-				eq(new IsbnData(NEW_VALID_ISBN13_WITHOUT_FORMATTING)),
-				any(BindingResult.class),
-				eq(new BookData(NEW_VALID_ISBN13_WITHOUT_FORMATTING, null, null)));
+				eq(new BookData(NEW_VALID_ISBN13_WITHOUT_FORMATTING, null, null)),
+				any(BindingResult.class));
 	}
 
 	@Test

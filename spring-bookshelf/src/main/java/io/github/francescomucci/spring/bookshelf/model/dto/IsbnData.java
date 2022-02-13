@@ -32,10 +32,6 @@ public class IsbnData {
 		this.isbn = isbn;
 	}
 
-	public Long toLong() {
-		return Long.valueOf(isbn.replace("-", "").replace(" ", ""));
-	}
-
 	@Override
 	public String toString() {
 		return "IsbnData [isbn=" + isbn + "]";

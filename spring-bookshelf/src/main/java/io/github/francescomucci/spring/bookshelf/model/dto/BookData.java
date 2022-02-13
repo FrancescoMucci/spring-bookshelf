@@ -1,14 +1,11 @@
 package io.github.francescomucci.spring.bookshelf.model.dto;
 
-import static java.util.Arrays.asList;
-
 import java.util.Objects;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.groups.Default;
 
-import io.github.francescomucci.spring.bookshelf.model.Book;
 import io.github.francescomucci.spring.bookshelf.model.dto.group.TitleConstraints;
 import io.github.francescomucci.spring.bookshelf.model.dto.group.AuthorsConstraints;
 
@@ -46,13 +43,6 @@ public class BookData extends IsbnData {
 
 	public void setAuthors(String authors) {
 		this.authors = authors;
-	}
-
-	public Book toBook() {
-		return new Book(
-			toLong(),
-			title,
-			asList(authors.split(", ")));
 	}
 
 	@Override

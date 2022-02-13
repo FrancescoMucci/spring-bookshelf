@@ -18,13 +18,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 import java.util.Collections;
-import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -36,9 +36,11 @@ import io.github.francescomucci.spring.bookshelf.exception.InvalidIsbnException;
 import io.github.francescomucci.spring.bookshelf.exception.BookAlreadyExistException;
 import io.github.francescomucci.spring.bookshelf.service.BookService;
 import io.github.francescomucci.spring.bookshelf.web.security.WithMockAdmin;
+import io.github.francescomucci.spring.bookshelf.web.dto.MyBookDataMapper;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(controllers = MyBookWebController.class)
+@Import(MyBookDataMapper.class)
 public class MyBookWebControllerTest {
 
 	@MockBean
@@ -85,14 +87,17 @@ public class MyBookWebControllerTest {
 
 	@Test
 	public void testWebController_getBookListView_whenDbIsNotEmpty_shouldAddBookListToModel() throws Exception {
-		List<Book> bookList = asList(new Book(VALID_ISBN13, TITLE, AUTHORS_LIST), new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2));
 		when(bookService.getAllBooks())
-			.thenReturn(bookList);
+			.thenReturn(asList(
+				new Book(VALID_ISBN13, TITLE, AUTHORS_LIST),
+				new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2)));
 	
 		mvc.perform(get(URI_BOOK_LIST))
 			.andExpect(status().isOk())
 			.andExpect(view().name(VIEW_BOOK_LIST))
-			.andExpect(model().attribute(MODEL_BOOKS, bookList));
+			.andExpect(model().attribute(MODEL_BOOKS, asList(
+				new BookData(VALID_ISBN13_WITHOUT_FORMATTING, TITLE, AUTHORS_STRING),
+				new BookData(VALID_ISBN13_2_WITHOUT_FORMATTING, TITLE_2, AUTHORS_STRING_2))));
 	}
 
 	/* ---------- postDeleteBook tests ---------- */
@@ -326,7 +331,8 @@ public class MyBookWebControllerTest {
 	@WithMockAdmin
 	public void testWebController_postSaveBook_whenAdminUserAndIsbnIsValidButUnused_shouldAddErrorInfoToModelAndReturnBookNotFoundView() throws Exception {
 		BookData editFormData = new BookData(UNUSED_ISBN13_WITHOUT_FORMATTING, UNUSED_TITLE, UNUSED_AUTHORS_STRING);
-		when(bookService.replaceBook(editFormData.toBook()))
+		Book editedBook = new Book(UNUSED_ISBN13, UNUSED_TITLE, UNUSED_AUTHORS_LIST);
+		when(bookService.replaceBook(editedBook))
 			.thenThrow(new BookNotFoundException(UNUSED_ISBN13));
 		
 		mvc.perform(post(URI_BOOK_SAVE)
@@ -345,6 +351,8 @@ public class MyBookWebControllerTest {
 	@WithMockAdmin
 	public void testWebController_postSaveBook_whenAdminUserAndBookFormDataDoNotContainErrors_shouldReplaceBookUsingServiceAndReturnBookListView() throws Exception {
 		BookData editFormData = new BookData(VALID_ISBN13_WITHOUT_FORMATTING, NEW_TITLE, AUTHORS_STRING);
+		Book editedBook = new Book(VALID_ISBN13, NEW_TITLE, AUTHORS_LIST);
+		
 		mvc.perform(post(URI_BOOK_SAVE)
 			.with(csrf())
 			.param("isbn", editFormData.getIsbn())
@@ -353,7 +361,7 @@ public class MyBookWebControllerTest {
 				.andExpect(status().is3xxRedirection())
 				.andExpect(redirectedUrl(URI_BOOK_LIST));
 		
-		verify(bookService).replaceBook(editFormData.toBook());
+		verify(bookService).replaceBook(editedBook);
 		verifyNoMoreInteractions(bookService);
 	}
 
@@ -509,7 +517,8 @@ public class MyBookWebControllerTest {
 	@WithMockAdmin
 	public void testWebController_postAddBook_whenAdminUserAndIsbnIsValidButAlreadyUsed_shouldAddErrorInfoToModelAndReturnBookAlreadyExistView() throws Exception {
 		BookData addFormData = new BookData(ALREADY_USED_ISBN13_WITHOUT_FORMATTING, UNUSED_TITLE, UNUSED_AUTHORS_STRING);
-		when(bookService.addNewBook(addFormData.toBook()))
+		Book newBook = new Book(ALREADY_USED_ISBN13, UNUSED_TITLE, UNUSED_AUTHORS_LIST);
+		when(bookService.addNewBook(newBook))
 			.thenThrow(new BookAlreadyExistException(ALREADY_USED_ISBN13));
 		
 		mvc.perform(post(URI_BOOK_ADD)
@@ -528,6 +537,8 @@ public class MyBookWebControllerTest {
 	@WithMockAdmin
 	public void testWebController_postAddBook_whenAdminUserAndBookFormDataDoNotContainErrors_shouldAddBookUsingServiceAndReturnBookListView() throws Exception {
 		BookData addFormData = new BookData(VALID_ISBN13_WITHOUT_FORMATTING, TITLE, AUTHORS_STRING);
+		Book newBook = new Book(VALID_ISBN13, TITLE, AUTHORS_LIST);
+		
 		mvc.perform(post(URI_BOOK_ADD)
 			.with(csrf())
 			.param("isbn", addFormData.getIsbn())
@@ -536,7 +547,7 @@ public class MyBookWebControllerTest {
 				.andExpect(status().is3xxRedirection())
 				.andExpect(redirectedUrl(URI_BOOK_LIST));
 		
-		verify(bookService).addNewBook(addFormData.toBook());
+		verify(bookService).addNewBook(newBook);
 		verifyNoMoreInteractions(bookService);
 	}
 
@@ -604,15 +615,15 @@ public class MyBookWebControllerTest {
 
 	@Test
 	public void testWebController_getBookByIsbn_whenIsbnIsValid_shouldAddRetrievedBooksToModelAndReturnSearchByIsbnView() throws Exception {
-		Book book = new Book(VALID_ISBN13, TITLE, AUTHORS_LIST);
 		when(bookService.getBookByIsbn(VALID_ISBN13))
-			.thenReturn(book);
+			.thenReturn(new Book(VALID_ISBN13, TITLE, AUTHORS_LIST));
 		
 		mvc.perform(get(URI_BOOK_GET_BY_ISBN)
 			.param("isbn", VALID_ISBN13_WITHOUT_FORMATTING))
 				.andExpect(status().isOk())
 				.andExpect(view().name(VIEW_BOOK_SEARCH_BY_ISBN))
-				.andExpect(model().attribute(MODEL_BOOKS, book));
+				.andExpect(model().attribute(MODEL_BOOKS, 
+					new BookData(VALID_ISBN13_WITHOUT_FORMATTING, TITLE, AUTHORS_STRING)));
 	}
 
 	/* ---------- getBookSearchByTitleView tests ---------- */
@@ -679,15 +690,18 @@ public class MyBookWebControllerTest {
 
 	@Test
 	public void testWebController_getBookByTitle_whenTitleIsValidAndFound_shouldAddRetrievedBooksToModelAndReturnSearchByTitleView() throws Exception {
-		List<Book> foundedBooks = asList(new Book(VALID_ISBN13, TITLE, AUTHORS_LIST), new Book(NEW_VALID_ISBN13, NEW_TITLE, AUTHORS_LIST));
 		when(bookService.getBooksByTitle(TITLE))
-			.thenReturn(foundedBooks);
+			.thenReturn(asList(
+				new Book(VALID_ISBN13, TITLE, AUTHORS_LIST),
+				new Book(NEW_VALID_ISBN13, NEW_TITLE, AUTHORS_LIST)));
 		
 		mvc.perform(get(URI_BOOK_GET_BY_TITLE)
 			.param("title", TITLE))
 				.andExpect(status().isOk())
 				.andExpect(view().name(VIEW_BOOK_SEARCH_BY_TITLE))
-				.andExpect(model().attribute(MODEL_BOOKS, foundedBooks));
+				.andExpect(model().attribute(MODEL_BOOKS, asList(
+					new BookData(VALID_ISBN13_WITHOUT_FORMATTING, TITLE, AUTHORS_STRING),
+					new BookData(NEW_VALID_ISBN13_WITHOUT_FORMATTING, NEW_TITLE, AUTHORS_STRING))));
 	}
 
 }
