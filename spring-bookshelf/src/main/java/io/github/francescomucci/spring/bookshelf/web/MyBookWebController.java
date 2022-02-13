@@ -59,13 +59,13 @@ public class MyBookWebController implements BookWebController {
 
 	@Override
 	public String postSaveBook(BookData editFormData, BindingResult result) {
-		if (result.hasErrors()) {
-			if (result.hasFieldErrors("isbn"))
-				throw new InvalidIsbnException(editFormData.getIsbn());
-			return VIEW_BOOK_EDIT;
+		if (!result.hasErrors()) {
+			service.replaceBook(map.toBook(editFormData));
+			return REDIRECT + URI_BOOK_LIST;
 		}
-		service.replaceBook(map.toBook(editFormData));
-		return REDIRECT + URI_BOOK_LIST;
+		if (result.hasFieldErrors("isbn"))
+			throw new InvalidIsbnException(editFormData.getIsbn());
+		return VIEW_BOOK_EDIT;
 	}
 
 	@Override
@@ -88,8 +88,10 @@ public class MyBookWebController implements BookWebController {
 
 	@Override
 	public String getBookByIsbn(BookData searchByIsbnFormData, BindingResult result, Model model) {
-		if (!result.hasErrors())
-			model.addAttribute(MODEL_BOOKS, map.toBookData(service.getBookByIsbn(map.toLong(searchByIsbnFormData))));
+		if (!result.hasErrors()) {
+			Book foundedBook = service.getBookByIsbn(map.toLong(searchByIsbnFormData));
+			model.addAttribute(MODEL_BOOKS, map.toBookData(foundedBook));
+		}
 		return VIEW_BOOK_SEARCH_BY_ISBN;
 	}
 
@@ -100,8 +102,10 @@ public class MyBookWebController implements BookWebController {
 
 	@Override
 	public String getBookByTitle(BookData searchByTitleFormData, BindingResult result, Model model) {
-		if (!result.hasErrors())
-			model.addAttribute(MODEL_BOOKS, toBookDataList(service.getBooksByTitle(searchByTitleFormData.getTitle())));
+		if (!result.hasErrors()) {
+			List<Book> foundedBookList = service.getBooksByTitle(searchByTitleFormData.getTitle());
+			model.addAttribute(MODEL_BOOKS, toBookDataList(foundedBookList));
+		}
 		return VIEW_BOOK_SEARCH_BY_TITLE;
 	}
 
