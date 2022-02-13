@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import io.github.francescomucci.spring.bookshelf.model.Book;
 import io.github.francescomucci.spring.bookshelf.model.dto.BookData;
+import io.github.francescomucci.spring.bookshelf.model.dto.IsbnData;
 
 @Component("BookDataMapper")
 public class MyBookDataMapper implements BookDataMapper {
@@ -32,6 +33,14 @@ public class MyBookDataMapper implements BookDataMapper {
 			isbnToString(book.getIsbn()),
 			titleToString(book.getTitle()),
 			authorsToString(book.getAuthors()));
+	}
+
+	@Override
+	public Long toLong(IsbnData isbnData) {
+		if (isbnData == null) 
+			return null;
+		
+		return isbnToLong(isbnData.getIsbn());
 	}
 
 	private Long isbnToLong(String isbn) {

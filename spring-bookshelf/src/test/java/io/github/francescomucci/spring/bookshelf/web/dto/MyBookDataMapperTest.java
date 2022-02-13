@@ -1,4 +1,5 @@
 package io.github.francescomucci.spring.bookshelf.web.dto;
+
 import static io.github.francescomucci.spring.bookshelf.BookTestingConstants.*;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -8,6 +9,7 @@ import org.junit.Test;
 
 import io.github.francescomucci.spring.bookshelf.model.Book;
 import io.github.francescomucci.spring.bookshelf.model.dto.BookData;
+import io.github.francescomucci.spring.bookshelf.model.dto.IsbnData;
 
 public class MyBookDataMapperTest {
 
@@ -149,6 +151,47 @@ public class MyBookDataMapperTest {
 		BookData mapResult = map.toBookData(bookToMap);
 		assertThat(mapResult)
 			.isEqualTo(new BookData(VALID_ISBN13_2_WITHOUT_FORMATTING, TITLE_2, AUTHORS_STRING_2));
+	}
+
+	/* ---------- toLong tests ---------- */
+
+	@Test
+	public void testMyBookDataMapper_toLong_whenIsbnDataIsNull_shouldReturnNull() {
+		Long mapResult = map.toLong(null);
+		assertThat(mapResult).isNull();
+	}
+
+	@Test
+	public void testMyBookDataMapper_toLong_whenIsbnDataContainNullIsbn_shouldReturnNull() {
+		Long mapResult = map.toLong(new IsbnData(null));
+		assertThat(mapResult).isNull();
+	}
+
+	@Test
+	public void testMyBookDataMapper_toLong_whenIsbnDataContainEmptyIsbn_shouldReturnNull() {
+		Long mapResult = map.toLong(new IsbnData(""));
+		assertThat(mapResult).isNull();
+	}
+
+	@Test
+	public void testMyBookDataMapper_toLong_whenIsbnHasHyphens_shouldReturnCorrespondingIsbn() {
+		IsbnData isbnDataToMap = new IsbnData(VALID_ISBN13_WITH_HYPHENS);
+		Long mapResult = map.toLong(isbnDataToMap);
+		assertThat(mapResult).isEqualTo(VALID_ISBN13);
+	}
+
+	@Test
+	public void testMyBookDataMapper_toLong_whenIsbnHasSpaces_shouldReturnCorrespondingIsbn() {
+		IsbnData isbnDataToMap = new IsbnData(VALID_ISBN13_WITH_SPACES);
+		Long mapResult = map.toLong(isbnDataToMap);
+		assertThat(mapResult).isEqualTo(VALID_ISBN13);
+	}
+
+	@Test
+	public void testMyBookDataMapper_toLong_whenBookData_shouldReturnCorrespondingIsbn() {
+		BookData bookDataToMap = new BookData(VALID_ISBN13_WITHOUT_FORMATTING, TITLE, AUTHORS_STRING);
+		Long mapResult = map.toLong(bookDataToMap);
+		assertThat(mapResult).isEqualTo(VALID_ISBN13);
 	}
 
 }

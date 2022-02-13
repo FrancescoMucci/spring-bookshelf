@@ -43,7 +43,7 @@ public class MyBookWebController implements BookWebController {
 	public String postDeleteBook(IsbnData isbn, BindingResult result) {
 		if (result.hasErrors())
 			throw new InvalidIsbnException(isbn.getIsbn());
-		service.delateBookByIsbn(isbn.toLong());
+		service.delateBookByIsbn(map.toLong(isbn));
 		return REDIRECT + URI_BOOK_LIST;
 	}
 
@@ -51,7 +51,7 @@ public class MyBookWebController implements BookWebController {
 	public String getBookEditView(BookData editFormData, BindingResult result) {
 		if (result.hasErrors())
 			throw new InvalidIsbnException(editFormData.getIsbn());
-		BookData bookToEditData = map.toBookData(service.getBookByIsbn(editFormData.toLong()));
+		BookData bookToEditData = map.toBookData(service.getBookByIsbn(map.toLong(editFormData)));
 		editFormData.setTitle(bookToEditData.getTitle());
 		editFormData.setAuthors(bookToEditData.getAuthors());
 		return VIEW_BOOK_EDIT;
@@ -89,7 +89,7 @@ public class MyBookWebController implements BookWebController {
 	@Override
 	public String getBookByIsbn(BookData searchByIsbnFormData, BindingResult result, Model model) {
 		if (!result.hasErrors())
-			model.addAttribute(MODEL_BOOKS, map.toBookData(service.getBookByIsbn(searchByIsbnFormData.toLong())));
+			model.addAttribute(MODEL_BOOKS, map.toBookData(service.getBookByIsbn(map.toLong(searchByIsbnFormData))));
 		return VIEW_BOOK_SEARCH_BY_ISBN;
 	}
 
