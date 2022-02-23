@@ -7,14 +7,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import io.github.francescomucci.spring.bookshelf.exception.BookAlreadyExistException;
 import io.github.francescomucci.spring.bookshelf.exception.BookNotFoundException;
 import io.github.francescomucci.spring.bookshelf.exception.InvalidIsbnException;
 
 @ControllerAdvice
-public class MyBookWebControllerExceptionHandler extends ResponseEntityExceptionHandler {
+public class MyBookWebControllerExceptionHandler {
 
 	@ExceptionHandler(InvalidIsbnException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
