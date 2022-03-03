@@ -35,37 +35,41 @@
 									<span><i class="fas fa-trash-alt" aria-hidden="true"></i></span>
 									<span>Delete</span>
 								</button>
+								<div class="modal fade" th:id="|deleteBookDialog-${book.isbn}|">
+									<div class="modal-dialog modal-dialog-centered">
+										<div class="modal-content">
+											<div class="modal-header bg-dark text-light">
+												<h5 class="modal-title">Do you really want to delete this book?</h5>
+												<button type="button" class="close" data-dismiss="modal"
+													th:id="|deleteBookDialog-${book.isbn}-closeButton|"
+													aria-label="Show delete book dialog button">
+													<i class="text-light fas fa-times" aria-hidden="true"></i>
+												</button>
+											</div>
+											<div class="modal-body"
+												th:text="|${book.isbn} - ${book.title} - ${book.authors}|">Placeholder for book data</div>
+											<div class="modal-footer">
+												<button type="button" class="btn btn-outline-dark" data-dismiss="modal"
+													th:id="|deleteBookDialog-${book.isbn}-noButton|">
+													<span><i class="fas fa-times-circle" aria-hidden="true"></i></span>
+													<span>No</span>
+												</button>
+												<form th:name="|deleteBookDialogForm-${book.isbn}|"
+													th:action="@{'/book/delete/{isbn}'(isbn=${book.isbn})}" method="post">
+													<button type="submit" class="btn btn-outline-dark"
+														th:id="|deleteBookDialog-${book.isbn}-yesButton|">
+														<span><i class="fas fa-trash-alt" aria-hidden="true"></i></span>
+														<span>Yes, delete</span>
+													</button>
+												</form>
+											</div>
+										</div>
+									</div>
+								</div>
 							</td>
 						</tr>
 					</tbody>
 				</table>
-			</div>
-			<div sec:authorize="hasRole('ADMIN')" th:each="book : ${books}"
-				 class="modal fade" th:id="|deleteBookDialog-${book.isbn}|">
-				<div class="modal-dialog modal-dialog-centered">
-					<div class="modal-content">
-						<div class="modal-header bg-dark text-light">
-							<h5 class="modal-title">Do you really want to delete this book?</h5>
-							<button type="button" class="close" data-dismiss="modal" th:id="|deleteBookDialog-${book.isbn}-closeButton|"
-								aria-label="Show delete book dialog button">
-								<i class="text-light fas fa-times" aria-hidden="true"></i>
-							</button>
-						</div>
-						<div class="modal-body" th:text="|${book.isbn} - ${book.title} - ${book.authors}|">Placeholder for book data</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-outline-dark" data-dismiss="modal" th:id="|deleteBookDialog-${book.isbn}-noButton|">
-								<span><i class="fas fa-times-circle" aria-hidden="true"></i></span>
-								<span>No</span>
-							</button>
-							<form th:name="|deleteBookDialogForm-${book.isbn}|" th:action="@{'/book/delete/{isbn}'(isbn=${book.isbn})}" method="post">
-								<button type="submit" class="btn btn-outline-dark" th:id="|deleteBookDialog-${book.isbn}-yesButton|">
-									<span><i class="fas fa-trash-alt" aria-hidden="true"></i></span>
-									<span>Yes, delete</span>
-								</button>
-							</form>
-						</div>
-					</div>
-				</div>
 			</div>
 		</div>
 	</section>
