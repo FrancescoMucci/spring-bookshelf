@@ -316,7 +316,7 @@ public class BookHomeViewTest {
 		loginForm.getInputByName("username").setValueAttribute(VALID_USER_NAME);
 		loginForm.getInputByName("password").setValueAttribute(VALID_PASSWORD);
 		loginForm.getInputByName("remember-me").click();
-		bookHomeView = loginForm.getButtonByName("submit-button").click();
+		loginForm.getButtonByName("submit-button").click();
 		
 		Date expires = webClient.getCookieManager()
 			.getCookie("spring-bookshelf-remember-me")
