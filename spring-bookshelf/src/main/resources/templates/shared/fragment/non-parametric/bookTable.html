@@ -31,7 +31,7 @@
 							</td>
 							<td sec:authorize="hasRole('ADMIN')" class="align-middle" colspan="2">
 								<button type="button" th:id="|getDeleteBookDialogButton-${book.isbn}|" class="btn btn-link text-muted"
-									data-toggle="modal" th:data-row=${book} th:data-target="|#deleteBookDialog-${book.isbn}|">
+									data-toggle="modal" th:data-target="|#deleteBookDialog-${book.isbn}|">
 									<span><i class="fas fa-trash-alt" aria-hidden="true"></i></span>
 									<span>Delete</span>
 								</button>
