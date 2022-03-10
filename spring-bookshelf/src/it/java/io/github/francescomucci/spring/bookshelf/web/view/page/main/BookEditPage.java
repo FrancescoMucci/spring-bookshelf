@@ -14,9 +14,9 @@ public class BookEditPage extends APageWithBookCUForm {
 	}
 
 	public MyPage fillEditFormAndPressSubmitButton(String title, String authors) {
-		clearAndThenfillFormInput(INPUT_TITLE, title);
-		clearAndThenfillFormInput(INPUT_AUTHORS, authors);
-		return pressSubmitButton();
+		form.clearAndThenfillFormInput(INPUT_TITLE, title);
+		form.clearAndThenfillFormInput(INPUT_AUTHORS, authors);
+		return form.pressSubmitButton();
 	}
 
 }

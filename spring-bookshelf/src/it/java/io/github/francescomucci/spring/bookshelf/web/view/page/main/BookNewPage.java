@@ -14,18 +14,18 @@ public class BookNewPage extends APageWithBookCUForm {
 	}
 
 	public MyPage fillAddFormAndPressSubmitButton(String isbn, String title, String authors) {
-		clearAndThenfillFormInput(INPUT_ISBN, isbn);
-		clearAndThenfillFormInput(INPUT_TITLE, title);
-		clearAndThenfillFormInput(INPUT_AUTHORS, authors);
-		return pressSubmitButton();
+		form.clearAndThenfillFormInput(INPUT_ISBN, isbn);
+		form.clearAndThenfillFormInput(INPUT_TITLE, title);
+		form.clearAndThenfillFormInput(INPUT_AUTHORS, authors);
+		return form.pressSubmitButton();
 	}
 
 	public String getIsbnInputValue() {
-		return getInputValue(INPUT_ISBN);
+		return form.getInputValue(INPUT_ISBN);
 	}
 
 	public String getIsbnValidationErrorMessage() {
-		return getMessage(INPUT_ISBN + VALIDATION_ERROR_SUFFIX);
+		return form.getMessage(INPUT_ISBN + VALIDATION_ERROR_SUFFIX);
 	}
 
 }

@@ -18,9 +18,9 @@ public class BookHomePage extends APageWithForm {
 	}
 
 	public BookHomePage fillLoginFormAndPressSubmitButton(String username, String password) {
-		clearAndThenfillFormInput("username", username);
-		clearAndThenfillFormInput("password", password);
-		return (BookHomePage) pressSubmitButton();
+		form.clearAndThenfillFormInput("username", username);
+		form.clearAndThenfillFormInput("password", password);
+		return (BookHomePage) form.pressSubmitButton();
 	}
 
 	public BookHomePage loginWithValidCredentials() {
@@ -28,11 +28,11 @@ public class BookHomePage extends APageWithForm {
 	}
 
 	public String getAuthenticationErrorMessage() {
-		return getMessage("authentication-error");
+		return form.getMessage("authentication-error");
 	}
 
 	public String getLogoutMessage() {
-		return getMessage("logout-message");
+		return form.getMessage("logout-message");
 	}
 
 	public void checkRemeberMe() {
