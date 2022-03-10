@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.PageFactory;
 
 import io.github.francescomucci.spring.bookshelf.web.view.page.error.MyErrorPage;
 import io.github.francescomucci.spring.bookshelf.web.view.page.main.BookEditPage;
@@ -15,7 +14,7 @@ import io.github.francescomucci.spring.bookshelf.web.view.page.main.BookNewPage;
 import io.github.francescomucci.spring.bookshelf.web.view.page.main.BookSearchByIsbnPage;
 import io.github.francescomucci.spring.bookshelf.web.view.page.main.BookSearchByTitlePage;
 
-public class MyPage {
+public class MyPage extends APageObject {
 
 	protected static final String BOOK_HOME_VIEW = "Book home view";
 	protected static final String BOOK_LIST_VIEW = "Book list view";
@@ -23,8 +22,6 @@ public class MyPage {
 	protected static final String BOOK_SEARCH_BY_ISBN_VIEW = "Book search by ISBN view";
 	protected static final String BOOK_SEARCH_BY_TITLE_VIEW = "Book search by title view";
 	protected static final String BOOK_EDIT_VIEW = "Book edit view";
-
-	protected WebDriver webDriver;
 
 	@FindBy(tagName = "header")
 	private WebElement header;
@@ -48,16 +45,11 @@ public class MyPage {
 	private WebElement logoutButton;
 
 	public MyPage(WebDriver webDriver) {
-		this.webDriver = webDriver;
-		PageFactory.initElements(webDriver, this);
+		super(webDriver);
 	}
 
 	public MyPage(WebDriver webDriver, String expectedTitle) {
-		this(webDriver);
-		verifyTitle(expectedTitle);
-	}
-
-	protected void verifyTitle(String expectedTitle) {
+		super(webDriver);
 		assertThat(this.getPageTitle())
 			.isEqualTo(expectedTitle);
 	}

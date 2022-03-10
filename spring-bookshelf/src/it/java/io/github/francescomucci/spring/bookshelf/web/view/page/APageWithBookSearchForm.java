@@ -1,38 +1,36 @@
 package io.github.francescomucci.spring.bookshelf.web.view.page;
 
-import static io.github.francescomucci.spring.bookshelf.web.view.page.BookFormConstants.*;
-
 import org.openqa.selenium.WebDriver;
 
-public abstract class APageWithBookSearchForm extends APageWithBookTable implements IPageWithForm {
+public abstract class APageWithBookSearchForm extends APageWithBookTable {
 
-	private String inputName;
+	private SearchFormComponent searchForm;
 
 	public APageWithBookSearchForm(WebDriver webDriver, String inputName) {
 		super(webDriver);
-		setInputName(inputName);
+		initSearchForm(inputName);
 	}
 
 	public APageWithBookSearchForm(WebDriver webDriver, String expectedTitle, String inputName) {
 		super(webDriver, expectedTitle);
-		setInputName(inputName);
+		initSearchForm(inputName);
 	}
 
 	public MyPage fillSearchFormAndPressSubmitButton(String inputValue) {
-		clearAndThenfillFormInput(this, inputName, inputValue);
-		return pressSubmitButton(this);
+		searchForm.fillSearchForm(inputValue);
+		return searchForm.pressSubmitButton();
 	}
 
 	public String getInputValue() {
-		return getInputValue(this, inputName);
+		return searchForm.getInputValue();
 	}
 
 	public String getValidationErrorMessage() {
-		return getMessage(this, inputName + VALIDATION_ERROR_SUFFIX);
+		return searchForm.getValidationErrorMessage();
 	}
 
-	private void setInputName(String inputName) {
-		this.inputName = inputName;
+	public void initSearchForm(String inputName) {
+		this.searchForm = new SearchFormComponent(webDriver, inputName);
 	}
 
 }
