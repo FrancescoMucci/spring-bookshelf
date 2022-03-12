@@ -145,7 +145,7 @@ public class BookAlreadyExistViewIT {
 		webDriver.get(newPageUrl);
 		BookNewPage bookNewPage = new BookNewPage(webDriver);
 		MyPage errorPage = bookNewPage.fillAddFormAndPressSubmitButton(VALID_ISBN13_WITH_SPACES, TITLE, AUTHORS_STRING);
-		BookHomePage bookHomePage = (BookHomePage) errorPage.clickLogoutButton();
+		BookHomePage bookHomePage = errorPage.clickLogoutButton();
 		
 		assertThat(bookHomePage.getLogoutMessage())
 			.isEqualTo("Logged out successfully");

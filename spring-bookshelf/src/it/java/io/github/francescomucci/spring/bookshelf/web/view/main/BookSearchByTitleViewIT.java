@@ -196,7 +196,7 @@ public class BookSearchByTitleViewIT {
 		
 		webDriver.get(bookSearchByTitleUrl);
 		BookSearchByTitlePage bookSearchByTitlePage = new BookSearchByTitlePage(webDriver);
-		BookHomePage bookHomePage = (BookHomePage) bookSearchByTitlePage.clickLogoutButton();
+		BookHomePage bookHomePage = bookSearchByTitlePage.clickLogoutButton();
 		
 		assertThat(bookHomePage.getLogoutMessage())
 			.isEqualTo("Logged out successfully");

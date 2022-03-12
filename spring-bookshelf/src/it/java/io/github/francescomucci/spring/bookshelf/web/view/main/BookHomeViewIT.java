@@ -139,7 +139,7 @@ public class BookHomeViewIT {
 	public void testBookEditView_logoutLink_canLogoutSuccesfully() {
 		loginWithValidCredentialsAndRememberMe(webDriver, portNumber);
 		
-		bookHomePage = (BookHomePage) bookHomePage.clickLogoutButton();
+		bookHomePage = bookHomePage.clickLogoutButton();
 		
 		assertThat(bookHomePage.getLogoutMessage())
 			.isEqualTo("Logged out successfully");

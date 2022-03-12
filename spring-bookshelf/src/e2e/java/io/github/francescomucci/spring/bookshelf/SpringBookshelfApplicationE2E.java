@@ -158,7 +158,7 @@ public class SpringBookshelfApplicationE2E {
 
 	@Test
 	public void testSpringBookshelfApplication_showBookList_whenNoBookAdded_shouldShowEmptyMessage() {
-		BookListPage bookListPage = (BookListPage) bookHomePage.clickNavbarShowBookListLink();
+		BookListPage bookListPage = bookHomePage.clickNavbarShowBookListLink();
 		
 		assertThat(bookListPage.getHeaderContent())
 			.contains("Empty database");
@@ -171,7 +171,7 @@ public class SpringBookshelfApplicationE2E {
 		setupAddingBookToDatabase(
 			new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2));
 		
-		BookListPage bookListPage = (BookListPage) bookHomePage.clickNavbarShowBookListLink();
+		BookListPage bookListPage = bookHomePage.clickNavbarShowBookListLink();
 		
 		assertThat(bookListPage.getBookTable())
 			.contains(VALID_ISBN13_WITHOUT_FORMATTING, TITLE, AUTHORS_STRING)
@@ -183,7 +183,7 @@ public class SpringBookshelfApplicationE2E {
 	@Test
 	public void testSpringBookshelfApplication_addNewBook_withInvalidData_shouldShowValidationErrorMessages() {
 		bookHomePage.loginWithValidCredentials();
-		BookNewPage bookNewPage = (BookNewPage) bookHomePage.clickNavbarAddNewBookLink();
+		BookNewPage bookNewPage = bookHomePage.clickNavbarAddNewBookLink();
 		bookNewPage.fillAddFormAndPressSubmitButton(INVALID_ISBN13_WITH_SPACES, INVALID_TITLE, INVALID_AUTHORS_STRING);
 		
 		assertThat(bookNewPage.getIsbnValidationErrorMessage())
@@ -200,7 +200,7 @@ public class SpringBookshelfApplicationE2E {
 			new Book(VALID_ISBN13, TITLE, AUTHORS_LIST));
 		
 		bookHomePage.loginWithValidCredentials();
-		BookNewPage bookNewPage = (BookNewPage) bookHomePage.clickNavbarAddNewBookLink();
+		BookNewPage bookNewPage = bookHomePage.clickNavbarAddNewBookLink();
 		MyErrorPage errorPage = (MyErrorPage) 
 			bookNewPage.fillAddFormAndPressSubmitButton(VALID_ISBN13_WITH_SPACES, TITLE, AUTHORS_STRING);
 		
@@ -213,7 +213,7 @@ public class SpringBookshelfApplicationE2E {
 	@Test
 	public void testSpringBookshelfApplication_addNewBook_withValidDataAndUnusedIsbn_shouldOpenBookListViewToShowNewlyAddedBook() {
 		bookHomePage.loginWithValidCredentials();
-		BookNewPage bookNewPage = (BookNewPage) bookHomePage.clickNavbarAddNewBookLink();
+		BookNewPage bookNewPage = bookHomePage.clickNavbarAddNewBookLink();
 		BookListPage bookListPage = (BookListPage) 
 			bookNewPage.fillAddFormAndPressSubmitButton(UNUSED_ISBN13_WITHOUT_FORMATTING, UNUSED_TITLE, UNUSED_AUTHORS_STRING);
 		
@@ -229,7 +229,7 @@ public class SpringBookshelfApplicationE2E {
 			new Book(VALID_ISBN13, TITLE, AUTHORS_LIST));
 		
 		bookHomePage.loginWithValidCredentials();
-		BookListPage bookListPage = (BookListPage) bookHomePage.clickNavbarShowBookListLink();
+		BookListPage bookListPage = bookHomePage.clickNavbarShowBookListLink();
 		BookEditPage bookEditPage = (BookEditPage) bookListPage.clickEditLink(VALID_ISBN13);
 		bookEditPage.fillEditFormAndPressSubmitButton(INVALID_TITLE, INVALID_AUTHORS_STRING);
 		
@@ -245,7 +245,7 @@ public class SpringBookshelfApplicationE2E {
 			new Book(VALID_ISBN13, TITLE, AUTHORS_LIST));
 		
 		bookHomePage.loginWithValidCredentials();
-		BookListPage bookListPage = (BookListPage) bookHomePage.clickNavbarShowBookListLink();
+		BookListPage bookListPage = bookHomePage.clickNavbarShowBookListLink();
 		BookEditPage bookEditPage = (BookEditPage) bookListPage.clickEditLink(VALID_ISBN13);
 		bookListPage = (BookListPage) 
 			bookEditPage.fillEditFormAndPressSubmitButton(NEW_TITLE, AUTHORS_STRING);
@@ -258,7 +258,7 @@ public class SpringBookshelfApplicationE2E {
 
 	@Test
 	public void testSpringBookshelfApplication_searchBookByIsbn_withInvalidIsbn_shouldShowValidationErrorMessage() {
-		BookSearchByIsbnPage searchByIsbnPage = (BookSearchByIsbnPage) bookHomePage.clickNavbarSearchBookByIsbnLink();
+		BookSearchByIsbnPage searchByIsbnPage = bookHomePage.clickNavbarSearchBookByIsbnLink();
 		searchByIsbnPage.fillSearchFormAndPressSubmitButton(INVALID_ISBN13_WITH_HYPHENS);
 		
 		assertThat(searchByIsbnPage.getValidationErrorMessage())
@@ -272,7 +272,7 @@ public class SpringBookshelfApplicationE2E {
 		setupAddingBookToDatabase(
 			new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2));
 		
-		BookSearchByIsbnPage searchByIsbnPage = (BookSearchByIsbnPage) bookHomePage.clickNavbarSearchBookByIsbnLink();
+		BookSearchByIsbnPage searchByIsbnPage = bookHomePage.clickNavbarSearchBookByIsbnLink();
 		MyErrorPage errorPage = (MyErrorPage) 
 			searchByIsbnPage.fillSearchFormAndPressSubmitButton(UNUSED_ISBN13_WITH_HYPHENS);
 		
@@ -289,7 +289,7 @@ public class SpringBookshelfApplicationE2E {
 		setupAddingBookToDatabase(
 			new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2));
 		
-		BookSearchByIsbnPage searchByIsbnPage = (BookSearchByIsbnPage) bookHomePage.clickNavbarSearchBookByIsbnLink();
+		BookSearchByIsbnPage searchByIsbnPage = bookHomePage.clickNavbarSearchBookByIsbnLink();
 		searchByIsbnPage.fillSearchFormAndPressSubmitButton(VALID_ISBN13_WITH_HYPHENS);
 		
 		assertThat(searchByIsbnPage.getBookTable())
@@ -306,7 +306,7 @@ public class SpringBookshelfApplicationE2E {
 		setupAddingBookToDatabase(
 			new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2));
 		
-		BookSearchByTitlePage searchByTitlePage = (BookSearchByTitlePage) bookHomePage.clickNavbarSearchBooksByTitleLink();
+		BookSearchByTitlePage searchByTitlePage = bookHomePage.clickNavbarSearchBooksByTitleLink();
 		searchByTitlePage.fillSearchFormAndPressSubmitButton(INVALID_TITLE);
 		
 		assertThat(searchByTitlePage.getValidationErrorMessage())
@@ -320,7 +320,7 @@ public class SpringBookshelfApplicationE2E {
 		setupAddingBookToDatabase(
 			new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2));
 		
-		BookSearchByTitlePage searchByTitlePage = (BookSearchByTitlePage) bookHomePage.clickNavbarSearchBooksByTitleLink();
+		BookSearchByTitlePage searchByTitlePage = bookHomePage.clickNavbarSearchBooksByTitleLink();
 		MyErrorPage errorPage = (MyErrorPage) 
 			searchByTitlePage.fillSearchFormAndPressSubmitButton(UNUSED_TITLE);
 		
@@ -339,7 +339,7 @@ public class SpringBookshelfApplicationE2E {
 		setupAddingBookToDatabase(
 			new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2));
 		
-		BookSearchByTitlePage searchByTitlePage = (BookSearchByTitlePage) bookHomePage.clickNavbarSearchBooksByTitleLink();
+		BookSearchByTitlePage searchByTitlePage = bookHomePage.clickNavbarSearchBooksByTitleLink();
 		searchByTitlePage.fillSearchFormAndPressSubmitButton(TITLE);
 		
 		assertThat(searchByTitlePage.getBookTable())
@@ -358,7 +358,7 @@ public class SpringBookshelfApplicationE2E {
 			new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2));
 		
 		bookHomePage.loginWithValidCredentials();
-		BookListPage bookListPage = (BookListPage) bookHomePage.clickNavbarShowBookListLink();
+		BookListPage bookListPage = bookHomePage.clickNavbarShowBookListLink();
 		bookListPage.clickShowDeleteDialogAndThenYesDeleteButton(VALID_ISBN13);
 		
 		assertThat(bookListPage.getBookTable())
@@ -374,7 +374,7 @@ public class SpringBookshelfApplicationE2E {
 			new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2));
 		
 		bookHomePage.loginWithValidCredentials();
-		BookSearchByIsbnPage searchByIsbnPage = (BookSearchByIsbnPage) bookHomePage.clickNavbarSearchBookByIsbnLink();
+		BookSearchByIsbnPage searchByIsbnPage = bookHomePage.clickNavbarSearchBookByIsbnLink();
 		searchByIsbnPage.fillSearchFormAndPressSubmitButton(VALID_ISBN13_WITH_HYPHENS);
 		BookListPage bookListPage = (BookListPage) searchByIsbnPage.clickShowDeleteDialogAndThenYesDeleteButton(VALID_ISBN13);
 		
@@ -393,7 +393,7 @@ public class SpringBookshelfApplicationE2E {
 			new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2));
 		
 		bookHomePage.loginWithValidCredentials();
-		BookSearchByTitlePage searchByTitlePage = (BookSearchByTitlePage) bookHomePage.clickNavbarSearchBooksByTitleLink();
+		BookSearchByTitlePage searchByTitlePage = bookHomePage.clickNavbarSearchBooksByTitleLink();
 		searchByTitlePage.fillSearchFormAndPressSubmitButton(TITLE);
 		BookListPage bookListPage = (BookListPage) searchByTitlePage.clickShowDeleteDialogAndThenYesDeleteButton(VALID_ISBN13);
 		

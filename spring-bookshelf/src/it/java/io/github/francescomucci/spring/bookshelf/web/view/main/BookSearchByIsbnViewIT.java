@@ -191,7 +191,7 @@ public class BookSearchByIsbnViewIT {
 		
 		webDriver.get(bookSearchByIsbnUrl);
 		BookSearchByIsbnPage bookSearchByIsbnPage = new BookSearchByIsbnPage(webDriver);
-		BookHomePage bookHomePage = (BookHomePage) bookSearchByIsbnPage.clickLogoutButton();
+		BookHomePage bookHomePage = bookSearchByIsbnPage.clickLogoutButton();
 		
 		assertThat(bookHomePage.getLogoutMessage())
 			.isEqualTo("Logged out successfully");

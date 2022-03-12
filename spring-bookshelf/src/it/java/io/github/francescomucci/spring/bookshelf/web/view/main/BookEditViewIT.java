@@ -178,7 +178,7 @@ public class BookEditViewIT {
 		
 		webDriver.get(bookEditUrl + toEditBook.getIsbn());
 		BookEditPage bookEditPage = new BookEditPage(webDriver);
-		BookHomePage bookHomePage = (BookHomePage) bookEditPage.clickLogoutButton();
+		BookHomePage bookHomePage = bookEditPage.clickLogoutButton();
 		
 		assertThat(bookHomePage.getLogoutMessage())
 			.isEqualTo("Logged out successfully");

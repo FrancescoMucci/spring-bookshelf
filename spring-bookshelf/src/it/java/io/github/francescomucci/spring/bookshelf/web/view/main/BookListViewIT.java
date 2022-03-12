@@ -171,7 +171,7 @@ public class BookListViewIT {
 		
 		webDriver.get(bookListUrl);
 		BookListPage bookListPage = new BookListPage(webDriver);
-		BookHomePage bookHomePage = (BookHomePage) bookListPage.clickLogoutButton();
+		BookHomePage bookHomePage = bookListPage.clickLogoutButton();
 		
 		assertThat(bookHomePage.getLogoutMessage())
 			.isEqualTo("Logged out successfully");

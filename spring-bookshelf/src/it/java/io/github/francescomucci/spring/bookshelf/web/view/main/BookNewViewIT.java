@@ -170,7 +170,7 @@ public class BookNewViewIT {
 		
 		webDriver.get(bookNewUrl);
 		BookNewPage bookNewPage = new BookNewPage(webDriver);
-		BookHomePage bookHomePage = (BookHomePage) bookNewPage.clickLogoutButton();
+		BookHomePage bookHomePage = bookNewPage.clickLogoutButton();
 		
 		assertThat(bookHomePage.getLogoutMessage())
 			.isEqualTo("Logged out successfully");
