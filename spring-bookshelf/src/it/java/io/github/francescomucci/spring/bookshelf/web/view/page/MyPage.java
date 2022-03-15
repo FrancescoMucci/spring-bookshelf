@@ -36,7 +36,7 @@ public class MyPage extends APageObject {
 	private WebElement searchBookByIsbnLink;
 
 	@FindBy(linkText = "Search book by title")
-	private WebElement searchBooksByTitle;
+	private WebElement searchBooksByTitleLink;
 
 	@FindBy(linkText = "Add new book")
 	private WebElement addNewBookLink;
@@ -50,7 +50,7 @@ public class MyPage extends APageObject {
 
 	public MyPage(WebDriver webDriver, String expectedTitle) {
 		super(webDriver);
-		assertThat(this.getPageTitle())
+		assertThat(getPageTitle())
 			.isEqualTo(expectedTitle);
 	}
 
@@ -78,7 +78,7 @@ public class MyPage extends APageObject {
 	}
 
 	public BookSearchByTitlePage clickNavbarSearchBooksByTitleLink() {
-		searchBooksByTitle.click();
+		searchBooksByTitleLink.click();
 		return new BookSearchByTitlePage(webDriver);
 	}
 
@@ -93,7 +93,7 @@ public class MyPage extends APageObject {
 	}
 
 	public MyPage nextPage() {
-		switch (this.getPageTitle()) {
+		switch (getPageTitle()) {
 			case BOOK_HOME_VIEW:
 				return new BookHomePage(webDriver);
 			case BOOK_LIST_VIEW:
