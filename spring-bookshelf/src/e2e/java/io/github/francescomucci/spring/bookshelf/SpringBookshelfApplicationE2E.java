@@ -103,7 +103,7 @@ public class SpringBookshelfApplicationE2E {
 		assertThat(bookHomePage.getHeaderContent())
 			.contains("Welcome back");
 		
-		webDriver.close();
+		webDriver.quit();
 		webDriver = new ChromeDriver(options);
 		webDriver.get(BASE_URL);
 		bookHomePage = new BookHomePage(webDriver);
@@ -119,7 +119,7 @@ public class SpringBookshelfApplicationE2E {
 		assertThat(bookHomePage.getHeaderContent())
 			.contains("Welcome back");
 		
-		webDriver.close();
+		webDriver.quit();
 		webDriver = new ChromeDriver(options);
 		webDriver.get(BASE_URL);
 		bookHomePage = new BookHomePage(webDriver);
