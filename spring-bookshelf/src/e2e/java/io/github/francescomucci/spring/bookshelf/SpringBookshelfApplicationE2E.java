@@ -4,6 +4,8 @@ import static io.github.francescomucci.spring.bookshelf.BookTestingConstants.*;
 import static io.github.francescomucci.spring.bookshelf.web.security.WebSecurityTestingConstants.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.List;
+
 import org.bson.Document;
 import org.junit.After;
 import org.junit.Before;
@@ -21,7 +23,6 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
-import io.github.francescomucci.spring.bookshelf.model.Book;
 import io.github.francescomucci.spring.bookshelf.web.view.page.main.BookHomePage;
 import io.github.francescomucci.spring.bookshelf.web.view.page.main.BookListPage;
 import io.github.francescomucci.spring.bookshelf.web.view.page.main.BookEditPage;
@@ -166,10 +167,8 @@ public class SpringBookshelfApplicationE2E {
 
 	@Test
 	public void testSpringBookshelfApplication_showBookList_whenSomeBookAdded_shouldShowBooksInATables() {
-		setupAddingBookToDatabase(
-			new Book(VALID_ISBN13, TITLE, AUTHORS_LIST));
-		setupAddingBookToDatabase(
-			new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2));
+		setupAddingBookToDatabase(VALID_ISBN13, TITLE, AUTHORS_LIST);
+		setupAddingBookToDatabase(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2);
 		
 		BookListPage bookListPage = bookHomePage.clickNavbarShowBookListLink();
 		
@@ -196,8 +195,7 @@ public class SpringBookshelfApplicationE2E {
 
 	@Test
 	public void testSpringBookshelfApplication_addNewBook_withValidDataButAlreadyUsedIsbn_shouldOpenBookAlreadyExistErrorView() {
-		setupAddingBookToDatabase(
-			new Book(VALID_ISBN13, TITLE, AUTHORS_LIST));
+		setupAddingBookToDatabase(VALID_ISBN13, TITLE, AUTHORS_LIST);
 		
 		bookHomePage.loginWithValidCredentials();
 		BookNewPage bookNewPage = bookHomePage.clickNavbarAddNewBookLink();
@@ -225,8 +223,7 @@ public class SpringBookshelfApplicationE2E {
 
 	@Test
 	public void testSpringBookshelfApplication_editBook_withInvalidFormData_shouldShowValidationErrorMessages() {
-		setupAddingBookToDatabase(
-			new Book(VALID_ISBN13, TITLE, AUTHORS_LIST));
+		setupAddingBookToDatabase(VALID_ISBN13, TITLE, AUTHORS_LIST);
 		
 		bookHomePage.loginWithValidCredentials();
 		BookListPage bookListPage = bookHomePage.clickNavbarShowBookListLink();
@@ -241,8 +238,7 @@ public class SpringBookshelfApplicationE2E {
 
 	@Test
 	public void testSpringBookshelfApplication_editBook_withValidFormData_shouldOpenBookListViewToShowUpdatedBook() {
-		setupAddingBookToDatabase(
-			new Book(VALID_ISBN13, TITLE, AUTHORS_LIST));
+		setupAddingBookToDatabase(VALID_ISBN13, TITLE, AUTHORS_LIST);
 		
 		bookHomePage.loginWithValidCredentials();
 		BookListPage bookListPage = bookHomePage.clickNavbarShowBookListLink();
@@ -267,10 +263,8 @@ public class SpringBookshelfApplicationE2E {
 
 	@Test
 	public void testSpringBookshelfApplication_searchBookByIsbn_withValidButUnusedIsbn_shouldOpenBookNotFoundErrorView() {
-		setupAddingBookToDatabase(
-			new Book(VALID_ISBN13, TITLE, AUTHORS_LIST));
-		setupAddingBookToDatabase(
-			new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2));
+		setupAddingBookToDatabase(VALID_ISBN13, TITLE, AUTHORS_LIST);
+		setupAddingBookToDatabase(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2);
 		
 		BookSearchByIsbnPage searchByIsbnPage = bookHomePage.clickNavbarSearchBookByIsbnLink();
 		MyErrorPage errorPage = (MyErrorPage) 
@@ -284,10 +278,8 @@ public class SpringBookshelfApplicationE2E {
 
 	@Test
 	public void testSpringBookshelfApplication_searchBookByIsbn_withValidAndUsedIsbn_shouldShowRetrievedBookInATable() {
-		setupAddingBookToDatabase(
-			new Book(VALID_ISBN13, TITLE, AUTHORS_LIST));
-		setupAddingBookToDatabase(
-			new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2));
+		setupAddingBookToDatabase(VALID_ISBN13, TITLE, AUTHORS_LIST);
+		setupAddingBookToDatabase(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2);
 		
 		BookSearchByIsbnPage searchByIsbnPage = bookHomePage.clickNavbarSearchBookByIsbnLink();
 		searchByIsbnPage.fillSearchFormAndPressSubmitButton(VALID_ISBN13_WITH_HYPHENS);
@@ -301,10 +293,8 @@ public class SpringBookshelfApplicationE2E {
 
 	@Test
 	public void testSpringBookshelfApplication_searchBookByTitle_withInvalidTitle_shouldShowValidationErrorMessage() {
-		setupAddingBookToDatabase(
-			new Book(VALID_ISBN13, TITLE, AUTHORS_LIST));
-		setupAddingBookToDatabase(
-			new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2));
+		setupAddingBookToDatabase(VALID_ISBN13, TITLE, AUTHORS_LIST);
+		setupAddingBookToDatabase(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2);
 		
 		BookSearchByTitlePage searchByTitlePage = bookHomePage.clickNavbarSearchBooksByTitleLink();
 		searchByTitlePage.fillSearchFormAndPressSubmitButton(INVALID_TITLE);
@@ -315,10 +305,8 @@ public class SpringBookshelfApplicationE2E {
 
 	@Test
 	public void testPocSpringLibraryApplication_searchBookByTitle_withValidButUnusedTitle_shouldOpenBookNotFoundErrorView() {
-		setupAddingBookToDatabase(
-			new Book(VALID_ISBN13, TITLE, AUTHORS_LIST));
-		setupAddingBookToDatabase(
-			new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2));
+		setupAddingBookToDatabase(VALID_ISBN13, TITLE, AUTHORS_LIST);
+		setupAddingBookToDatabase(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2);
 		
 		BookSearchByTitlePage searchByTitlePage = bookHomePage.clickNavbarSearchBooksByTitleLink();
 		MyErrorPage errorPage = (MyErrorPage) 
@@ -332,12 +320,9 @@ public class SpringBookshelfApplicationE2E {
 
 	@Test
 	public void testSpringBookshelfApplication_searchBookByTitle_withValidAndUsedTitle_shouldShowRetrievedBooksInATable() {
-		setupAddingBookToDatabase(
-			new Book(VALID_ISBN13, TITLE, AUTHORS_LIST));
-		setupAddingBookToDatabase(
-			new Book(NEW_VALID_ISBN13, NEW_TITLE, AUTHORS_LIST));
-		setupAddingBookToDatabase(
-			new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2));
+		setupAddingBookToDatabase(VALID_ISBN13, TITLE, AUTHORS_LIST);
+		setupAddingBookToDatabase(NEW_VALID_ISBN13, NEW_TITLE, AUTHORS_LIST);
+		setupAddingBookToDatabase(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2);
 		
 		BookSearchByTitlePage searchByTitlePage = bookHomePage.clickNavbarSearchBooksByTitleLink();
 		searchByTitlePage.fillSearchFormAndPressSubmitButton(TITLE);
@@ -352,10 +337,8 @@ public class SpringBookshelfApplicationE2E {
 
 	@Test
 	public void testSpringBookshelfApplication_deleteBook_whenBookListView_shouldShowUpdatedBookListView() {
-		setupAddingBookToDatabase(
-			new Book(VALID_ISBN13, TITLE, AUTHORS_LIST));
-		setupAddingBookToDatabase(
-			new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2));
+		setupAddingBookToDatabase(VALID_ISBN13, TITLE, AUTHORS_LIST);
+		setupAddingBookToDatabase(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2);
 		
 		bookHomePage.loginWithValidCredentials();
 		BookListPage bookListPage = bookHomePage.clickNavbarShowBookListLink();
@@ -368,10 +351,8 @@ public class SpringBookshelfApplicationE2E {
 
 	@Test
 	public void testSpringBookshelfApplication_deleteBook_whenBookSearchByIsbnView_shouldShowUpdatedBookListView() {
-		setupAddingBookToDatabase(
-			new Book(VALID_ISBN13, TITLE, AUTHORS_LIST));
-		setupAddingBookToDatabase(
-			new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2));
+		setupAddingBookToDatabase(VALID_ISBN13, TITLE, AUTHORS_LIST);
+		setupAddingBookToDatabase(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2);
 		
 		bookHomePage.loginWithValidCredentials();
 		BookSearchByIsbnPage searchByIsbnPage = bookHomePage.clickNavbarSearchBookByIsbnLink();
@@ -385,12 +366,9 @@ public class SpringBookshelfApplicationE2E {
 
 	@Test
 	public void testSpringBookshelfApplication_deleteBook_whenBookSearchByTitleView_shouldShowUpdatedBookListView() {
-		setupAddingBookToDatabase(
-			new Book(VALID_ISBN13, TITLE, AUTHORS_LIST));
-		setupAddingBookToDatabase(
-			new Book(NEW_VALID_ISBN13, NEW_TITLE, AUTHORS_LIST));
-		setupAddingBookToDatabase(
-			new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2));
+		setupAddingBookToDatabase(VALID_ISBN13, TITLE, AUTHORS_LIST);
+		setupAddingBookToDatabase(NEW_VALID_ISBN13, NEW_TITLE, AUTHORS_LIST);
+		setupAddingBookToDatabase(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2);
 		
 		bookHomePage.loginWithValidCredentials();
 		BookSearchByTitlePage searchByTitlePage = bookHomePage.clickNavbarSearchBooksByTitleLink();
@@ -406,12 +384,12 @@ public class SpringBookshelfApplicationE2E {
 
 	/* ---------- Helper methods ---------- */
 
-	private void setupAddingBookToDatabase(Book book) {
+	private void setupAddingBookToDatabase(long isbn, String title, List<String> authors) {
 		mongoClient.getDatabase(db_name).getCollection(DB_COLLECTION)
 			.insertOne(new Document()
-				.append("_id", book.getIsbn())
-				.append("title", book.getTitle())
-				.append("authors", book.getAuthors()));
+				.append("_id", isbn)
+				.append("title", title)
+				.append("authors", authors));
 	}
 
 }
