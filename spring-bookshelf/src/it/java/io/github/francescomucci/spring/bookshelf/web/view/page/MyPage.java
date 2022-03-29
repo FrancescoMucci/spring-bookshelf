@@ -1,7 +1,5 @@
 package io.github.francescomucci.spring.bookshelf.web.view.page;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -50,8 +48,11 @@ public class MyPage extends APageObject {
 
 	public MyPage(WebDriver webDriver, String expectedTitle) {
 		super(webDriver);
-		assertThat(getPageTitle())
-			.isEqualTo(expectedTitle);
+		String actualTitle = getPageTitle();
+		if (!actualTitle.equals(expectedTitle))
+			throw new IllegalStateException(
+				"Expected page: " + expectedTitle + 
+				", Actual page: " + actualTitle);
 	}
 
 	public String getPageTitle() {
