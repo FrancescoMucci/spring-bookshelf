@@ -4,8 +4,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-import io.github.francescomucci.spring.bookshelf.web.view.page.error.MyErrorPage;
-import io.github.francescomucci.spring.bookshelf.web.view.page.main.BookEditPage;
 import io.github.francescomucci.spring.bookshelf.web.view.page.main.BookHomePage;
 import io.github.francescomucci.spring.bookshelf.web.view.page.main.BookListPage;
 import io.github.francescomucci.spring.bookshelf.web.view.page.main.BookNewPage;
@@ -13,13 +11,6 @@ import io.github.francescomucci.spring.bookshelf.web.view.page.main.BookSearchBy
 import io.github.francescomucci.spring.bookshelf.web.view.page.main.BookSearchByTitlePage;
 
 public class MyPage extends APageObject {
-
-	protected static final String BOOK_HOME_VIEW = "Book home view";
-	protected static final String BOOK_LIST_VIEW = "Book list view";
-	protected static final String BOOK_NEW_VIEW = "Book new view";
-	protected static final String BOOK_SEARCH_BY_ISBN_VIEW = "Book search by ISBN view";
-	protected static final String BOOK_SEARCH_BY_TITLE_VIEW = "Book search by title view";
-	protected static final String BOOK_EDIT_VIEW = "Book edit view";
 
 	@FindBy(tagName = "header")
 	private WebElement header;
@@ -91,25 +82,6 @@ public class MyPage extends APageObject {
 	public BookHomePage clickLogoutButton() {
 		logoutButton.click();
 		return new BookHomePage(webDriver);
-	}
-
-	public MyPage nextPage() {
-		switch (getPageTitle()) {
-			case BOOK_HOME_VIEW:
-				return new BookHomePage(webDriver);
-			case BOOK_LIST_VIEW:
-				return new BookListPage(webDriver);
-			case BOOK_NEW_VIEW:
-				return new BookNewPage(webDriver);
-			case BOOK_SEARCH_BY_ISBN_VIEW:
-				return new BookSearchByIsbnPage(webDriver);
-			case BOOK_SEARCH_BY_TITLE_VIEW:
-				return new BookSearchByTitlePage(webDriver);
-			case BOOK_EDIT_VIEW:
-				return new BookEditPage(webDriver);
-			default:
-				return new MyErrorPage(webDriver);
-		}
 	}
 
 }

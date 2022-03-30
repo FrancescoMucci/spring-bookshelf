@@ -14,13 +14,14 @@ public class BookHomePage extends APageWithForm {
 	private WebElement rememberMe;
 
 	public BookHomePage(WebDriver webDriver) {
-		super(webDriver, BOOK_HOME_VIEW);
+		super(webDriver, "Book home view");
 	}
 
 	public BookHomePage fillLoginFormAndPressSubmitButton(String username, String password) {
 		form.clearAndThenfillFormInput("username", username);
 		form.clearAndThenfillFormInput("password", password);
-		return (BookHomePage) form.pressSubmitButton();
+		form.pressSubmitButton();
+		return this;
 	}
 
 	public BookHomePage loginWithValidCredentials() {

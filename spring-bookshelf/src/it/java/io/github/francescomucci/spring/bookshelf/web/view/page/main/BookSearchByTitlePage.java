@@ -9,7 +9,7 @@ import io.github.francescomucci.spring.bookshelf.web.view.page.APageWithBookSear
 public class BookSearchByTitlePage extends APageWithBookSearchForm {
 
 	public BookSearchByTitlePage(WebDriver webDriver) {
-		super(webDriver, BOOK_SEARCH_BY_TITLE_VIEW, INPUT_TITLE);
+		super(webDriver, "Book search by title view", INPUT_TITLE);
 	}
 
 	public BookSearchByTitlePage fillSearchFormAndSubmit(String inputValue) {

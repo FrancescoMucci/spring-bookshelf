@@ -22,7 +22,7 @@ public class FormComponent extends APageObject {
 
 	public MyPage pressSubmitButton() {
 		submitButton.click();
-		return new MyPage(webDriver).nextPage();
+		return new MyPage(webDriver);
 	}
 
 	public String getInputValue(String inputName) {

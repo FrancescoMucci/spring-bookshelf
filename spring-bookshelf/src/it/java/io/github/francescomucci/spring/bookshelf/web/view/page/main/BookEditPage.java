@@ -10,7 +10,7 @@ import io.github.francescomucci.spring.bookshelf.web.view.page.APageWithBookCUFo
 public class BookEditPage extends APageWithBookCUForm {
 
 	public BookEditPage(WebDriver webDriver) {
-		super(webDriver, BOOK_EDIT_VIEW);
+		super(webDriver, "Book edit view");
 	}
 
 	public BookListPage fillEditFormAndSubmit(String title, String authors) {
