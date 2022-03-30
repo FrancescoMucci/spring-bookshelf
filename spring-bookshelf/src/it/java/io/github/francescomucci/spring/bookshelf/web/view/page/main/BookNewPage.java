@@ -4,7 +4,7 @@ import static io.github.francescomucci.spring.bookshelf.web.view.page.BookFormCo
 
 import org.openqa.selenium.WebDriver;
 
-import io.github.francescomucci.spring.bookshelf.web.view.page.MyPage;
+import io.github.francescomucci.spring.bookshelf.web.view.page.error.MyErrorPage;
 import io.github.francescomucci.spring.bookshelf.web.view.page.APageWithBookCUForm;
 
 public class BookNewPage extends APageWithBookCUForm {
@@ -13,11 +13,19 @@ public class BookNewPage extends APageWithBookCUForm {
 		super(webDriver, BOOK_NEW_VIEW);
 	}
 
-	public MyPage fillAddFormAndPressSubmitButton(String isbn, String title, String authors) {
-		form.clearAndThenfillFormInput(INPUT_ISBN, isbn);
-		form.clearAndThenfillFormInput(INPUT_TITLE, title);
-		form.clearAndThenfillFormInput(INPUT_AUTHORS, authors);
-		return form.pressSubmitButton();
+	public BookListPage fillAddFormAndSubmit(String isbn, String title, String authors) {
+		fillAddFormAndPressSubmitButton(isbn, title, authors);
+		return new BookListPage(webDriver);
+	}
+
+	public MyErrorPage fillAddFormAndSubmitExpectingError(String isbn, String title, String authors) {
+		fillAddFormAndPressSubmitButton(isbn, title, authors);
+		return new MyErrorPage(webDriver);
+	}
+
+	public BookNewPage fillAddFormAndSubmitExpectingValidationError(String isbn, String title, String authors) {
+		fillAddFormAndPressSubmitButton(isbn, title, authors);
+		return this;
 	}
 
 	public String getIsbnInputValue() {
@@ -26,6 +34,13 @@ public class BookNewPage extends APageWithBookCUForm {
 
 	public String getIsbnValidationErrorMessage() {
 		return form.getMessage(INPUT_ISBN + VALIDATION_ERROR_SUFFIX);
+	}
+
+	private void fillAddFormAndPressSubmitButton(String isbn, String title, String authors) {
+		form.clearAndThenfillFormInput(INPUT_ISBN, isbn);
+		form.clearAndThenfillFormInput(INPUT_TITLE, title);
+		form.clearAndThenfillFormInput(INPUT_AUTHORS, authors);
+		form.pressSubmitButton();
 	}
 
 }

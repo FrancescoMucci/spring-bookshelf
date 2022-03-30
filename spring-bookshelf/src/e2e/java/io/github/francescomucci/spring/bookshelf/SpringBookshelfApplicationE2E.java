@@ -184,7 +184,7 @@ public class SpringBookshelfApplicationE2E {
 	public void testSpringBookshelfApplication_addNewBook_withInvalidData_shouldShowValidationErrorMessages() {
 		bookHomePage.loginWithValidCredentials();
 		BookNewPage bookNewPage = bookHomePage.clickNavbarAddNewBookLink();
-		bookNewPage.fillAddFormAndPressSubmitButton(INVALID_ISBN13_WITH_SPACES, INVALID_TITLE, INVALID_AUTHORS_STRING);
+		bookNewPage.fillAddFormAndSubmitExpectingValidationError(INVALID_ISBN13_WITH_SPACES, INVALID_TITLE, INVALID_AUTHORS_STRING);
 		
 		assertThat(bookNewPage.getIsbnValidationErrorMessage())
 			.contains("Invalid ISBN-13");
@@ -199,7 +199,7 @@ public class SpringBookshelfApplicationE2E {
 		bookHomePage.loginWithValidCredentials();
 		BookNewPage bookNewPage = bookHomePage.clickNavbarAddNewBookLink();
 		MyErrorPage errorPage = (MyErrorPage) 
-			bookNewPage.fillAddFormAndPressSubmitButton(VALID_ISBN13_WITH_SPACES, TITLE, AUTHORS_STRING);
+			bookNewPage.fillAddFormAndSubmitExpectingError(VALID_ISBN13_WITH_SPACES, TITLE, AUTHORS_STRING);
 		
 		assertThat(errorPage.getPageTitle())
 			.isEqualTo("Book already exist error view");
@@ -212,7 +212,7 @@ public class SpringBookshelfApplicationE2E {
 		bookHomePage.loginWithValidCredentials();
 		BookNewPage bookNewPage = bookHomePage.clickNavbarAddNewBookLink();
 		BookListPage bookListPage = (BookListPage) 
-			bookNewPage.fillAddFormAndPressSubmitButton(UNUSED_ISBN13_WITHOUT_FORMATTING, UNUSED_TITLE, UNUSED_AUTHORS_STRING);
+			bookNewPage.fillAddFormAndSubmit(UNUSED_ISBN13_WITHOUT_FORMATTING, UNUSED_TITLE, UNUSED_AUTHORS_STRING);
 		
 		assertThat(bookListPage.getBookTable())
 			.contains(UNUSED_ISBN13_WITHOUT_FORMATTING, UNUSED_TITLE, UNUSED_AUTHORS_STRING);
