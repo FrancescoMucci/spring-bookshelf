@@ -15,19 +15,19 @@ public abstract class APageWithBookCUForm extends APageWithForm {
 	}
 
 	public String getTitleInputValue() {
-		return getInputValue(INPUT_TITLE);
+		return form.getInputValue(INPUT_TITLE);
 	}
 
 	public String getTitleValidationErrorMessage() {
-		return getMessage(INPUT_TITLE + VALIDATION_ERROR_SUFFIX);
+		return form.getMessage(INPUT_TITLE + VALIDATION_ERROR_SUFFIX);
 	}
 
 	public String getAuthorsInputValue() {
-		return getInputValue(INPUT_AUTHORS);
+		return form.getInputValue(INPUT_AUTHORS);
 	}
 
 	public String getAuthorsValidationErrorMessage() {
-		return getMessage(INPUT_AUTHORS + VALIDATION_ERROR_SUFFIX);
+		return form.getMessage(INPUT_AUTHORS + VALIDATION_ERROR_SUFFIX);
 	}
 
 }

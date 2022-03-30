@@ -87,7 +87,7 @@ public class BookListViewIT {
 		
 		webDriver.get(bookListUrl);
 		BookListPage bookListPage = new BookListPage(webDriver);
-		MyPage returnedPage = bookListPage.clickShowDeleteDialogAndThenYesDeleteButton(book.getIsbn());
+		MyPage returnedPage = bookListPage.clickDeleteAndThenYes(book.getIsbn());
 	
 		assertThat(returnedPage.getPageTitle())
 			.isEqualTo("Book list view");
@@ -105,7 +105,7 @@ public class BookListViewIT {
 		webDriver.get(bookListUrl);
 		BookListPage bookListPage = new BookListPage(webDriver);
 		bookRepository.deleteAll();
-		MyPage returnedPage = bookListPage.clickShowDeleteDialogAndThenYesDeleteButton(book.getIsbn());
+		MyPage returnedPage = bookListPage.clickDeleteAndThenYesExpectingError(book.getIsbn());
 		
 		assertThat(returnedPage.getPageTitle())
 			.isEqualTo("Book not found error view");
@@ -171,7 +171,7 @@ public class BookListViewIT {
 		
 		webDriver.get(bookListUrl);
 		BookListPage bookListPage = new BookListPage(webDriver);
-		BookHomePage bookHomePage = (BookHomePage) bookListPage.clickLogoutButton();
+		BookHomePage bookHomePage = bookListPage.clickLogoutButton();
 		
 		assertThat(bookHomePage.getLogoutMessage())
 			.isEqualTo("Logged out successfully");

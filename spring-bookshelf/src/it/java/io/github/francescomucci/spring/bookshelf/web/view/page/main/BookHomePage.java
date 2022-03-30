@@ -14,13 +14,14 @@ public class BookHomePage extends APageWithForm {
 	private WebElement rememberMe;
 
 	public BookHomePage(WebDriver webDriver) {
-		super(webDriver, BOOK_HOME_VIEW);
+		super(webDriver, "Book home view");
 	}
 
 	public BookHomePage fillLoginFormAndPressSubmitButton(String username, String password) {
-		clearAndThenfillFormInput("username", username);
-		clearAndThenfillFormInput("password", password);
-		return (BookHomePage) pressSubmitButton();
+		form.clearAndThenfillFormInput("username", username);
+		form.clearAndThenfillFormInput("password", password);
+		form.pressSubmitButton();
+		return this;
 	}
 
 	public BookHomePage loginWithValidCredentials() {
@@ -28,11 +29,11 @@ public class BookHomePage extends APageWithForm {
 	}
 
 	public String getAuthenticationErrorMessage() {
-		return getMessage("authentication-error");
+		return form.getMessage("authentication-error");
 	}
 
 	public String getLogoutMessage() {
-		return getMessage("logout-message");
+		return form.getMessage("logout-message");
 	}
 
 	public void checkRemeberMe() {

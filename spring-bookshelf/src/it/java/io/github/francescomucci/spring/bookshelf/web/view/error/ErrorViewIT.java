@@ -127,7 +127,7 @@ public class ErrorViewIT {
 		
 		webDriver.get(unknownErrorPageUrl);
 		MyErrorPage errorPage = new MyErrorPage(webDriver);
-		BookHomePage bookHomePage = (BookHomePage) errorPage.clickLogoutButton();
+		BookHomePage bookHomePage = errorPage.clickLogoutButton();
 		
 		assertThat(bookHomePage.getLogoutMessage())
 			.isEqualTo("Logged out successfully");

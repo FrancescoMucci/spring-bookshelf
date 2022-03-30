@@ -60,7 +60,8 @@ public class BookNewViewIT {
 		
 		webDriver.get(bookNewUrl);
 		BookNewPage bookNewPage = new BookNewPage(webDriver);
-		MyPage returnedPage = bookNewPage.fillAddFormAndPressSubmitButton("" + alreadyExistingbook.getIsbn(), NEW_TITLE, AUTHORS_STRING);
+		MyPage returnedPage = bookNewPage
+			.fillAddFormAndSubmitExpectingError("" + alreadyExistingbook.getIsbn(), NEW_TITLE, AUTHORS_STRING);
 		
 		assertThat(returnedPage.getPageTitle())
 			.isEqualTo("Book already exist error view");
@@ -74,7 +75,7 @@ public class BookNewViewIT {
 		
 		webDriver.get(bookNewUrl);
 		BookNewPage bookNewPage = new BookNewPage(webDriver);
-		MyPage returnedPage = bookNewPage.fillAddFormAndPressSubmitButton(VALID_ISBN13_WITH_SPACES, TITLE, AUTHORS_STRING);
+		MyPage returnedPage = bookNewPage.fillAddFormAndSubmit(VALID_ISBN13_WITH_SPACES, TITLE, AUTHORS_STRING);
 		
 		assertThat(returnedPage.getPageTitle())
 			.isEqualTo("Book list view");
@@ -88,7 +89,8 @@ public class BookNewViewIT {
 		
 		webDriver.get(bookNewUrl);
 		BookNewPage bookNewPage = new BookNewPage(webDriver);
-		MyPage returnedPage = bookNewPage.fillAddFormAndPressSubmitButton(INVALID_ISBN13_WITH_SPACES, INVALID_TITLE, INVALID_AUTHORS_STRING);
+		MyPage returnedPage = bookNewPage
+			.fillAddFormAndSubmitExpectingValidationError(INVALID_ISBN13_WITH_SPACES, INVALID_TITLE, INVALID_AUTHORS_STRING);
 		
 		assertThat(returnedPage.getPageTitle())
 			.isEqualTo("Book new view");
@@ -170,7 +172,7 @@ public class BookNewViewIT {
 		
 		webDriver.get(bookNewUrl);
 		BookNewPage bookNewPage = new BookNewPage(webDriver);
-		BookHomePage bookHomePage = (BookHomePage) bookNewPage.clickLogoutButton();
+		BookHomePage bookHomePage = bookNewPage.clickLogoutButton();
 		
 		assertThat(bookHomePage.getLogoutMessage())
 			.isEqualTo("Logged out successfully");

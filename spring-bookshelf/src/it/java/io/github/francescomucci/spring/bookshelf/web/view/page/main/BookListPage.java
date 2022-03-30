@@ -7,7 +7,7 @@ import io.github.francescomucci.spring.bookshelf.web.view.page.APageWithBookTabl
 public class BookListPage extends APageWithBookTable {
 
 	public BookListPage(WebDriver webDriver) {
-		super(webDriver, BOOK_LIST_VIEW);
+		super(webDriver, "Book list view");
 	}
 
 }

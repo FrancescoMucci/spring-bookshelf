@@ -60,7 +60,7 @@ public class BookSearchByIsbnViewIT {
 		
 		webDriver.get(bookSearchByIsbnUrl);
 		BookSearchByIsbnPage bookSearchByIsbnPage = new BookSearchByIsbnPage(webDriver);
-		MyPage returnedPage = bookSearchByIsbnPage.fillSearchFormAndPressSubmitButton(UNUSED_ISBN13_WITH_HYPHENS);
+		MyPage returnedPage = bookSearchByIsbnPage.fillSearchFormAndSubmitExpectingError(UNUSED_ISBN13_WITH_HYPHENS);
 		
 		assertThat(returnedPage.getPageTitle())
 			.isEqualTo("Book not found error view");
@@ -73,7 +73,7 @@ public class BookSearchByIsbnViewIT {
 		
 		webDriver.get(bookSearchByIsbnUrl);
 		BookSearchByIsbnPage bookSearchByIsbnPage = new BookSearchByIsbnPage(webDriver);
-		MyPage returnedPage = bookSearchByIsbnPage.fillSearchFormAndPressSubmitButton(VALID_ISBN13_WITHOUT_FORMATTING);
+		MyPage returnedPage = bookSearchByIsbnPage.fillSearchFormAndSubmit(VALID_ISBN13_WITHOUT_FORMATTING);
 		
 		assertThat(returnedPage.getPageTitle())
 			.isEqualTo("Book search by ISBN view");
@@ -91,7 +91,7 @@ public class BookSearchByIsbnViewIT {
 		
 		webDriver.get(bookSearchByIsbnUrl);
 		BookSearchByIsbnPage bookSearchByIsbnPage = new BookSearchByIsbnPage(webDriver);
-		bookSearchByIsbnPage.fillSearchFormAndPressSubmitButton("" + book.getIsbn());
+		bookSearchByIsbnPage.fillSearchFormAndSubmit("" + book.getIsbn());
 		MyPage returnedPage = bookSearchByIsbnPage.clickEditLink(book.getIsbn());
 		
 		assertThat(returnedPage.getPageTitle())
@@ -105,8 +105,8 @@ public class BookSearchByIsbnViewIT {
 		
 		webDriver.get(bookSearchByIsbnUrl);
 		BookSearchByIsbnPage bookSearchByIsbnPage = new BookSearchByIsbnPage(webDriver);
-		bookSearchByIsbnPage.fillSearchFormAndPressSubmitButton("" + book.getIsbn());
-		MyPage returnedPage = bookSearchByIsbnPage.clickShowDeleteDialogAndThenYesDeleteButton(book.getIsbn());
+		bookSearchByIsbnPage.fillSearchFormAndSubmit("" + book.getIsbn());
+		MyPage returnedPage = bookSearchByIsbnPage.clickDeleteAndThenYes(book.getIsbn());
 		
 		assertThat(returnedPage.getPageTitle())
 			.isEqualTo("Book list view");
@@ -123,9 +123,9 @@ public class BookSearchByIsbnViewIT {
 		
 		webDriver.get(bookSearchByIsbnUrl);
 		BookSearchByIsbnPage bookSearchByIsbnPage = new BookSearchByIsbnPage(webDriver);
-		bookSearchByIsbnPage.fillSearchFormAndPressSubmitButton("" + book.getIsbn());
+		bookSearchByIsbnPage.fillSearchFormAndSubmit("" + book.getIsbn());
 		bookRepository.deleteAll();
-		MyPage returnedPage = bookSearchByIsbnPage.clickShowDeleteDialogAndThenYesDeleteButton(book.getIsbn());
+		MyPage returnedPage = bookSearchByIsbnPage.clickDeleteAndThenYesExpectingError(book.getIsbn());
 
 		assertThat(returnedPage.getPageTitle())
 			.isEqualTo("Book not found error view");
@@ -191,7 +191,7 @@ public class BookSearchByIsbnViewIT {
 		
 		webDriver.get(bookSearchByIsbnUrl);
 		BookSearchByIsbnPage bookSearchByIsbnPage = new BookSearchByIsbnPage(webDriver);
-		BookHomePage bookHomePage = (BookHomePage) bookSearchByIsbnPage.clickLogoutButton();
+		BookHomePage bookHomePage = bookSearchByIsbnPage.clickLogoutButton();
 		
 		assertThat(bookHomePage.getLogoutMessage())
 			.isEqualTo("Logged out successfully");

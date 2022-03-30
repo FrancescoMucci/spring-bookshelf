@@ -61,7 +61,7 @@ public class BookAlreadyExistViewIT {
 		
 		webDriver.get(newPageUrl);
 		BookNewPage bookNewPage = new BookNewPage(webDriver);
-		MyErrorPage errorPage = (MyErrorPage) bookNewPage.fillAddFormAndPressSubmitButton(VALID_ISBN13_WITH_SPACES, TITLE, AUTHORS_STRING);
+		MyErrorPage errorPage = bookNewPage.fillAddFormAndSubmitExpectingError(VALID_ISBN13_WITH_SPACES, TITLE, AUTHORS_STRING);
 		
 		assertThat(errorPage.getPageTitle())
 			.isEqualTo("Book already exist error view");
@@ -79,7 +79,7 @@ public class BookAlreadyExistViewIT {
 		
 		webDriver.get(newPageUrl);
 		BookNewPage bookNewPage = new BookNewPage(webDriver);
-		MyPage errorPage = bookNewPage.fillAddFormAndPressSubmitButton(VALID_ISBN13_WITH_SPACES, TITLE, AUTHORS_STRING);
+		MyPage errorPage = bookNewPage.fillAddFormAndSubmitExpectingError(VALID_ISBN13_WITH_SPACES, TITLE, AUTHORS_STRING);
 		MyPage returnedPage = errorPage.clickNavbarHomeLink();
 		
 		assertThat(returnedPage.getPageTitle())
@@ -92,7 +92,7 @@ public class BookAlreadyExistViewIT {
 		
 		webDriver.get(newPageUrl);
 		BookNewPage bookNewPage = new BookNewPage(webDriver);
-		MyPage errorPage = bookNewPage.fillAddFormAndPressSubmitButton(VALID_ISBN13_WITH_SPACES, TITLE, AUTHORS_STRING);
+		MyPage errorPage = bookNewPage.fillAddFormAndSubmitExpectingError(VALID_ISBN13_WITH_SPACES, TITLE, AUTHORS_STRING);
 		MyPage returnedPage = errorPage.clickNavbarShowBookListLink();
 		
 		assertThat(returnedPage.getPageTitle())
@@ -105,7 +105,7 @@ public class BookAlreadyExistViewIT {
 		
 		webDriver.get(newPageUrl);
 		BookNewPage bookNewPage = new BookNewPage(webDriver);
-		MyPage errorPage = bookNewPage.fillAddFormAndPressSubmitButton(VALID_ISBN13_WITH_SPACES, TITLE, AUTHORS_STRING);
+		MyPage errorPage = bookNewPage.fillAddFormAndSubmitExpectingError(VALID_ISBN13_WITH_SPACES, TITLE, AUTHORS_STRING);
 		MyPage returnedPage = errorPage.clickNavbarSearchBookByIsbnLink();
 		
 		assertThat(returnedPage.getPageTitle())
@@ -118,7 +118,7 @@ public class BookAlreadyExistViewIT {
 		
 		webDriver.get(newPageUrl);
 		BookNewPage bookNewPage = new BookNewPage(webDriver);
-		MyPage errorPage = bookNewPage.fillAddFormAndPressSubmitButton(VALID_ISBN13_WITH_SPACES, TITLE, AUTHORS_STRING);
+		MyPage errorPage = bookNewPage.fillAddFormAndSubmitExpectingError(VALID_ISBN13_WITH_SPACES, TITLE, AUTHORS_STRING);
 		MyPage returnedPage = errorPage.clickNavbarSearchBooksByTitleLink();
 		
 		assertThat(returnedPage.getPageTitle())
@@ -131,7 +131,7 @@ public class BookAlreadyExistViewIT {
 		
 		webDriver.get(newPageUrl);
 		BookNewPage bookNewPage = new BookNewPage(webDriver);
-		MyPage errorPage = bookNewPage.fillAddFormAndPressSubmitButton(VALID_ISBN13_WITH_SPACES, TITLE, AUTHORS_STRING);
+		MyPage errorPage = bookNewPage.fillAddFormAndSubmitExpectingError(VALID_ISBN13_WITH_SPACES, TITLE, AUTHORS_STRING);
 		MyPage returnedPage = errorPage.clickNavbarAddNewBookLink();
 		
 		assertThat(returnedPage.getPageTitle())
@@ -144,8 +144,8 @@ public class BookAlreadyExistViewIT {
 		
 		webDriver.get(newPageUrl);
 		BookNewPage bookNewPage = new BookNewPage(webDriver);
-		MyPage errorPage = bookNewPage.fillAddFormAndPressSubmitButton(VALID_ISBN13_WITH_SPACES, TITLE, AUTHORS_STRING);
-		BookHomePage bookHomePage = (BookHomePage) errorPage.clickLogoutButton();
+		MyPage errorPage = bookNewPage.fillAddFormAndSubmitExpectingError(VALID_ISBN13_WITH_SPACES, TITLE, AUTHORS_STRING);
+		BookHomePage bookHomePage = errorPage.clickLogoutButton();
 		
 		assertThat(bookHomePage.getLogoutMessage())
 			.isEqualTo("Logged out successfully");

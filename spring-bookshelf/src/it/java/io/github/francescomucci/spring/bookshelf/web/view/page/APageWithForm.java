@@ -2,30 +2,22 @@ package io.github.francescomucci.spring.bookshelf.web.view.page;
 
 import org.openqa.selenium.WebDriver;
 
-public abstract class APageWithForm extends MyPage implements IPageWithForm {
+public abstract class APageWithForm extends MyPage {
+
+	protected FormComponent form;
 
 	public APageWithForm(WebDriver webDriver) {
 		super(webDriver);
+		initForm();
 	}
 
 	public APageWithForm(WebDriver webDriver, String expectedTitle) {
 		super(webDriver, expectedTitle);
+		initForm();
 	}
 
-	public void clearAndThenfillFormInput(String inputName, String inputValue) {
-		clearAndThenfillFormInput(this, inputName, inputValue);
-	}
-
-	public MyPage pressSubmitButton() {
-		return pressSubmitButton(this);
-	}
-
-	public String getInputValue(String inputName) {
-		return getInputValue(this, inputName);
-	}
-
-	public String getMessage(String messageId) {
-		return getMessage(this, messageId);
+	private void initForm() {
+		form = new FormComponent(webDriver);
 	}
 
 }

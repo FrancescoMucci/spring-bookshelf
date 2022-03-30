@@ -19,6 +19,10 @@ public class MyErrorPage extends MyPage {
 
 	public MyErrorPage(WebDriver webDriver) {
 		super(webDriver);
+		String actualTitle = getPageTitle();
+		if (!actualTitle.contains("error view"))
+			throw new IllegalStateException(
+				"Expecting an error view, but actual page is: " + actualTitle);
 	}
 
 	public String getErrorCode() {

@@ -9,7 +9,12 @@ import io.github.francescomucci.spring.bookshelf.web.view.page.APageWithBookSear
 public class BookSearchByIsbnPage extends APageWithBookSearchForm{
 
 	public BookSearchByIsbnPage(WebDriver webDriver) {
-		super(webDriver, BOOK_SEARCH_BY_ISBN_VIEW, INPUT_ISBN);
+		super(webDriver, "Book search by ISBN view", INPUT_ISBN);
+	}
+
+	public BookSearchByIsbnPage fillSearchFormAndSubmit(String inputValue) {
+		fillSearchFormAndPressSubmitButton(inputValue);
+		return this;
 	}
 
 }
