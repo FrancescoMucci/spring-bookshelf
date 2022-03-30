@@ -54,6 +54,17 @@ public class MyBookDataMapper implements BookDataMapper {
 			.collect(Collectors.toList());
 	}
 
+	@Override
+	public BookData updateBookData(BookData bookData, Book book) {
+		if (bookData == null || book == null)
+			return null;
+		
+		bookData.setIsbn(isbnToString(book.getIsbn()));
+		bookData.setTitle(titleToString(book.getTitle()));
+		bookData.setAuthors(authorsToString(book.getAuthors()));
+		return bookData;
+	}
+
 	private Long isbnToLong(String isbn) {
 		if (isbn == null || isbn.isEmpty())
 			return null;

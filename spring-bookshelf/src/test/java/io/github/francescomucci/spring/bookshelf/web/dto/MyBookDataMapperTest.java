@@ -226,4 +226,75 @@ public class MyBookDataMapperTest {
 		assertThat(mapResult).isEqualTo(expecedResult);
 	}
 
+	/* ---------- updateBookData tests ---------- */
+
+	@Test
+	public void testMyBookDataMapper_updateBookData_whenBookDataIsNull_shouldReturnNull() {
+		BookData updateResult = map.updateBookData(null, new Book(VALID_ISBN13_2, TITLE, AUTHORS_LIST_2));
+		assertThat(updateResult).isNull();
+	}
+
+	@Test
+	public void testMyBookDataMapper_updateBookData_whenBookIsNull_shouldNotUpdateAndReturnNull() {
+		BookData bookDataToUpdate = new BookData(VALID_ISBN13_WITHOUT_FORMATTING, TITLE, AUTHORS_STRING);
+		BookData expectedResult = bookDataToUpdate;
+		BookData updateResult = map.updateBookData(bookDataToUpdate, null);
+		assertThat(bookDataToUpdate).isEqualTo(expectedResult);
+		assertThat(updateResult).isNull();
+	}
+
+	@Test
+	public void testMyBookDataMapper_updateBookData_whenBookIsbnIsNull_shouldUpdateAndReturnTheUpdatedBookDataWithEmptyIsbn() {
+		BookData bookDataToUpdate = new BookData(VALID_ISBN13_WITHOUT_FORMATTING, TITLE, AUTHORS_STRING);
+		BookData expectedResult = new BookData("", TITLE_2, AUTHORS_STRING_2);
+		BookData updateResult = map.updateBookData(bookDataToUpdate, new Book(null, TITLE_2, AUTHORS_LIST_2));
+		assertThat(bookDataToUpdate).isEqualTo(expectedResult);
+		assertThat(updateResult).isEqualTo(expectedResult);
+	}
+
+	@Test
+	public void testMyBookDataMapper_updateBookData_whenBookTitleIsNull_shouldUpdateAndReturnTheUpdatedBookDataWithEmptyTitle() {
+		BookData bookDataToUpdate = new BookData(VALID_ISBN13_WITHOUT_FORMATTING, TITLE, AUTHORS_STRING);
+		BookData expectedResult = new BookData(VALID_ISBN13_2_WITHOUT_FORMATTING, "", AUTHORS_STRING_2);
+		BookData updateResult = map.updateBookData(bookDataToUpdate, new Book(VALID_ISBN13_2, null, AUTHORS_LIST_2));
+		assertThat(bookDataToUpdate).isEqualTo(expectedResult);
+		assertThat(updateResult).isEqualTo(expectedResult);
+	}
+
+	@Test
+	public void testMyBookDataMapper_updateBookData_whenBookTitleIsEmpty_shouldUpdateAndReturnTheUpdatedBookDataWithEmptyTitle() {
+		BookData bookDataToUpdate = new BookData(VALID_ISBN13_WITHOUT_FORMATTING, TITLE, AUTHORS_STRING);
+		BookData expectedResult = new BookData(VALID_ISBN13_2_WITHOUT_FORMATTING, "", AUTHORS_STRING_2);
+		BookData updateResult = map.updateBookData(bookDataToUpdate, new Book(VALID_ISBN13_2, null, AUTHORS_LIST_2));
+		assertThat(bookDataToUpdate).isEqualTo(expectedResult);
+		assertThat(updateResult).isEqualTo(expectedResult);
+	}
+
+	@Test
+	public void testMyBookDataMapper_updateBookData_whenBookAuthorsIsNull_shouldUpdateAndReturnTheUpdatedBookDataWithEmptyAuthors() {
+		BookData bookDataToUpdate = new BookData(VALID_ISBN13_WITHOUT_FORMATTING, TITLE, AUTHORS_STRING);
+		BookData expectedResult = new BookData(VALID_ISBN13_2_WITHOUT_FORMATTING, TITLE_2, "");
+		BookData updateResult = map.updateBookData(bookDataToUpdate, new Book(VALID_ISBN13_2, TITLE_2, null));
+		assertThat(bookDataToUpdate).isEqualTo(expectedResult);
+		assertThat(updateResult).isEqualTo(expectedResult);
+	}
+
+	@Test
+	public void testMyBookDataMapper_updateBookData_whenBookAuthorsIsEmpty_shouldUpdateAndReturnTheUpdatedBookDataWithEmptyAuthors() {
+		BookData bookDataToUpdate = new BookData(VALID_ISBN13_WITHOUT_FORMATTING, TITLE, AUTHORS_STRING);
+		BookData expectedResult = new BookData(VALID_ISBN13_2_WITHOUT_FORMATTING, TITLE_2, "");
+		BookData updateResult = map.updateBookData(bookDataToUpdate, new Book(VALID_ISBN13_2, TITLE_2, null));
+		assertThat(bookDataToUpdate).isEqualTo(expectedResult);
+		assertThat(updateResult).isEqualTo(expectedResult);
+	}
+
+	@Test
+	public void testMyBookDataMapper_updateBookData_whenBookDataAndBookIsNotNull_shouldUpdateAndReturnTheUpdatedBookData() {
+		BookData bookDataToUpdate = new BookData(VALID_ISBN13_WITHOUT_FORMATTING, TITLE, AUTHORS_STRING);
+		BookData expectedResult = new BookData(VALID_ISBN13_2_WITHOUT_FORMATTING, TITLE_2, AUTHORS_STRING_2);
+		BookData updateResult = map.updateBookData(bookDataToUpdate, new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2));
+		assertThat(bookDataToUpdate).isEqualTo(expectedResult);
+		assertThat(updateResult).isEqualTo(expectedResult);
+	}
+
 }

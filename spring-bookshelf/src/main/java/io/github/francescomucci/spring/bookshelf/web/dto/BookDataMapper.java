@@ -16,4 +16,6 @@ public interface BookDataMapper {
 
 	public List<BookData> toBookDataList(List<Book> bookList);
 
+	public BookData updateBookData(BookData bookData, Book book);
+
 }

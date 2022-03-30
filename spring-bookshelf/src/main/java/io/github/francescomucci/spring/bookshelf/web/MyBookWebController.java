@@ -50,9 +50,8 @@ public class MyBookWebController implements BookWebController {
 	public String getBookEditView(BookData editFormData, BindingResult result) {
 		if (result.hasErrors())
 			throw new InvalidIsbnException(editFormData.getIsbn());
-		BookData bookToEditData = map.toBookData(service.getBookByIsbn(map.toLong(editFormData)));
-		editFormData.setTitle(bookToEditData.getTitle());
-		editFormData.setAuthors(bookToEditData.getAuthors());
+		Book toBeEditedBook = service.getBookByIsbn(map.toLong(editFormData));
+		map.updateBookData(editFormData, toBeEditedBook);
 		return VIEW_BOOK_EDIT;
 	}
 
