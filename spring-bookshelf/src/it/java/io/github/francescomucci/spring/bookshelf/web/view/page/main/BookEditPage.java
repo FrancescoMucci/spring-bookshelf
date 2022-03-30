@@ -4,7 +4,7 @@ import static io.github.francescomucci.spring.bookshelf.web.view.page.BookFormCo
 
 import org.openqa.selenium.WebDriver;
 
-import io.github.francescomucci.spring.bookshelf.web.view.page.MyPage;
+import io.github.francescomucci.spring.bookshelf.web.view.page.error.MyErrorPage;
 import io.github.francescomucci.spring.bookshelf.web.view.page.APageWithBookCUForm;
 
 public class BookEditPage extends APageWithBookCUForm {
@@ -13,10 +13,25 @@ public class BookEditPage extends APageWithBookCUForm {
 		super(webDriver, BOOK_EDIT_VIEW);
 	}
 
-	public MyPage fillEditFormAndPressSubmitButton(String title, String authors) {
+	public BookListPage fillEditFormAndSubmit(String title, String authors) {
+		fillEditFormAndPressSubmitButton(title, authors);
+		return new BookListPage(webDriver);
+	}
+
+	public MyErrorPage fillEditFormAndSubmitExpectingError(String title, String authors) {
+		fillEditFormAndPressSubmitButton(title, authors);
+		return new MyErrorPage(webDriver);
+	}
+
+	public BookEditPage fillEditFormAndSubmitExpectingValidationError(String title, String authors) {
+		fillEditFormAndPressSubmitButton(title, authors);
+		return this;
+	}
+
+	private void fillEditFormAndPressSubmitButton(String title, String authors) {
 		form.clearAndThenfillFormInput(INPUT_TITLE, title);
 		form.clearAndThenfillFormInput(INPUT_AUTHORS, authors);
-		return form.pressSubmitButton();
+		form.pressSubmitButton();
 	}
 
 }

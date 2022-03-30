@@ -225,7 +225,7 @@ public class SpringBookshelfApplicationE2E {
 		bookHomePage.loginWithValidCredentials();
 		BookListPage bookListPage = bookHomePage.clickNavbarShowBookListLink();
 		BookEditPage bookEditPage = (BookEditPage) bookListPage.clickEditLink(VALID_ISBN13);
-		bookEditPage.fillEditFormAndPressSubmitButton(INVALID_TITLE, INVALID_AUTHORS_STRING);
+		bookEditPage.fillEditFormAndSubmitExpectingValidationError(INVALID_TITLE, INVALID_AUTHORS_STRING);
 		
 		assertThat(bookEditPage.getTitleValidationErrorMessage())
 			.contains("Invalid title");
@@ -239,7 +239,7 @@ public class SpringBookshelfApplicationE2E {
 		BookListPage bookListPage = bookHomePage.clickNavbarShowBookListLink();
 		BookEditPage bookEditPage = (BookEditPage) bookListPage.clickEditLink(VALID_ISBN13);
 		bookListPage = (BookListPage) 
-			bookEditPage.fillEditFormAndPressSubmitButton(NEW_TITLE, AUTHORS_STRING);
+			bookEditPage.fillEditFormAndSubmit(NEW_TITLE, AUTHORS_STRING);
 		
 		assertThat(bookListPage.getBookTable())
 			.contains(VALID_ISBN13_WITHOUT_FORMATTING, NEW_TITLE, AUTHORS_STRING);
