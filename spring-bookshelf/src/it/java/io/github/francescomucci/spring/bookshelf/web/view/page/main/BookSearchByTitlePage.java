@@ -12,4 +12,9 @@ public class BookSearchByTitlePage extends APageWithBookSearchForm {
 		super(webDriver, BOOK_SEARCH_BY_TITLE_VIEW, INPUT_TITLE);
 	}
 
+	public BookSearchByTitlePage fillSearchFormAndSubmit(String inputValue) {
+		fillSearchFormAndPressSubmitButton(inputValue);
+		return this;
+	}
+
 }

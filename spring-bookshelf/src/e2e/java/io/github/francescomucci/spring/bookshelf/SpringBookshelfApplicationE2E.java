@@ -198,8 +198,7 @@ public class SpringBookshelfApplicationE2E {
 	public void testSpringBookshelfApplication_addNewBook_withValidDataButAlreadyUsedIsbn_shouldOpenBookAlreadyExistErrorView() {
 		bookHomePage.loginWithValidCredentials();
 		BookNewPage bookNewPage = bookHomePage.clickNavbarAddNewBookLink();
-		MyErrorPage errorPage = (MyErrorPage) 
-			bookNewPage.fillAddFormAndSubmitExpectingError(VALID_ISBN13_WITH_SPACES, TITLE, AUTHORS_STRING);
+		MyErrorPage errorPage = bookNewPage.fillAddFormAndSubmitExpectingError(VALID_ISBN13_WITH_SPACES, TITLE, AUTHORS_STRING);
 		
 		assertThat(errorPage.getPageTitle())
 			.isEqualTo("Book already exist error view");
@@ -211,8 +210,7 @@ public class SpringBookshelfApplicationE2E {
 	public void testSpringBookshelfApplication_addNewBook_withValidDataAndUnusedIsbn_shouldOpenBookListViewToShowNewlyAddedBook() {
 		bookHomePage.loginWithValidCredentials();
 		BookNewPage bookNewPage = bookHomePage.clickNavbarAddNewBookLink();
-		BookListPage bookListPage = (BookListPage) 
-			bookNewPage.fillAddFormAndSubmit(UNUSED_ISBN13_WITHOUT_FORMATTING, UNUSED_TITLE, UNUSED_AUTHORS_STRING);
+		BookListPage bookListPage = bookNewPage.fillAddFormAndSubmit(UNUSED_ISBN13_WITHOUT_FORMATTING, UNUSED_TITLE, UNUSED_AUTHORS_STRING);
 		
 		assertThat(bookListPage.getBookTable())
 			.contains(UNUSED_ISBN13_WITHOUT_FORMATTING, UNUSED_TITLE, UNUSED_AUTHORS_STRING);
@@ -224,7 +222,7 @@ public class SpringBookshelfApplicationE2E {
 	public void testSpringBookshelfApplication_editBook_withInvalidFormData_shouldShowValidationErrorMessages() {
 		bookHomePage.loginWithValidCredentials();
 		BookListPage bookListPage = bookHomePage.clickNavbarShowBookListLink();
-		BookEditPage bookEditPage = (BookEditPage) bookListPage.clickEditLink(VALID_ISBN13);
+		BookEditPage bookEditPage = bookListPage.clickEditLink(VALID_ISBN13);
 		bookEditPage.fillEditFormAndSubmitExpectingValidationError(INVALID_TITLE, INVALID_AUTHORS_STRING);
 		
 		assertThat(bookEditPage.getTitleValidationErrorMessage())
@@ -237,9 +235,8 @@ public class SpringBookshelfApplicationE2E {
 	public void testSpringBookshelfApplication_editBook_withValidFormData_shouldOpenBookListViewToShowUpdatedBook() {
 		bookHomePage.loginWithValidCredentials();
 		BookListPage bookListPage = bookHomePage.clickNavbarShowBookListLink();
-		BookEditPage bookEditPage = (BookEditPage) bookListPage.clickEditLink(VALID_ISBN13);
-		bookListPage = (BookListPage) 
-			bookEditPage.fillEditFormAndSubmit(NEW_TITLE, AUTHORS_STRING);
+		BookEditPage bookEditPage = bookListPage.clickEditLink(VALID_ISBN13);
+		bookListPage = bookEditPage.fillEditFormAndSubmit(NEW_TITLE, AUTHORS_STRING);
 		
 		assertThat(bookListPage.getBookTable())
 			.contains(VALID_ISBN13_WITHOUT_FORMATTING, NEW_TITLE, AUTHORS_STRING);
@@ -250,7 +247,7 @@ public class SpringBookshelfApplicationE2E {
 	@Test
 	public void testSpringBookshelfApplication_searchBookByIsbn_withInvalidIsbn_shouldShowValidationErrorMessage() {
 		BookSearchByIsbnPage searchByIsbnPage = bookHomePage.clickNavbarSearchBookByIsbnLink();
-		searchByIsbnPage.fillSearchFormAndPressSubmitButton(INVALID_ISBN13_WITH_HYPHENS);
+		searchByIsbnPage.fillSearchFormAndSubmit(INVALID_ISBN13_WITH_HYPHENS);
 		
 		assertThat(searchByIsbnPage.getValidationErrorMessage())
 			.contains("Invalid ISBN-13");
@@ -259,8 +256,7 @@ public class SpringBookshelfApplicationE2E {
 	@Test
 	public void testSpringBookshelfApplication_searchBookByIsbn_withValidButUnusedIsbn_shouldOpenBookNotFoundErrorView() {
 		BookSearchByIsbnPage searchByIsbnPage = bookHomePage.clickNavbarSearchBookByIsbnLink();
-		MyErrorPage errorPage = (MyErrorPage) 
-			searchByIsbnPage.fillSearchFormAndPressSubmitButton(UNUSED_ISBN13_WITH_HYPHENS);
+		MyErrorPage errorPage = searchByIsbnPage.fillSearchFormAndSubmitExpectingError(UNUSED_ISBN13_WITH_HYPHENS);
 		
 		assertThat(errorPage.getPageTitle())
 			.isEqualTo("Book not found error view");
@@ -271,7 +267,7 @@ public class SpringBookshelfApplicationE2E {
 	@Test
 	public void testSpringBookshelfApplication_searchBookByIsbn_withValidAndUsedIsbn_shouldShowRetrievedBookInATable() {
 		BookSearchByIsbnPage searchByIsbnPage = bookHomePage.clickNavbarSearchBookByIsbnLink();
-		searchByIsbnPage.fillSearchFormAndPressSubmitButton(VALID_ISBN13_WITH_HYPHENS);
+		searchByIsbnPage.fillSearchFormAndSubmit(VALID_ISBN13_WITH_HYPHENS);
 		
 		assertThat(searchByIsbnPage.getBookTable())
 			.contains(VALID_ISBN13_WITHOUT_FORMATTING, TITLE, AUTHORS_STRING)
@@ -283,7 +279,7 @@ public class SpringBookshelfApplicationE2E {
 	@Test
 	public void testSpringBookshelfApplication_searchBookByTitle_withInvalidTitle_shouldShowValidationErrorMessage() {
 		BookSearchByTitlePage searchByTitlePage = bookHomePage.clickNavbarSearchBooksByTitleLink();
-		searchByTitlePage.fillSearchFormAndPressSubmitButton(INVALID_TITLE);
+		searchByTitlePage.fillSearchFormAndSubmit(INVALID_TITLE);
 		
 		assertThat(searchByTitlePage.getValidationErrorMessage())
 			.contains("Invalid title");
@@ -292,8 +288,7 @@ public class SpringBookshelfApplicationE2E {
 	@Test
 	public void testPocSpringLibraryApplication_searchBookByTitle_withValidButUnusedTitle_shouldOpenBookNotFoundErrorView() {
 		BookSearchByTitlePage searchByTitlePage = bookHomePage.clickNavbarSearchBooksByTitleLink();
-		MyErrorPage errorPage = (MyErrorPage) 
-			searchByTitlePage.fillSearchFormAndPressSubmitButton(UNUSED_TITLE);
+		MyErrorPage errorPage = searchByTitlePage.fillSearchFormAndSubmitExpectingError(UNUSED_TITLE);
 		
 		assertThat(errorPage.getPageTitle())
 			.isEqualTo("Book not found error view");
@@ -306,7 +301,7 @@ public class SpringBookshelfApplicationE2E {
 		setupAddingBookToDatabase(NEW_VALID_ISBN13, NEW_TITLE, AUTHORS_LIST);
 		
 		BookSearchByTitlePage searchByTitlePage = bookHomePage.clickNavbarSearchBooksByTitleLink();
-		searchByTitlePage.fillSearchFormAndPressSubmitButton(TITLE);
+		searchByTitlePage.fillSearchFormAndSubmit(TITLE);
 		
 		assertThat(searchByTitlePage.getBookTable())
 			.contains(VALID_ISBN13_WITHOUT_FORMATTING, TITLE, AUTHORS_STRING)
@@ -331,7 +326,7 @@ public class SpringBookshelfApplicationE2E {
 	public void testSpringBookshelfApplication_deleteBook_whenBookSearchByIsbnView_shouldShowUpdatedBookListView() {
 		bookHomePage.loginWithValidCredentials();
 		BookSearchByIsbnPage searchByIsbnPage = bookHomePage.clickNavbarSearchBookByIsbnLink();
-		searchByIsbnPage.fillSearchFormAndPressSubmitButton(VALID_ISBN13_WITH_HYPHENS);
+		searchByIsbnPage.fillSearchFormAndSubmit(VALID_ISBN13_WITH_HYPHENS);
 		BookListPage bookListPage = searchByIsbnPage.clickDeleteAndThenYes(VALID_ISBN13);
 		
 		assertThat(bookListPage.getBookTable())
@@ -345,7 +340,7 @@ public class SpringBookshelfApplicationE2E {
 		
 		bookHomePage.loginWithValidCredentials();
 		BookSearchByTitlePage searchByTitlePage = bookHomePage.clickNavbarSearchBooksByTitleLink();
-		searchByTitlePage.fillSearchFormAndPressSubmitButton(TITLE);
+		searchByTitlePage.fillSearchFormAndSubmit(TITLE);
 		BookListPage bookListPage = searchByTitlePage.clickDeleteAndThenYes(VALID_ISBN13);
 		
 		assertThat(bookListPage.getBookTable())

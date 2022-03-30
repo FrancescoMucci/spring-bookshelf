@@ -12,4 +12,9 @@ public class BookSearchByIsbnPage extends APageWithBookSearchForm{
 		super(webDriver, BOOK_SEARCH_BY_ISBN_VIEW, INPUT_ISBN);
 	}
 
+	public BookSearchByIsbnPage fillSearchFormAndSubmit(String inputValue) {
+		fillSearchFormAndPressSubmitButton(inputValue);
+		return this;
+	}
+
 }

@@ -61,7 +61,7 @@ public class BookSearchByTitleViewIT {
 		
 		webDriver.get(bookSearchByTitleUrl);
 		BookSearchByTitlePage bookSearchByTitlePage = new BookSearchByTitlePage(webDriver);
-		MyPage returnedPage = bookSearchByTitlePage.fillSearchFormAndPressSubmitButton(UNUSED_TITLE);
+		MyPage returnedPage = bookSearchByTitlePage.fillSearchFormAndSubmitExpectingError(UNUSED_TITLE);
 		
 		assertThat(returnedPage.getPageTitle())
 			.isEqualTo("Book not found error view");
@@ -75,7 +75,7 @@ public class BookSearchByTitleViewIT {
 		
 		webDriver.get(bookSearchByTitleUrl);
 		BookSearchByTitlePage bookSearchByTitlePage = new BookSearchByTitlePage(webDriver);
-		MyPage returnedPage = bookSearchByTitlePage.fillSearchFormAndPressSubmitButton("Foundation");
+		MyPage returnedPage = bookSearchByTitlePage.fillSearchFormAndSubmit("Foundation");
 		
 		assertThat(returnedPage.getPageTitle())
 			.isEqualTo("Book search by title view");
@@ -96,7 +96,7 @@ public class BookSearchByTitleViewIT {
 		
 		webDriver.get(bookSearchByTitleUrl);
 		BookSearchByTitlePage bookSearchByTitlePage = new BookSearchByTitlePage(webDriver);
-		bookSearchByTitlePage.fillSearchFormAndPressSubmitButton("" + book.getTitle());
+		bookSearchByTitlePage.fillSearchFormAndSubmit("" + book.getTitle());
 		MyPage returnedPage = bookSearchByTitlePage.clickEditLink(book.getIsbn());
 		
 		assertThat(returnedPage.getPageTitle())
@@ -110,7 +110,7 @@ public class BookSearchByTitleViewIT {
 		
 		webDriver.get(bookSearchByTitleUrl);
 		BookSearchByTitlePage bookSearchByTitlePage = new BookSearchByTitlePage(webDriver);
-		bookSearchByTitlePage.fillSearchFormAndPressSubmitButton("" + book.getTitle());
+		bookSearchByTitlePage.fillSearchFormAndSubmit("" + book.getTitle());
 		MyPage returnedPage = bookSearchByTitlePage.clickDeleteAndThenYes(book.getIsbn());
 		
 		assertThat(returnedPage.getPageTitle())
@@ -128,7 +128,7 @@ public class BookSearchByTitleViewIT {
 		
 		webDriver.get(bookSearchByTitleUrl);
 		BookSearchByTitlePage bookSearchByTitlePage = new BookSearchByTitlePage(webDriver);
-		bookSearchByTitlePage.fillSearchFormAndPressSubmitButton("" + book.getTitle());
+		bookSearchByTitlePage.fillSearchFormAndSubmit("" + book.getTitle());
 		bookRepository.deleteAll();
 		MyPage returnedPage = bookSearchByTitlePage.clickDeleteAndThenYesExpectingError(book.getIsbn());
 

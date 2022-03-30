@@ -2,6 +2,8 @@ package io.github.francescomucci.spring.bookshelf.web.view.page;
 
 import org.openqa.selenium.WebDriver;
 
+import io.github.francescomucci.spring.bookshelf.web.view.page.error.MyErrorPage;
+
 public abstract class APageWithBookSearchForm extends APageWithBookTable {
 
 	private SearchFormComponent searchForm;
@@ -16,9 +18,9 @@ public abstract class APageWithBookSearchForm extends APageWithBookTable {
 		initSearchForm(inputName);
 	}
 
-	public MyPage fillSearchFormAndPressSubmitButton(String inputValue) {
-		searchForm.fillSearchForm(inputValue);
-		return searchForm.pressSubmitButton();
+	public MyErrorPage fillSearchFormAndSubmitExpectingError(String inputValue) {
+		fillSearchFormAndPressSubmitButton(inputValue);
+		return new MyErrorPage(webDriver);
 	}
 
 	public String getInputValue() {
@@ -31,6 +33,11 @@ public abstract class APageWithBookSearchForm extends APageWithBookTable {
 
 	public void initSearchForm(String inputName) {
 		this.searchForm = new SearchFormComponent(webDriver, inputName);
+	}
+
+	protected void fillSearchFormAndPressSubmitButton(String inputValue) {
+		searchForm.fillSearchForm(inputValue);
+		searchForm.pressSubmitButton();
 	}
 
 }
