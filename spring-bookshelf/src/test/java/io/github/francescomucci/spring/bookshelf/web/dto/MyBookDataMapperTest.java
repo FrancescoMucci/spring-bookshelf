@@ -4,6 +4,8 @@ import static io.github.francescomucci.spring.bookshelf.BookTestingConstants.*;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -192,6 +194,36 @@ public class MyBookDataMapperTest {
 		BookData bookDataToMap = new BookData(VALID_ISBN13_WITHOUT_FORMATTING, TITLE, AUTHORS_STRING);
 		Long mapResult = map.toLong(bookDataToMap);
 		assertThat(mapResult).isEqualTo(VALID_ISBN13);
+	}
+
+	/* ---------- toBookDataList tests ---------- */
+
+	@Test
+	public void testMyBookDataMapper_toBookDataList_whenBookLisIsNull_shouldReturnEmptyBookList() {
+		List<Book> bookList = null;
+		List<BookData> expecedResult = asList();
+		List<BookData> mapResult = map.toBookDataList(bookList);
+		assertThat(mapResult).isEqualTo(expecedResult);
+	}
+
+	@Test
+	public void testMyBookDataMapper_toBookDataList_whenBookLisIsEmpty_shouldReturnEmptyBookList() {
+		List<Book> bookList = asList();
+		List<BookData> expecedResult = asList();
+		List<BookData> mapResult = map.toBookDataList(bookList);
+		assertThat(mapResult).isEqualTo(expecedResult);
+	}
+
+	@Test
+	public void testMyBookDataMapper_toBookDataList_whenBookLisIsNotEmpty_shouldReturnCorrespondingBookDataList() {
+		List<Book> bookList = asList(
+			new Book(VALID_ISBN13, TITLE, AUTHORS_LIST),
+			new Book(VALID_ISBN13_2, TITLE_2, AUTHORS_LIST_2));
+		List<BookData> expecedResult = asList(
+			new BookData(VALID_ISBN13_WITHOUT_FORMATTING, TITLE, AUTHORS_STRING),
+			new BookData(VALID_ISBN13_2_WITHOUT_FORMATTING, TITLE_2, AUTHORS_STRING_2));
+		List<BookData> mapResult = map.toBookDataList(bookList);
+		assertThat(mapResult).isEqualTo(expecedResult);
 	}
 
 }
