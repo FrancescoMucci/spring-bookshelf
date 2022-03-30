@@ -111,7 +111,7 @@ public class BookSearchByTitleViewIT {
 		webDriver.get(bookSearchByTitleUrl);
 		BookSearchByTitlePage bookSearchByTitlePage = new BookSearchByTitlePage(webDriver);
 		bookSearchByTitlePage.fillSearchFormAndPressSubmitButton("" + book.getTitle());
-		MyPage returnedPage = bookSearchByTitlePage.clickShowDeleteDialogAndThenYesDeleteButton(book.getIsbn());
+		MyPage returnedPage = bookSearchByTitlePage.clickDeleteAndThenYes(book.getIsbn());
 		
 		assertThat(returnedPage.getPageTitle())
 			.isEqualTo("Book list view");
@@ -130,7 +130,7 @@ public class BookSearchByTitleViewIT {
 		BookSearchByTitlePage bookSearchByTitlePage = new BookSearchByTitlePage(webDriver);
 		bookSearchByTitlePage.fillSearchFormAndPressSubmitButton("" + book.getTitle());
 		bookRepository.deleteAll();
-		MyPage returnedPage = bookSearchByTitlePage.clickShowDeleteDialogAndThenYesDeleteButton(book.getIsbn());
+		MyPage returnedPage = bookSearchByTitlePage.clickDeleteAndThenYesExpectingError(book.getIsbn());
 
 		assertThat(returnedPage.getPageTitle())
 			.isEqualTo("Book not found error view");

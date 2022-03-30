@@ -320,7 +320,7 @@ public class SpringBookshelfApplicationE2E {
 	public void testSpringBookshelfApplication_deleteBook_whenBookListView_shouldShowUpdatedBookListView() {
 		bookHomePage.loginWithValidCredentials();
 		BookListPage bookListPage = bookHomePage.clickNavbarShowBookListLink();
-		bookListPage.clickShowDeleteDialogAndThenYesDeleteButton(VALID_ISBN13);
+		bookListPage.clickDeleteAndThenYes(VALID_ISBN13);
 		
 		assertThat(bookListPage.getBookTable())
 			.doesNotContain(VALID_ISBN13_WITHOUT_FORMATTING, TITLE, AUTHORS_STRING)
@@ -332,7 +332,7 @@ public class SpringBookshelfApplicationE2E {
 		bookHomePage.loginWithValidCredentials();
 		BookSearchByIsbnPage searchByIsbnPage = bookHomePage.clickNavbarSearchBookByIsbnLink();
 		searchByIsbnPage.fillSearchFormAndPressSubmitButton(VALID_ISBN13_WITH_HYPHENS);
-		BookListPage bookListPage = (BookListPage) searchByIsbnPage.clickShowDeleteDialogAndThenYesDeleteButton(VALID_ISBN13);
+		BookListPage bookListPage = searchByIsbnPage.clickDeleteAndThenYes(VALID_ISBN13);
 		
 		assertThat(bookListPage.getBookTable())
 			.doesNotContain(VALID_ISBN13_WITHOUT_FORMATTING, TITLE, AUTHORS_STRING)
@@ -346,7 +346,7 @@ public class SpringBookshelfApplicationE2E {
 		bookHomePage.loginWithValidCredentials();
 		BookSearchByTitlePage searchByTitlePage = bookHomePage.clickNavbarSearchBooksByTitleLink();
 		searchByTitlePage.fillSearchFormAndPressSubmitButton(TITLE);
-		BookListPage bookListPage = (BookListPage) searchByTitlePage.clickShowDeleteDialogAndThenYesDeleteButton(VALID_ISBN13);
+		BookListPage bookListPage = searchByTitlePage.clickDeleteAndThenYes(VALID_ISBN13);
 		
 		assertThat(bookListPage.getBookTable())
 			.doesNotContain(VALID_ISBN13_WITHOUT_FORMATTING)
