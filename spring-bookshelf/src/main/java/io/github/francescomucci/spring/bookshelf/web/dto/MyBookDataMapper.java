@@ -3,6 +3,7 @@ package io.github.francescomucci.spring.bookshelf.web.dto;
 import static java.util.Arrays.asList;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
@@ -41,6 +42,27 @@ public class MyBookDataMapper implements BookDataMapper {
 			return null;
 		
 		return isbnToLong(isbnData.getIsbn());
+	}
+
+	@Override
+	public List<BookData> toBookDataList(List<Book> bookList) {
+		if (bookList == null)
+			return asList();
+		
+		return bookList.stream()
+			.map(this::toBookData)
+			.collect(Collectors.toList());
+	}
+
+	@Override
+	public BookData updateBookData(BookData bookData, Book book) {
+		if (bookData == null || book == null)
+			return null;
+		
+		bookData.setIsbn(isbnToString(book.getIsbn()));
+		bookData.setTitle(titleToString(book.getTitle()));
+		bookData.setAuthors(authorsToString(book.getAuthors()));
+		return bookData;
 	}
 
 	private Long isbnToLong(String isbn) {

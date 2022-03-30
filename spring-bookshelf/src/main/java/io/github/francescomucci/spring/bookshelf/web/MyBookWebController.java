@@ -3,7 +3,6 @@ package io.github.francescomucci.spring.bookshelf.web;
 import static io.github.francescomucci.spring.bookshelf.web.BookWebControllerConstants.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -35,7 +34,7 @@ public class MyBookWebController implements BookWebController {
 	public String getBookListView(Model model) {
 		List<Book> bookList = service.getAllBooks();
 		if (!bookList.isEmpty())
-			model.addAttribute(MODEL_BOOKS, toBookDataList(bookList));
+			model.addAttribute(MODEL_BOOKS, map.toBookDataList(bookList));
 		return VIEW_BOOK_LIST;
 	}
 
@@ -51,9 +50,8 @@ public class MyBookWebController implements BookWebController {
 	public String getBookEditView(BookData editFormData, BindingResult result) {
 		if (result.hasErrors())
 			throw new InvalidIsbnException(editFormData.getIsbn());
-		BookData bookToEditData = map.toBookData(service.getBookByIsbn(map.toLong(editFormData)));
-		editFormData.setTitle(bookToEditData.getTitle());
-		editFormData.setAuthors(bookToEditData.getAuthors());
+		Book toBeEditedBook = service.getBookByIsbn(map.toLong(editFormData));
+		map.updateBookData(editFormData, toBeEditedBook);
 		return VIEW_BOOK_EDIT;
 	}
 
@@ -104,15 +102,9 @@ public class MyBookWebController implements BookWebController {
 	public String getBookByTitle(BookData searchByTitleFormData, BindingResult result, Model model) {
 		if (!result.hasErrors()) {
 			List<Book> foundedBookList = service.getBooksByTitle(searchByTitleFormData.getTitle());
-			model.addAttribute(MODEL_BOOKS, toBookDataList(foundedBookList));
+			model.addAttribute(MODEL_BOOKS, map.toBookDataList(foundedBookList));
 		}
 		return VIEW_BOOK_SEARCH_BY_TITLE;
-	}
-
-	private List<BookData> toBookDataList(List<Book> bookList){
-		return bookList.stream()
-			.map(map::toBookData)
-			.collect(Collectors.toList());
 	}
 
 }
