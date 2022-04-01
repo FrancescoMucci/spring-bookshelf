@@ -435,8 +435,6 @@
 					<version>0.34.1</version>
 					<configuration>
 						<showLogs>true</showLogs>
-						<verbose>build</verbose>
-						<autoCreateCustomNetworks>true</autoCreateCustomNetworks>
 					</configuration>
 					<executions>
 						<execution>
