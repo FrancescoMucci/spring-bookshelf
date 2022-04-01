@@ -435,6 +435,16 @@
 					<version>0.34.1</version>
 					<configuration>
 						<showLogs>true</showLogs>
+						<images>
+							<image>
+								<name>mongo:4.4.3</name>
+								<run>
+									<ports>
+										<port>${spring.data.mongodb.port}:27017</port>
+									</ports>
+								</run>
+							</image>
+						</images>
 					</configuration>
 					<executions>
 						<execution>
@@ -535,18 +545,6 @@
 					<plugin>
 						<groupId>io.fabric8</groupId>
 						<artifactId>docker-maven-plugin</artifactId>
-						<configuration>
-							<images>
-								<image>
-									<name>mongo:4.4.3</name>
-									<run>
-										<ports>
-											<port>${spring.data.mongodb.port}:27017</port>
-										</ports>
-									</run>
-								</image>
-							</images>
-						</configuration>
 					</plugin>
 
 				</plugins>
@@ -570,18 +568,6 @@
 					<plugin>
 						<groupId>io.fabric8</groupId>
 						<artifactId>docker-maven-plugin</artifactId>
-						<configuration>
-							<images>
-								<image>
-									<name>mongo:4.4.3</name>
-									<run>
-										<ports>
-											<port>${spring.data.mongodb.port}:27017</port>
-										</ports>
-									</run>
-								</image>
-							</images>
-						</configuration>
 					</plugin>
 
 					<plugin>
