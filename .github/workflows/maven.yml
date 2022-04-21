@@ -8,9 +8,11 @@ on:
   push:
     paths-ignore:
      - 'README.md'
+     - '**.pdf'
   pull_request:
     paths-ignore:
      - 'README.md'
+     - '**.pdf'
 
 jobs:
   build:
