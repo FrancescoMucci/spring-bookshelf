@@ -8,10 +8,12 @@ on:
   push:
     paths-ignore:
      - 'README.md'
+     - 'LICENSE.md'
      - '**.pdf'
   pull_request:
     paths-ignore:
      - 'README.md'
+     - 'LICENSE.md'
      - '**.pdf'
 
 jobs:

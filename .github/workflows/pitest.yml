@@ -8,6 +8,7 @@ on:
   pull_request:
     paths-ignore:
      - 'README.md'
+     - 'LICENSE.md'
      - '**.pdf'
 
 jobs:
